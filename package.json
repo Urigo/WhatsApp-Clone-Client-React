@@ -46,15 +46,21 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js --env=jsdom"
+    "test": "node scripts/test.js --env=jsdom",
+    "generator": "ts-node src/codegen.ts"
   },
   "devDependencies": {
     "@types/jest": "^23.3.10",
     "@types/node": "^10.12.11",
     "@types/react": "^16.7.11",
     "@types/react-dom": "^16.0.11",
+    "graphql-code-generator": "0.12.6",
+    "graphql-codegen-typescript-react-apollo-template": "0.12.6",
+    "graphql-codegen-typescript-template": "0.12.6",
     "node-sass": "^4.10.0",
+    "prompt": "^1.0.0",
     "sass-loader": "^7.1.0",
+    "ts-node": "^7.0.1",
     "typescript": "^3.2.1"
   },
   "jest": {
