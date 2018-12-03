@@ -1,11 +1,11 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { withAuth } from './services/auth.service';
-import AuthScreen from './screens/AuthScreen';
-import ChatsListScreen from './screens/ChatsListScreen';
-import ChatScreen from './screens/ChatScreen';
-import NewChatScreen from './screens/NewChatScreen';
-import NewChatGroupScreen from './screens/NewChatGroupScreen';
+import AuthScreen from './components/AuthScreen';
+import ChatsListScreen from './components/ChatsListScreen';
+import ChatScreen from './components/ChatScreen';
+import NewChatScreen from './components/NewChatScreen';
+import NewChatGroupScreen from './components/NewChatGroupScreen';
 
 export default () => (
   <Switch>
