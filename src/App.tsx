@@ -10,10 +10,10 @@ import NewChatGroupScreen from './components/NewChatGroupScreen';
 export default () => (
   <Switch>
     <Route exact path="/auth" component={AuthScreen} />
-    <Route exact path="/chats" component={ChatsListScreen} />
-    <Route exact path="/chats/:chatId" component={ChatScreen} />
-    <Route exact path="/new-chat" component={NewChatScreen} />
-    <Route exact path="/new-chat/group" component={NewChatGroupScreen} />
+    <Route exact path="/chats" component={withAuth(ChatsListScreen)} />
+    <Route exact path="/chats/:chatId" component={withAuth(ChatScreen)} />
+    <Route exact path="/new-chat" component={withAuth(NewChatScreen)} />
+    <Route exact path="/new-chat/group" component={withAuth(NewChatGroupScreen)} />
     <Route path="/" to="/chats" component={Redirect} />
   </Switch>
 )

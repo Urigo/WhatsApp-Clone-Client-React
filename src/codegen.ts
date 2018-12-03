@@ -1,3 +1,4 @@
+// @ts-ignore
 import * as prompt from 'prompt';
 import { generate } from 'graphql-code-generator';
 
@@ -9,7 +10,7 @@ interface Credentials {
 async function getCredentials(): Promise<Credentials> {
   return new Promise<Credentials>(resolve => {
     prompt.start();
-    prompt.get(['username', 'password'], (_err, result) => {
+    prompt.get(['username', 'password'], (_err: Error, result: Credentials) => {
       resolve({
         username: result.username,
         password: result.password,
@@ -32,8 +33,8 @@ async function main() {
 
   await generate(
     {
-      schema: 'http://localhost:3000/graphql',
-      template: 'graphql-codegen-apollo-angular-template',
+      schema: `http://${process.env.REACT_APP_APOLLO_SERVER_URI}`,
+      template: 'graphql-codegen-typescript-react-apollo-template',
       out: './src/graphql.ts',
       args: ['./src/graphql/**/*.ts'],
       header: headers,

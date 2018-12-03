@@ -5,7 +5,7 @@ export const withAuth(component: React.Component) => {
   return (props) => getAuthHeader() ? (
     <Component {...props} authHeader={getAuthHeader()} user={getUser()} />
   ) : (
-    <Redirect {...props} to="/login" />
+    <Redirect {...props} to="/auth" />
   );
 };
 
