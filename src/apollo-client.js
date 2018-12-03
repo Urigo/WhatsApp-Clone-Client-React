@@ -6,11 +6,11 @@ import { WebSocketLink } from 'apollo-link-ws';
 import { InMemoryCache, defaultDataIdFromObject } from 'apollo-cache-inmemory';
 
 const httpLink = new HttpLink({
-  uri: 'http://localhost:3000/graphql',
+  uri: `http://${process.env.REACT_APP_APOLLO_SERVER_URI}`,
 });
 
 const wsLink = new WebSocketLink({
-  uri: `ws://localhost:3000/graphql`,
+  uri: `ws://${process.env.REACT_APP_APOLLO_SERVER_URI}`,
   options: {
     reconnect: true,
     connectionParams: () => ({
