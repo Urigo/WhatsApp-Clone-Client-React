@@ -10,29 +10,31 @@ interface NavbarProps {
   onBack?: () => void,
 }
 
-const StyledToolbar = styled(Toolbar) `
+const name = 'Navbar';
+
+const Style = styled(Toolbar) `
   font-size: 20px;
 
-  > ._back-btn {
+  .${name}-back-btn {
 
   }
 
-  > ._body {
+  .${name}-body {
 
   }
-`
+`;
 
 const BackButton = (
   <ArrowBack />
 );
 
 const Navbar = ({ children, showBackButton, onBack }: NavbarProps) => (
-  <StyledToolbar className="wc-primary-comp">
-    {showBackButton && <ArrowBack className="_back-btn" onClick={onBack} />}
-    <div className="_body">
+  <Style className={`${name} wc-primary-comp`}>
+    {showBackButton && <ArrowBack className={`${name}-back-btn`} onClick={onBack} />}
+    <div className={`${name}-body`}>
       {children}
     </div>
-  </StyledToolbar>
+  </Style>
 );
 
 Navbar.defaultProps = {
