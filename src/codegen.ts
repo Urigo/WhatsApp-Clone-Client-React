@@ -1,6 +1,8 @@
-// @ts-ignore
+import dotenv from 'dotenv';
 import * as prompt from 'prompt';
 import { generate } from 'graphql-code-generator';
+
+dotenv.config();
 
 interface Credentials {
   username: string;
@@ -10,7 +12,7 @@ interface Credentials {
 async function getCredentials(): Promise<Credentials> {
   return new Promise<Credentials>(resolve => {
     prompt.start();
-    prompt.get(['username', 'password'], (_err: Error, result: Credentials) => {
+    prompt.get(['username', 'password'], (err: Error, result: Credentials) => {
       resolve({
         username: result.username,
         password: result.password,
@@ -34,7 +36,7 @@ async function main() {
   await generate(
     {
       schema: `http://${process.env.REACT_APP_APOLLO_SERVER_URI}`,
-      template: 'graphql-codegen-typescript-react-apollo-template',
+      template: 'graphql-codegen-typescript-template',
       out: './src/graphql.ts',
       args: ['./src/graphql/**/*.ts'],
       header: headers,

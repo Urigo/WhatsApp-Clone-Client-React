@@ -1,9 +1,11 @@
+import { InMemoryCache, defaultDataIdFromObject } from 'apollo-cache-inmemory';
 import { ApolloClient } from 'apollo-client';
-import { getMainDefinition } from 'apollo-utilities';
 import { ApolloLink, split } from 'apollo-link';
 import { HttpLink } from 'apollo-link-http';
 import { WebSocketLink } from 'apollo-link-ws';
-import { InMemoryCache, defaultDataIdFromObject } from 'apollo-cache-inmemory';
+import { getMainDefinition } from 'apollo-utilities';
+import { OperationDefinitionNode } from 'graphql';
+import { getAuthHeader } from './services/auth.service';
 
 const httpLink = new HttpLink({
   uri: `http://${process.env.REACT_APP_APOLLO_SERVER_URI}`,
@@ -14,7 +16,7 @@ const wsLink = new WebSocketLink({
   options: {
     reconnect: true,
     connectionParams: () => ({
-      authToken: loginService.getAuthHeader() || null
+      authToken: getAuthHeader() || null
     }),
   },
 });
@@ -24,8 +26,8 @@ const terminatingLink = split(
     const { kind, operation } = getMainDefinition(query) as OperationDefinitionNode;
     return kind === 'OperationDefinition' && operation === 'subscription';
   },
-  subscriptionLink,
-  httpLink.create({uri})
+  wsLink,
+  httpLink,
 );
 
 const link = ApolloLink.from([terminatingLink]);

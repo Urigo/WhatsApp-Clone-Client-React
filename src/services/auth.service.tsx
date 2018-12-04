@@ -1,12 +1,15 @@
-import React from 'react';
+import * as React from 'react';
 import { Redirect } from 'react-router-dom';
+import { User } from '../graphql';
 
-export const withAuth(component: React.Component) => {
-  return (props) => getAuthHeader() ? (
-    <Component {...props} authHeader={getAuthHeader()} user={getUser()} />
-  ) : (
-    <Redirect {...props} to="/auth" />
-  );
+export const withAuth = (Component: React.Component | React.SFC) => {
+  return Component
+
+  // return (props) => getAuthHeader() ? (
+  //   <Component {...props} authHeader={getAuthHeader()} user={getUser()} />
+  // ) : (
+  //   <Redirect {...props} to="/auth" />
+  // );
 };
 
 export const storeAuthHeader = (auth: string) => {
