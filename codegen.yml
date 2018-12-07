@@ -1,0 +1,10 @@
+schema: ../WhatsApp-Clone-server/src/schema.ts
+documents: ./src/react-apollo-hooks/**/*.ts
+overwrite: true
+require:
+  - graphql-code-generator/../../src/babel-register.ts
+generates:
+  ./src/types/graphql.ts:
+    plugins:
+      - typescript-common
+      - typescript-client
