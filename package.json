@@ -64,9 +64,6 @@
     "codegen": "gql-gen"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.2.0",
-    "@babel/preset-typescript": "^7.1.0",
-    "@babel/register": "^7.0.0",
     "@types/graphql": "^14.0.3",
     "@types/jest": "^23.3.10",
     "@types/node": "^10.12.12",
