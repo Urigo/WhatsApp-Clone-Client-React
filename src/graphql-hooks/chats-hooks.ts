@@ -1,4 +1,4 @@
-// import gql from 'graphql-tag'
+import gql from 'graphql-tag'
 // import { useQuery } from 'react-apollo-hooks'
 // import { GetChats } from '../types'
 //
@@ -17,6 +17,20 @@
 //     }
 //   `, options)
 // }
+
+export const query = gql `
+  query GetChats {
+    chats {
+      _id
+      name
+      picture
+      recentMessage {
+        contents
+        sentAt
+      }
+    }
+  }
+`
 
 export const useGetChats = () => ({
   data: {

@@ -1,4 +1,7 @@
+import Button from '@material-ui/core/Button'
+import SendIcon from '@material-ui/icons/Send'
 import * as React from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
 
 const name = 'MessageBox'
@@ -7,9 +10,10 @@ const Style = styled.div `
   display: flex;
   height: 50px;
   padding: 5px;
+  width: calc(100% - 10px);
 
   .${name}-input {
-    width: 100%;
+    width: calc(100% - 50px);
     border: none;
     border-radius: 999px;
     padding: 10px;
@@ -23,14 +27,15 @@ const Style = styled.div `
   }
 
   .${name}-button {
-    min-width: 45px;
-    width: 45px;
+    min-width: 50px;
+    width: 50px;
     border-radius: 999px;
-    background-color: var(--primary);
-    margin-left: 5px;
+    background-color: var(--primary-bg);
+    margin: 0 5px;
     color: white;
+    padding-left: 20px;
 
-    > mat-icon {
+    svg {
       margin-left: -3px;
     }
   }
@@ -44,11 +49,12 @@ interface MessageBoxProps {
 export default ({ disabled, onSubmitMessage }: MessageBoxProps) => {
   const [message, setMessage] = useState('')
 
-  const onInputKeyup = ({ keyCode }: KeyboardEvent) => {
-    if (!message) return
-
+  const onInputChange = ({ keyCode, target }: KeyboardEvent) => {
     if (keyCode == 13) {
       submitMessage()
+    }
+    else {
+      setMessage(target.value)
     }
   }
 
@@ -62,10 +68,10 @@ export default ({ disabled, onSubmitMessage }: MessageBoxProps) => {
 
   return (
     <Style className={name}>
-      <input className={`${name}-input`} type="text" placeholder="Type a message" onKeyUp={onInputKeyUp}>{message}</input>
-      <button className={`${name}-button`} mat-button onClick={submitMessage} disabled={disabled}>
-        <mat-icon aria-label="Icon-button with a send icon">send</mat-icon>
-      </button>
+      <input className={`${name}-input`} type="text" placeholder="Type a message" value={message} onChange={onInputChange} />
+      <Button className={`${name}-button`} onClick={submitMessage} disabled={disabled}>
+        <SendIcon />
+      </Button>
     </Style>
   )
 }
