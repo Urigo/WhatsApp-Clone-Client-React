@@ -1,5 +1,6 @@
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
+import * as moment from 'moment'
 import * as React from 'react'
 import styled from 'styled-components'
 import { useGetChats } from '../../graphql-hooks/chats-hooks'
@@ -59,12 +60,12 @@ export default () => {
     <Style className={name}>
       <List className={`${name}-chats-list`}>
         {data.chats.map(chat => (
-          <ListItem className={`${name}-chat-item`} button>
-            <img className={`${name}-profile-pic`} src={chat.picture} />
+          <ListItem key={chat._id} className={`${name}-chat-item`} button>
+            <img className={`${name}-profile-pic`} src={chat.picture || '/assets/default-profile-pic.jpg'} />
             <div className={`${name}-info`}>
               <div className={`${name}-name`}>{chat.name}</div>
               <div className={`${name}-last-message`}>{chat.recentMessage.contents}</div>
-              <div className={`${name}-timestamp`}>{chat.recentMessage.sentAt}</div>
+              <div className={`${name}-timestamp`}>{moment(chat.recentMessage.sentAt).format('HH:mm')}</div>
             </div>
           </ListItem>
         ))}
