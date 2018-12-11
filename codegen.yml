@@ -1,5 +1,5 @@
 schema: ../WhatsApp-Clone-server/src/schema.ts
-documents: ./src/react-apollo-hooks/**/*.ts
+documents: ./src/graphql-hooks/**/*.ts
 overwrite: true
 require:
   - graphql-code-generator/../../../WhatsApp-Clone-server/src/babel-register.ts
