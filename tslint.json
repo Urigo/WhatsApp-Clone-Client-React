@@ -6,7 +6,9 @@
     "jsx-boolean-value": false,
     "interface-name" : false,
     "variable-name": false,
-    "no-string-literal": false
+    "no-string-literal": false,
+    "no-namespace": false,
+    "interface-over-type-literal": false
   },
   "linterOptions": {
     "exclude": [

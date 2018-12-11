@@ -1,14 +1,9 @@
 import gql from 'graphql-tag'
-import { useQuery } from 'react-hooks'
+import { useQuery } from 'react-apollo-hooks'
 import { GetChats } from '../types'
 
-export interface GetChatsOptions {
-  variables: GetChats.Variables,
-  [key: string],
-}
-
-export const useGetChats = (options: GetChatsOptions): GetChats.Query => {
-  return useQuery(gql `
+export const useGetChats = (options?) => {
+  return useQuery<GetChats.Query, GetChats.Variables>(gql `
     query GetChats {
       chats {
         _id
@@ -16,6 +11,7 @@ export const useGetChats = (options: GetChatsOptions): GetChats.Query => {
         picture
         recentMessage {
           contents
+          sentAt
         }
       }
     }

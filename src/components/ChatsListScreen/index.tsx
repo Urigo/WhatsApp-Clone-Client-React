@@ -1,4 +1,5 @@
-import * as React, { Suspense } from 'react'
+import * as React from 'react'
+import { Suspense } from 'react'
 import Navbar from '../Navbar'
 import ChatsList from './ChatsList'
 
@@ -9,7 +10,7 @@ export default () => (
     <Navbar>
       WhatsApp Clone
     </Navbar>
-    <Suspense>
+    <Suspense fallback={null}>
       <ChatsList />
     </Suspense>
   </div>

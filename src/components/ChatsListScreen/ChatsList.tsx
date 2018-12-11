@@ -2,7 +2,7 @@ import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import * as React from 'react'
 import styled from 'styled-components'
-import { useGetChats } from '../graphql-hooks/chats-hooks'
+import { useGetChats } from '../../graphql-hooks/chats-hooks'
 
 const name = 'ChatsList'
 
@@ -52,7 +52,7 @@ const Style = styled.div `
   }
 `
 
-const ChatsList = () => {
+export default () => {
   const { data } = useGetChats()
 
   return (

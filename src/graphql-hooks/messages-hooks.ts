@@ -1,14 +1,9 @@
 import gql from 'graphql-tag'
-import { useQuery } from 'react-hooks'
+import { useQuery } from 'react-apollo-hooks'
 import { GetMessages } from '../types'
 
-export interface GetMessagesOptions {
-  variables: GetMessages.Variables,
-  [key: string],
-}
-
-export const useGetMessages = (options: GetMessagesOptions): GetMessages.Query => {
-  return useQuery(gql `
+export const useGetMessages = (options?) => {
+  return useQuery<GetMessages.Query, GetMessages.Variables>(gql `
     query GetMessages($chatId: ID!, $skip: Int, $limit: Int) {
       chat(chatId: $chatId) {
         messages(skip: $skip, limit: $limit) {
