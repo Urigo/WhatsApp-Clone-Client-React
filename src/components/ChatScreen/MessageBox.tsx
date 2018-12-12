@@ -56,9 +56,6 @@ export default ({ chatId }: MessageBoxProps) => {
   const [message, setMessage] = useState('')
 
   const addMessage = useAddMessage({
-    update() {
-      setMessage('')
-    },
     variables: {
       chatId,
       contents: message,
@@ -84,14 +81,14 @@ export default ({ chatId }: MessageBoxProps) => {
     update(store, { data: { addMessage } }: { data: AddMessage.Mutation }) {
       {
         const { chat } = store.readQuery<GetMessages.Query, GetMessages.Variables>({
-          query: getChatQuery,
+          query: getMessagesQuery,
           variables: { chatId },
         })
 
         chat.messages.push(addMessage)
 
         store.writeQuery<GetMessages.Query, GetMessages.Variables>({
-          query: getChatQuery,
+          query: getMessagesQuery,
           variables: { chatId },
           data: { chat },
         })

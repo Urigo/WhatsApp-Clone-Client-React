@@ -20,7 +20,7 @@ export const useAddMessage = (options?) => {
   return useMutation<AddMessage.Mutation, AddMessage.Variables>(addMessageMutation, options)
 }
 
-const getMessagesQuery = gql `
+export const getMessagesQuery = gql `
   query GetMessages($chatId: ID!) {
     chat(chatId: $chatId) {
       _id
