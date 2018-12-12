@@ -13,15 +13,9 @@ interface NavbarProps {
 const name = 'Navbar';
 
 const Style = styled(Toolbar) `
+  background-color: var(--primary-bg);
+  color: var(--primary-text);
   font-size: 20px;
-
-  .${name}-back-btn {
-
-  }
-
-  .${name}-body {
-
-  }
 `;
 
 const BackButton = (

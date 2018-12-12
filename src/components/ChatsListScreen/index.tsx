@@ -7,7 +7,7 @@ import ChatsList from './ChatsList'
 const name = 'ChatsListScreen'
 
 export default ({ history }: RouteComponentProps) => (
-  <div className={name}>
+  <div className={`${name} Screen`}>
     <Navbar>
       WhatsApp Clone
     </Navbar>

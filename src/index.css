@@ -20,12 +20,6 @@ body {
   height: 100%;
 }
 
-.wc-primary-comp {
-  background-color: var(--primary-bg);
-  color: var(--primary-text);
-}
-
-.wc-secondary-comp {
-  background-color: var(--secondary-text);
-  color: var(--secondary-text);
+.Screen {
+  height: 100%;
 }

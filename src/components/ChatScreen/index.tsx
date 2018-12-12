@@ -11,13 +11,11 @@ import MessagesList from './MessagesList'
 const name = 'ChatScreen'
 
 const Style = styled.div `
-  height: calc(100% - 56px);
-
   .${name}-body {
     position: relative;
     background: url(/assets/chat-background.jpg);
     width: 100%;
-    height: 100%;
+    height: calc(100% - 56px);
 
     .MessagesList {
       position: absolute;
@@ -34,7 +32,7 @@ const Style = styled.div `
 `
 
 export default ({ match, history }: RouteComponentProps) => (
-  <Style className={name}>
+  <Style className={`${name} Screen`}>
     <Navbar>
       <Suspense fallback={null}>
         <ChatNavbar chatId={match.params.chatId} history={history} />
