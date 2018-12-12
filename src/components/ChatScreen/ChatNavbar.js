@@ -39,10 +39,9 @@ interface ChatNavbarProps {
 }
 
 export default ({ chatId, history }: ChatNavbarProps) => {
-  const { data } = useGetChatInfo({
+  const { data: { chat } } = useGetChatInfo({
     variables: { chatId }
   })
-  const { chat } = data
 
   const navToChats = () => {
     history.push('/chats')

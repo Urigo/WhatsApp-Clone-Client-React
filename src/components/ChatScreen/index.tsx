@@ -42,7 +42,7 @@ export default ({ match, history }: RouteComponentProps) => (
       <Suspense fallback={null}>
         <MessagesList chatId={match.params.chatId} />
       </Suspense>
-      <MessageBox />
+      <MessageBox chatId={match.params.chatId} />
     </div>
   </Style>
 )

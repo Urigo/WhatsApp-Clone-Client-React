@@ -3,6 +3,11 @@ import SendIcon from '@material-ui/icons/Send'
 import * as React from 'react'
 import { useState } from 'react'
 import styled from 'styled-components'
+import uniqid from 'uniqid'
+import { getChatsQuery } from '../../graphql-hooks/chats-hooks'
+import { useGetMe } from '../../graphql-hooks/users-hooks'
+import { useAddMessage, getMessagesQuery } from '../../graphql-hooks/messages-hooks'
+import { GetMessages, GetChats, AddMessage } from '../../types'
 
 const name = 'MessageBox'
 
@@ -43,12 +48,69 @@ const Style = styled.div `
 `
 
 interface MessageBoxProps {
-  onSubmitMessage: (message: string) => {};
-  disabled?: boolean;
+  chatId: string;
 }
 
-export default ({ disabled, onSubmitMessage }: MessageBoxProps) => {
+export default ({ chatId }: MessageBoxProps) => {
+  const { data: { me } } = useGetMe()
   const [message, setMessage] = useState('')
+
+  const addMessage = useAddMessage({
+    update() {
+      setMessage('')
+    },
+    variables: {
+      chatId,
+      contents: message,
+    },
+    optimisticResponse: {
+      __typename: 'Mutation',
+      addMessage: {
+        _id: uniqid(),
+        __typename: 'Message',
+        chat: {
+          _id: chatId,
+          __typename: 'Chat',
+        },
+        from: {
+          __typename: 'User',
+          name: me.name,
+        },
+        contents: message,
+        sentAt: new Date(),
+        isMine: true,
+      },
+    },
+    update(store, { data: { addMessage } }: { data: AddMessage.Mutation }) {
+      {
+        const { chat } = store.readQuery<GetMessages.Query, GetMessages.Variables>({
+          query: getChatQuery,
+          variables: { chatId },
+        })
+
+        chat.messages.push(addMessage)
+
+        store.writeQuery<GetMessages.Query, GetMessages.Variables>({
+          query: getChatQuery,
+          variables: { chatId },
+          data: { chat },
+        })
+      }
+
+      {
+        const { chats } = store.readQuery<GetChats.Query, GetChats.Variables>({
+          query: getChatsQuery,
+        })
+
+        chats.find(chat => chat._id == chatId).messages.push(addMessage);
+
+        store.writeQuery<GetChats.Query, GetChats.Variables>({
+          query: getChatsQuery,
+          data: { chats },
+        })
+      }
+    },
+  })
 
   const onInputChange = ({ keyCode, target }: KeyboardEvent) => {
     if (keyCode == 13) {
@@ -61,16 +123,14 @@ export default ({ disabled, onSubmitMessage }: MessageBoxProps) => {
 
   const submitMessage = () => {
     if (!message) return
-    if (disabled) return
 
-    onSubmitMessage(message)
-    setMessage('')
+    addMessage(message)
   }
 
   return (
     <Style className={name}>
       <input className={`${name}-input`} type="text" placeholder="Type a message" value={message} onChange={onInputChange} />
-      <Button className={`${name}-button`} onClick={submitMessage} disabled={disabled}>
+      <Button className={`${name}-button`} onClick={submitMessage}>
         <SendIcon />
       </Button>
     </Style>

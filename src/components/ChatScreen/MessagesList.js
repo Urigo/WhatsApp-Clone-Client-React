@@ -83,10 +83,9 @@ interface MessagesListProps {
 }
 
 export default ({ chatId }: MessagesListProps) => {
-  const r = useGetMessages({
+  const { data: { chat: { messages } } } = useGetMessages({
     variables: { chatId }
   })
-  const { messages } = r.data.chat
 
   return (
     <Style className={name}>
