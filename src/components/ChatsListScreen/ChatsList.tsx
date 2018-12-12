@@ -1,5 +1,6 @@
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
+import { History } from 'history'
 import * as moment from 'moment'
 import * as React from 'react'
 import styled from 'styled-components'
@@ -19,7 +20,8 @@ const Style = styled.div `
 
   .${name}-profile-pic {
     height: 50px;
-    width: auto;
+    width: 50px;
+    object-fit: contain;
     border-radius: 50%;
   }
 
@@ -53,14 +55,22 @@ const Style = styled.div `
   }
 `
 
-export default () => {
+interface ChatsListProps {
+  history: History
+}
+
+export default ({ history }: ChatsListProps) => {
   const { data } = useGetChats()
+
+  const navToChat = (chatId) => {
+    history.push(`chats/${chatId}`)
+  }
 
   return (
     <Style className={name}>
       <List className={`${name}-chats-list`}>
         {data.chats.map(chat => (
-          <ListItem key={chat._id} className={`${name}-chat-item`} button>
+          <ListItem key={chat._id} className={`${name}-chat-item`} button onClick={navToChat.bind(null, chat._id)}>
             <img className={`${name}-profile-pic`} src={chat.picture || '/assets/default-profile-pic.jpg'} />
             <div className={`${name}-info`}>
               <div className={`${name}-name`}>{chat.name}</div>

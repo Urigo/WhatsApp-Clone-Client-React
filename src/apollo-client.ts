@@ -1,4 +1,4 @@
-import { InMemoryCache, defaultDataIdFromObject } from 'apollo-cache-inmemory';
+import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ApolloClient } from 'apollo-client';
 import { ApolloLink, split } from 'apollo-link';
 import { HttpLink } from 'apollo-link-http';
@@ -32,18 +32,9 @@ const terminatingLink = split(
 
 const link = ApolloLink.from([terminatingLink]);
 
-const dataIdFromObject = (object: any) => {
-  switch (object.__typename) {
-    case 'Message':
-      // use `chatId` prefix and `messageId` as the primary key
-      return `${object.chat.id}:${object.id}`;
-    default:
-      // fall back to default handling
-      return defaultDataIdFromObject(object);
-  }
-};
-
-const cache = new InMemoryCache({ dataIdFromObject });
+const cache = new InMemoryCache({
+  dataIdFromObject: (obj: any) => obj._id
+});
 
 export default new ApolloClient({
   link,
