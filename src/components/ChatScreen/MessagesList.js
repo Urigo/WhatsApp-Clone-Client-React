@@ -1,7 +1,7 @@
 import * as moment from 'moment'
 import * as React from 'react'
 import styled from 'styled-components'
-import { GetMessages } from '../../types'
+import { useGetMessages } from '../../graphql-hooks/messages-hooks'
 
 const name = 'MessagesList'
 
@@ -79,16 +79,23 @@ const Style = styled.div `
 `
 
 interface MessagesListProps {
-  messages: GetMessages.Messages;
+  chatId: string;
 }
 
-export default ({ messages }: MessagesListProps) => (
-  <Style className={name}>
-    {messages.map((message) => (
-      <div key={message._id} className={`${name}-message ${message.isMine ? `${name}-message-mine` : `${name}-message-others`}`}>
-        <div className={`${name}-message-contents`}>{message.contents}</div>
-        <span className={`${name}-message-timestamp`}>{moment(message.sentAt).format('HH:mm')}</span>
-      </div>
-    ))}
-  </Style>
-)
+export default ({ chatId }: MessagesListProps) => {
+  const r = useGetMessages({
+    variables: { chatId }
+  })
+  const { messages } = r.data.chat
+
+  return (
+    <Style className={name}>
+      {messages.map((message) => (
+        <div key={message._id} className={`${name}-message ${message.isMine ? `${name}-message-mine` : `${name}-message-others`}`}>
+          <div className={`${name}-message-contents`}>{message.contents}</div>
+          <span className={`${name}-message-timestamp`}>{moment(message.sentAt).format('HH:mm')}</span>
+        </div>
+      ))}
+    </Style>
+  )
+}

@@ -32,6 +32,7 @@ const Style = styled.div `
     border-radius: 999px;
     background-color: var(--primary-bg);
     margin: 0 5px;
+    margin-right: 0;
     color: white;
     padding-left: 20px;
 

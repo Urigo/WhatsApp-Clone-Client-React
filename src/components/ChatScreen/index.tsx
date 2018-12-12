@@ -1,8 +1,10 @@
 import * as React from 'react'
 import { Suspense } from 'react'
+import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
 import { useGetMessages } from '../../graphql-hooks/messages-hooks'
 import Navbar from '../Navbar'
+import ChatNavbar from './ChatNavbar'
 import MessageBox from './MessageBox'
 import MessagesList from './MessagesList'
 
@@ -31,20 +33,18 @@ const Style = styled.div `
   }
 `
 
-export default () => {
-  const { data } = useGetMessages()
-
-  return (
-    <Style className={name}>
-      <Navbar>
-        WhatsApp Clone
-      </Navbar>
-      <div className={`${name}-body`}>
-        <Suspense fallback={null}>
-          <MessagesList messages={data.chat.messages} />
-        </Suspense>
-        <MessageBox />
-      </div>
-    </Style>
-  )
-}
+export default ({ match, history }: RouteComponentProps) => (
+  <Style className={name}>
+    <Navbar>
+      <Suspense fallback={null}>
+        <ChatNavbar chatId={match.params.chatId} history={history} />
+      </Suspense>
+    </Navbar>
+    <div className={`${name}-body`}>
+      <Suspense fallback={null}>
+        <MessagesList chatId={match.params.chatId} />
+      </Suspense>
+      <MessageBox />
+    </div>
+  </Style>
+)
