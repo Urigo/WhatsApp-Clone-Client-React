@@ -2,6 +2,7 @@ import Button from '@material-ui/core/Button'
 import SendIcon from '@material-ui/icons/Send'
 import * as React from 'react'
 import { useState } from 'react'
+import { MutationUpdaterFn } from 'react-apollo-hooks'
 import styled from 'styled-components'
 import uniqid from 'uniqid'
 import { getChatsQuery } from '../../graphql-hooks/chats-hooks'
@@ -78,16 +79,16 @@ export default ({ chatId }: MessageBoxProps) => {
         isMine: true,
       },
     },
-    update(store, { data: { addMessage } }: { data: AddMessage.Mutation }) {
+    update: ((store, { data: { addMessage } }) => {
       {
-        const { chat } = store.readQuery<GetMessages.Query, GetMessages.Variables>({
+        const { chat } = store.readQuery({
           query: getMessagesQuery,
           variables: { chatId },
         })
 
         chat.messages.push(addMessage)
 
-        store.writeQuery<GetMessages.Query, GetMessages.Variables>({
+        store.writeQuery({
           query: getMessagesQuery,
           variables: { chatId },
           data: { chat },
@@ -95,21 +96,21 @@ export default ({ chatId }: MessageBoxProps) => {
       }
 
       {
-        const { chats } = store.readQuery<GetChats.Query, GetChats.Variables>({
+        const { chats } = store.readQuery({
           query: getChatsQuery,
         })
 
         chats.find(chat => chat._id == chatId).messages.push(addMessage);
 
-        store.writeQuery<GetChats.Query, GetChats.Variables>({
+        store.writeQuery({
           query: getChatsQuery,
           data: { chats },
         })
       }
-    },
+    }) as MutationUpdaterFn<AddMessage.Mutation>,
   })
 
-  const onInputChange = ({ keyCode, target }: KeyboardEvent) => {
+  const onInputChange = ({ keyCode, target }) => {
     if (keyCode == 13) {
       submitMessage()
     }
@@ -121,7 +122,7 @@ export default ({ chatId }: MessageBoxProps) => {
   const submitMessage = () => {
     if (!message) return
 
-    addMessage(message)
+    addMessage()
   }
 
   return (
