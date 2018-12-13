@@ -78,7 +78,7 @@ export default ({ chatId }: MessageBoxProps) => {
   return (
     <Style className={name}>
       <input className={`${name}-input`} type="text" placeholder="Type a message" value={message} onKeyPress={onKeyPress} onChange={onChange} />
-      <Button className={`${name}-button`} onClick={submitMessage}>
+      <Button variant="contained" color="primary" className={`${name}-button`} onClick={submitMessage}>
         <SendIcon />
       </Button>
     </Style>
