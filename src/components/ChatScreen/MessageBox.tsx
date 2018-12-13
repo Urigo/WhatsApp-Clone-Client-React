@@ -2,13 +2,9 @@ import Button from '@material-ui/core/Button'
 import SendIcon from '@material-ui/icons/Send'
 import * as React from 'react'
 import { useState } from 'react'
-import { MutationUpdaterFn } from 'react-apollo-hooks'
 import styled from 'styled-components'
-import uniqid from 'uniqid'
-import { getChatsQuery } from '../../graphql-hooks/chats-hooks'
+import { useAddMessage } from '../../graphql-hooks/messages-hooks'
 import { useGetMe } from '../../graphql-hooks/users-hooks'
-import { useAddMessage, getMessagesQuery } from '../../graphql-hooks/messages-hooks'
-import { GetMessages, GetChats, AddMessage } from '../../types'
 
 const name = 'MessageBox'
 
@@ -53,81 +49,35 @@ interface MessageBoxProps {
 }
 
 export default ({ chatId }: MessageBoxProps) => {
-  const { data: { me } } = useGetMe()
   const [message, setMessage] = useState('')
-
+  const { data: { me } } = useGetMe()
   const addMessage = useAddMessage({
     variables: {
       chatId,
       contents: message,
-    },
-    optimisticResponse: {
-      __typename: 'Mutation',
-      addMessage: {
-        _id: uniqid(),
-        __typename: 'Message',
-        chat: {
-          _id: chatId,
-          __typename: 'Chat',
-        },
-        from: {
-          __typename: 'User',
-          name: me.name,
-        },
-        contents: message,
-        sentAt: new Date(),
-        isMine: true,
-      },
-    },
-    update: ((store, { data: { addMessage } }) => {
-      {
-        const { chat } = store.readQuery({
-          query: getMessagesQuery,
-          variables: { chatId },
-        })
-
-        chat.messages.push(addMessage)
-
-        store.writeQuery({
-          query: getMessagesQuery,
-          variables: { chatId },
-          data: { chat },
-        })
-      }
-
-      {
-        const { chats } = store.readQuery({
-          query: getChatsQuery,
-        })
-
-        chats.find(chat => chat._id == chatId).messages.push(addMessage);
-
-        store.writeQuery({
-          query: getChatsQuery,
-          data: { chats },
-        })
-      }
-    }) as MutationUpdaterFn<AddMessage.Mutation>,
+    }
   })
 
-  const onInputChange = ({ keyCode, target }) => {
-    if (keyCode == 13) {
+  const onKeyPress = (e) => {
+    if (e.charCode === 13) {
       submitMessage()
     }
-    else {
-      setMessage(target.value)
-    }
+  }
+
+  const onChange = ({ target }) => {
+    setMessage(target.value)
   }
 
   const submitMessage = () => {
     if (!message) return
 
     addMessage()
+    setMessage('')
   }
 
   return (
     <Style className={name}>
-      <input className={`${name}-input`} type="text" placeholder="Type a message" value={message} onChange={onInputChange} />
+      <input className={`${name}-input`} type="text" placeholder="Type a message" value={message} onKeyPress={onKeyPress} onChange={onChange} />
       <Button className={`${name}-button`} onClick={submitMessage}>
         <SendIcon />
       </Button>

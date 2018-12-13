@@ -8,9 +8,9 @@ const name = 'MessagesList'
 const Style = styled.div `
   display: block;
   height: 100%;
-  width: calc(100% - 40px);
+  width: calc(100% - 30px);
   overflow-y: overlay;
-  padding: 0 20px;
+  padding: 0 15px;
 
   .${name}-message {
     display: inline-block;
@@ -18,7 +18,8 @@ const Style = styled.div `
     max-width: 100%;
     border-radius: 7px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, .15);
-    margin-top: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
     clear: both;
 
     &::after {

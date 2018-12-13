@@ -5,7 +5,7 @@ import ArrowBack from '@material-ui/icons/ArrowBack';
 import styled from 'styled-components';
 
 interface NavbarProps {
-  children: React.Children,
+  children: any,
   showBackButton?: boolean,
   onBack?: () => void,
 }
@@ -32,7 +32,7 @@ const Navbar = ({ children, showBackButton, onBack }: NavbarProps) => (
 );
 
 Navbar.defaultProps = {
-  onBack: () => {},
+  onBack: Function,
 };
 
 export default Navbar;
