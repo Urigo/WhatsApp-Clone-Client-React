@@ -4,7 +4,7 @@ import { Suspense } from 'react'
 import { ApolloProvider } from 'react-apollo-hooks'
 import * as ReactDOM from 'react-dom'
 import apolloClient from './apollo-client'
-import App from './App'
+import App from './components/App'
 import registerServiceWorker from './registerServiceWorker'
 import './index.css'
 

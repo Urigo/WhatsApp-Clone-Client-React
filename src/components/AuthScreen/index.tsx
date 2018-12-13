@@ -15,11 +15,7 @@ export default ({ history, location }: RouteComponentProps) => (
   <Style className={`${name} Screen`}>
     <img src="assets/whatsapp-icon.png" />
     <h2>WhatsApp Clone</h2>
-    <AnimatedSwitch
-      atEnter={{ opacity: 0 }}
-      atLeave={{ opacity: 0 }}
-      atActive={{ opacity: 1 }}
-    >
+    <AnimatedSwitch>
       <Route exact path="/sign-in" component={SignInForm} />
       <Route exact path="/sign-up" component={SignUpForm} />
     </AnimatedSwitch>
