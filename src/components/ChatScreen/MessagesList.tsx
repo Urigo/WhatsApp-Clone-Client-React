@@ -1,5 +1,7 @@
 import * as moment from 'moment'
 import * as React from 'react'
+import { useRef, useEffect } from 'react'
+import * as ReactDOM from 'react-dom'
 import styled from 'styled-components'
 import { useGetMessages } from '../../graphql-hooks/messages-hooks'
 
@@ -87,9 +89,20 @@ export default ({ chatId }: MessagesListProps) => {
   const { data: { chat: { messages } } } = useGetMessages({
     variables: { chatId }
   })
+  const selfRef = useRef(null)
+
+  const resetScrollTop = () => {
+    if (!selfRef.current) return
+
+    const selfDOMNode = ReactDOM.findDOMNode(selfRef.current) as HTMLElement
+    selfDOMNode.scrollTop = Number.MAX_SAFE_INTEGER
+  }
+
+  useEffect(resetScrollTop, [selfRef.current])
+  useEffect(resetScrollTop, [messages.length])
 
   return (
-    <Style className={name}>
+    <Style className={name} ref={selfRef}>
       {messages.map((message) => (
         <div key={message._id} className={`${name}-message ${message.isMine ? `${name}-message-mine` : `${name}-message-others`}`}>
           <div className={`${name}-message-contents`}>{message.contents}</div>

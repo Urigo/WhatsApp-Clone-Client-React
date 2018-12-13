@@ -3,6 +3,7 @@ import ListItem from '@material-ui/core/ListItem'
 import { History } from 'history'
 import * as moment from 'moment'
 import * as React from 'react'
+import * as ReactDOM from 'react-dom'
 import styled from 'styled-components'
 import { useGetChats } from '../../graphql-hooks/chats-hooks'
 
