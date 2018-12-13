@@ -1,5 +1,6 @@
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
+import { History } from 'history'
 import * as React from 'react'
 import { useState } from 'react'
 import styled from 'styled-components'
@@ -10,10 +11,10 @@ const Style = styled.div `
 `
 
 interface SignInFormProps {
-  handleSignUp: () => void;
+  history: History;
 }
 
-export default ({ handleSignUp }: SignInFormProps) => {
+export default ({ history }: SignInFormProps) => {
   const [username, setUsername] = useState('')
   const [usernameError, setUsernameError] = useState('')
   const [password, setPassword] = useState('')
@@ -27,16 +28,16 @@ export default ({ handleSignUp }: SignInFormProps) => {
     setPassword(target.value)
   }
 
-  const signIn = () => {
-    alert('singing in')
-  }
-
   const maySignIn = () => {
     return !!(username && password)
   }
 
-  const requestSignUp = () => {
-    handleSignUp()
+  const signIn = () => {
+    alert('singing in')
+  }
+
+  const signUp = () => {
+    history.push('/sign-up')
   }
 
   return (
@@ -50,9 +51,7 @@ export default ({ handleSignUp }: SignInFormProps) => {
             onChange={updateUsername}
             margin="normal"
           />
-          {usernameError && (
-            <div className="error">Username is required</div>
-          )}
+          {usernameError && <div className="error">{usernameError}</div>}
           <TextField
             label="Password"
             type="password"
@@ -60,12 +59,10 @@ export default ({ handleSignUp }: SignInFormProps) => {
             onChange={updatePassword}
             margin="normal"
           />
-          {passwordError && (
-            <div className="error">Password is required</div>
-          )}
+          {passwordError && <div className="error">{passwordError}</div>}
         </div>
-        <Button type="submit" color="secondary" variant="contained" disabled={maySignIn()} onClick={signIn}>Sign in</Button>
-        <span className="alternative">Don't have an account yet? <a onClick={requestSignUp}>Sign up!</a></span>
+        <Button type="submit" color="secondary" variant="contained" disabled={!maySignIn()} onClick={signIn}>Sign in</Button>
+        <span className="alternative">Don't have an account yet? <a onClick={signUp}>Sign up!</a></span>
       </form>
     </Style>
   )
