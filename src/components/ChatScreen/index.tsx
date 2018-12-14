@@ -28,6 +28,11 @@ const Style = styled.div `
       bottom: 0;
       left: 0;
     }
+
+    .AddChatButton {
+      right: 0;
+      bottom: 0;
+    }
   }
 `
 
