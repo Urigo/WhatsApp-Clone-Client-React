@@ -6,16 +6,16 @@ const glide = (val) => spring(val, {
   damping: 24,
 })
 
-const mapStyles = () => (styles) => ({
+const mapStyles = (styles) => ({
   transform: `translateX(${styles.offset}%)`,
 })
 
-export default styled(AnimatedSwitch).attrs({
+export default styled(AnimatedSwitch).attrs(() => ({
   atEnter: { offset: 100 },
   atLeave: { offset: glide(-100) },
   atActive: { offset: glide(0) },
   mapStyles,
-}) `
+})) `
   position: relative;
   overflow: hidden;
   width: 100%;

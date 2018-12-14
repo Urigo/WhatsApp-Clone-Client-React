@@ -61,7 +61,7 @@ interface ChatsListProps {
 }
 
 export default ({ history }: ChatsListProps) => {
-  const { data } = useGetChats()
+  const { data: { chats } } = useGetChats()
 
   const navToChat = (chatId) => {
     history.push(`chats/${chatId}`)
@@ -70,7 +70,7 @@ export default ({ history }: ChatsListProps) => {
   return (
     <Style className={name}>
       <List className={`${name}-chats-list`}>
-        {data.chats.map(chat => (
+        {chats.map(chat => (
           <ListItem key={chat._id} className={`${name}-chat-item`} button onClick={navToChat.bind(null, chat._id)}>
             <img className={`${name}-profile-pic`} src={chat.picture || '/assets/default-profile-pic.jpg'} />
             <div className={`${name}-info`}>
