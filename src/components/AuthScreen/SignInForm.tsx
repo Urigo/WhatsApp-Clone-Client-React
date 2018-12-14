@@ -16,15 +16,13 @@ interface SignInFormProps {
 
 export default ({ history }: SignInFormProps) => {
   const [username, setUsername] = useState('')
-  const [usernameError, setUsernameError] = useState('')
   const [password, setPassword] = useState('')
-  const [passwordError, setPasswordError] = useState('')
 
-  const updateUsername = ({ target }) => {
+  const onUsernameChange = ({ target }) => {
     setUsername(target.value)
   }
 
-  const updatePassword = ({ target }) => {
+  const onPasswordChange = ({ target }) => {
     setPassword(target.value)
   }
 
@@ -33,7 +31,7 @@ export default ({ history }: SignInFormProps) => {
   }
 
   const signIn = () => {
-    alert('singing in')
+    history.push('/chats')
   }
 
   const signUp = () => {
@@ -46,23 +44,25 @@ export default ({ history }: SignInFormProps) => {
         <legend>Sign in</legend>
         <div style={{ width: '100%' }}>
           <TextField
+            className="AuthScreen-text-field"
             label="Username"
             value={username}
-            onChange={updateUsername}
+            onChange={onUsernameChange}
             margin="normal"
+            placeholder="Enter your username"
           />
-          {usernameError && <div className="error">{usernameError}</div>}
           <TextField
+            className="AuthScreen-text-field"
             label="Password"
             type="password"
             value={password}
-            onChange={updatePassword}
+            onChange={onPasswordChange}
             margin="normal"
+            placeholder="Enter your password"
           />
-          {passwordError && <div className="error">{passwordError}</div>}
         </div>
         <Button type="submit" color="secondary" variant="contained" disabled={!maySignIn()} onClick={signIn}>Sign in</Button>
-        <span className="alternative">Don't have an account yet? <a onClick={signUp}>Sign up!</a></span>
+        <span className="AuthScreen-alternative">Don't have an account yet? <a onClick={signUp}>Sign up!</a></span>
       </form>
     </Style>
   )

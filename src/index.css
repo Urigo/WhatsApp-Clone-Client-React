@@ -21,5 +21,6 @@ body {
 }
 
 .Screen {
+  position: relative;
   height: 100%;
 }

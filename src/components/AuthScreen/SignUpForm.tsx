@@ -16,13 +16,9 @@ interface SignUpFormProps {
 
 export default ({ history }: SignUpFormProps) => {
   const [name, setName] = useState('')
-  const [nameError, setNameError] = useState('')
   const [username, setUsername] = useState('')
-  const [usernameError, setUsernameError] = useState('')
   const [oldPassword, setOldPassword] = useState('')
-  const [oldPasswordError, setOldPasswordError] = useState('')
   const [newPassword, setNewPassword] = useState('')
-  const [newPasswordError, setNewPasswordError] = useState('')
 
   const updateName = ({ target }) => {
     setName(target.value)
@@ -41,11 +37,11 @@ export default ({ history }: SignUpFormProps) => {
   }
 
   const maySignUp = () => {
-    return false
+    return !!(name && username && oldPassword && oldPassword === newPassword)
   }
 
   const signUp = () => {
-    alert('singing up')
+    history.push('/sign-in')
   }
 
   const signIn = () => {
@@ -58,40 +54,44 @@ export default ({ history }: SignUpFormProps) => {
         <legend>Sign up</legend>
         <div style={{ float: 'left', width: 'calc(50% - 10px)', paddingRight: '10px' }}>
           <TextField
+            className="AuthScreen-text-field"
             label="Name"
             value={name}
             onChange={updateName}
+            autoComplete="off"
             margin="normal"
           />
-          {nameError && <div className="error">{nameError}</div>}
           <TextField
+            className="AuthScreen-text-field"
             label="Username"
             value={username}
             onChange={updateUsername}
+            autoComplete="off"
             margin="normal"
           />
-          {usernameError && <div className="error">{usernameError}</div>}
         </div>
         <div style={{ float: 'right', width: 'calc(50% - 10px)', paddingLeft: '10px' }}>
           <TextField
+            className="AuthScreen-text-field"
             label="Old password"
             type="password"
             value={oldPassword}
             onChange={updateOldPassword}
+            autoComplete="off"
             margin="normal"
           />
-          {oldPasswordError && <div className="error">{oldPasswordError}</div>}
           <TextField
+            className="AuthScreen-text-field"
             label="New password"
             type="password"
             value={newPassword}
             onChange={updateNewPassword}
+            autoComplete="off"
             margin="normal"
           />
-          {newPasswordError && <div className="error">{newPasswordError}</div>}
         </div>
         <Button type="submit" color="secondary" variant="contained" disabled={!maySignUp()} onClick={signUp}>Sign up</Button>
-        <span className="alternative">Already have an accout? <a onClick={signIn}>Sign in!</a></span>
+        <span className="AuthScreen-alternative">Already have an accout? <a onClick={signIn}>Sign in!</a></span>
       </form>
     </Style>
   )
