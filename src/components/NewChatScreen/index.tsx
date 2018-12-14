@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import Navbar from '../Navbar'
 import UsersList from '../UsersList'
 import NewChatNavbar from './NewChatNavbar'
+import NewGroupButton from './NewGroupButton'
 
 const name = 'NewChatScreen'
 
@@ -18,6 +19,7 @@ export default ({ history }: RouteComponentProps) => (
     <Navbar>
       <NewChatNavbar history={history} />
     </Navbar>
+    <NewGroupButton />
     <UsersList />
   </Style>
 )
