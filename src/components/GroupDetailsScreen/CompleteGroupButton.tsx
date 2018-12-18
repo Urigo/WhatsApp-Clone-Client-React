@@ -1,11 +1,10 @@
 import Button from '@material-ui/core/Button'
-import AddIcon from '@material-ui/icons/Add'
+import ArrowRightIcon from '@material-ui/icons/ArrowRightAlt'
 import { History } from 'history'
 import * as React from 'react'
 import styled from 'styled-components'
-import { GetUsers } from '../../types'
 
-const name = 'CreateGroupButton'
+const name = 'CompleteGroupButton'
 
 const Style = styled.div `
   position: fixed;
@@ -22,22 +21,19 @@ const Style = styled.div `
   }
 `
 
-interface CreateGroupButtonProps {
+interface CompleteGroupButtonProps {
   history: History;
-  users: GetUsers.Users[];
 }
 
-export default ({ history, users }: CreateGroupButtonProps) => {
+export default ({ history }: CompleteGroupButtonProps) => {
   const onClick = () => {
-    history.push('/new-chat/group/details', {
-      users
-    })
+    history.push('/chats')
   }
 
   return (
     <Style className={name}>
       <Button variant="contained" color="secondary" onClick={onClick}>
-        <AddIcon />
+        <ArrowRightIcon />
       </Button>
     </Style>
   )

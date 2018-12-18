@@ -26,7 +26,7 @@ export default ({ history }: RouteComponentProps) => {
       <UsersList selectable onSelectionChange={setSelectedUsers} />
 
       {selectedUsers.length && (
-        <CreateGroupButton history={history} />
+        <CreateGroupButton history={history} users={selectedUsers} />
       )}
     </Style>
   )
