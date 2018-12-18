@@ -1,8 +1,16 @@
-import * as React from 'react';
-import Popover from '@material-ui/core/Popover';
-import Toolbar from '@material-ui/core/Toolbar';
-import ArrowBack from '@material-ui/icons/ArrowBack';
-import styled from 'styled-components';
+import * as React from 'react'
+import Popover from '@material-ui/core/Popover'
+import Toolbar from '@material-ui/core/Toolbar'
+import ArrowBack from '@material-ui/icons/ArrowBack'
+import styled from 'styled-components'
+
+const name = 'Navbar'
+
+const Style = styled(Toolbar) `
+  background-color: var(--primary-bg);
+  color: var(--primary-text);
+  font-size: 20px;
+`
 
 interface NavbarProps {
   children: any,
@@ -10,29 +18,20 @@ interface NavbarProps {
   onBack?: () => void,
 }
 
-const name = 'Navbar';
+const Navbar = (props: NavbarProps) => {
+  const { children, showBackButton, onBack } = {
+    onBack: () => {},
+    ...props,
+  }
 
-const Style = styled(Toolbar) `
-  background-color: var(--primary-bg);
-  color: var(--primary-text);
-  font-size: 20px;
-`;
+  return (
+    <Style className={`${name} wc-primary-comp`}>
+      {showBackButton && <ArrowBack className={`${name}-back-btn`} onClick={onBack} />}
+      <div className={`${name}-body`}>
+        {children}
+      </div>
+    </Style>
+  )
+}
 
-const BackButton = (
-  <ArrowBack />
-);
-
-const Navbar = ({ children, showBackButton, onBack }: NavbarProps) => (
-  <Style className={`${name} wc-primary-comp`}>
-    {showBackButton && <ArrowBack className={`${name}-back-btn`} onClick={onBack} />}
-    <div className={`${name}-body`}>
-      {children}
-    </div>
-  </Style>
-);
-
-Navbar.defaultProps = {
-  onBack: Function,
-};
-
-export default Navbar;
+export default Navbar

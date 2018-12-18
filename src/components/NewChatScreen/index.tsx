@@ -19,7 +19,7 @@ export default ({ history }: RouteComponentProps) => (
     <Navbar>
       <NewChatNavbar history={history} />
     </Navbar>
-    <NewGroupButton />
+    <NewGroupButton history={history} />
     <UsersList />
   </Style>
 )

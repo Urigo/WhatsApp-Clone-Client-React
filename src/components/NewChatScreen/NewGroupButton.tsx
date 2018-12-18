@@ -1,5 +1,6 @@
 import Button from '@material-ui/core/Button'
 import GroupAddIcon from '@material-ui/icons/GroupAdd'
+import { History } from 'history'
 import * as React from 'react'
 import styled from 'styled-components'
 
@@ -36,13 +37,23 @@ const Style = styled.div `
   }
 `
 
-export default () => (
-  <Style>
-    <Button>
-      <div className={`${name}-icon`}>
-        <GroupAddIcon />
-      </div>
-      <div className={`${name}-title`}>New Group</div>
-    </Button>
-  </Style>
-)
+interface NewGroupButtonProps {
+  history: History;
+}
+
+export default ({ history }: NewGroupButtonProps) => {
+  const navToGroup = () => {
+    history.push('/new-chat/group')
+  }
+
+  return (
+    <Style>
+      <Button onClick={navToGroup}>
+        <div className={`${name}-icon`}>
+          <GroupAddIcon />
+        </div>
+        <div className={`${name}-title`}>New Group</div>
+      </Button>
+    </Style>
+  )
+}

@@ -1,10 +1,10 @@
 import Button from '@material-ui/core/Button'
-import ChatIcon from '@material-ui/icons/Chat'
+import AddIcon from '@material-ui/icons/Add'
 import { History } from 'history'
 import * as React from 'react'
 import styled from 'styled-components'
 
-const name = 'AddChatButton'
+const name = 'CreateGroupButton'
 
 const Style = styled.div `
   position: fixed;
@@ -21,19 +21,19 @@ const Style = styled.div `
   }
 `
 
-interface AddChatButtonProps {
+interface CreateGroupButtonProps {
   history: History;
 }
 
-export default ({ history }: AddChatButtonProps) => {
+export default ({ history }: CreateGroupButtonProps) => {
   const onClick = () => {
-    history.push('/new-chat')
+    history.push('/new-chat/group/details')
   }
 
   return (
     <Style className={name}>
       <Button variant="contained" color="secondary" onClick={onClick}>
-        <ChatIcon />
+        <AddIcon />
       </Button>
     </Style>
   )
