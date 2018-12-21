@@ -61,16 +61,16 @@ interface ChatsListProps {
 }
 
 export default ({ history }: ChatsListProps) => {
-  const { data: { chats } } = useGetChats({
-    variables: { amount: 1 }
-  })
+  const r = useGetChats()
+  debugger
+  const { data: { chats } } = r
 
   const navToChat = (chatId) => {
     history.push(`chats/${chatId}`)
   }
 
   const pluckRecentMessage = (chat) => {
-    return chat.messageFeed.messages[chat.messageFeed.messages.length - 1] || {}
+    return chat.messages[chat.messages.length - 1] || {}
   }
 
   return (

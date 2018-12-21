@@ -5,12 +5,8 @@ export const addChatMutation = gql `
   mutation AddChat($recipientId: ID!) {
     addChat(recipientId: $recipientId) {
       ...ChatWithoutMessages
-      messageFeed {
-        hasNextPage,
-        cursor,
-        messages {
-          ...Message
-        }
+      messages {
+        ...Message
       }
     }
   }
@@ -22,7 +18,7 @@ export const addChatMutation = gql `
 //   mutation AddGroup($recipientIds: [ID!]!, $groupName: String!) {
 //     addGroup(recipientIds: $recipientIds, groupName: $groupName) {
 //       ...ChatWithoutMessages
-//       messageFeed {
+//       messages {
 //         hasNextPage,
 //         cursor,
 //         messages {
@@ -36,15 +32,11 @@ export const addChatMutation = gql `
 // `
 
 export const chatAddedSubscription = gql`
-  subscription chatAdded($amount: Int!) {
+  subscription chatAdded {
     chatAdded {
       ...ChatWithoutMessages
-      messageFeed(amount: $amount) {
-        hasNextPage,
-        cursor,
-        messages {
-          ...Message
-        }
+      messages {
+        ...Message
       }
     }
   }
@@ -53,15 +45,11 @@ export const chatAddedSubscription = gql`
 `
 
 export const getChatQuery = gql`
-  query GetChat($chatId: ID!, $amount: Int!) {
+  query GetChat($chatId: ID!) {
     chat(chatId: $chatId) {
       ...ChatWithoutMessages
-      messageFeed(amount: $amount) {
-        hasNextPage,
-        cursor,
-        messages {
-          ...Message
-        }
+      messages {
+        ...Message
       }
     }
   }
@@ -70,15 +58,11 @@ export const getChatQuery = gql`
 `
 
 export const getChatsQuery = gql`
-  query GetChats($amount: Int!) {
+  query GetChats {
     chats {
       ...ChatWithoutMessages
-      messageFeed(amount: $amount) {
-        hasNextPage,
-        cursor,
-        messages {
-          ...Message
-        }
+      messages {
+        ...Message
       }
     }
   }

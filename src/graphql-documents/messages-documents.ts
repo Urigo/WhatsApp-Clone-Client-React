@@ -22,21 +22,6 @@ export const messageAddedSubscription = gql`
   ${fragments.message}
 `
 
-export const moreMessagesQuery = gql`
-  query MoreMessages($chatId: ID!, $amount: Int!, $before: String!) {
-    chat(chatId: $chatId) {
-      messageFeed(amount: $amount, before: $before) {
-        hasNextPage,
-        cursor,
-        messages {
-          ...Message
-        }
-      }
-    }
-  }
-  ${fragments.message}
-`
-
 export const removeAllMessagesMutation = gql`
   mutation RemoveAllMessages($chatId: ID!, $all: Boolean) {
     removeMessages(chatId: $chatId, all: $all)
