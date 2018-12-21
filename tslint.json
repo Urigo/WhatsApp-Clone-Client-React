@@ -14,7 +14,8 @@
     "no-label": false,
     "no-empty": false,
     "no-debugger": false,
-    "no-console": false
+    "no-console": false,
+    "array-type": false
   },
   "linterOptions": {
     "exclude": [

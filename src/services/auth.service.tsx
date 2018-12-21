@@ -14,8 +14,8 @@ export const storeAuthHeader = (auth: string) => {
   localStorage.setItem('Authorization', auth)
 }
 
-export const getAuthHeader = (): string => {
-  return localStorage.getItem('Authorization')
+export const getAuthHeader = (): string | null => {
+  return localStorage.getItem('Authorization') || null
 }
 
 export const signIn = ({ username, password }) => {
