@@ -5,7 +5,7 @@ import Navbar from '../Navbar'
 import UsersList from '../UsersList'
 import { useAddChat } from '../../graphql-hooks/chats-hooks'
 import NewChatNavbar from './NewChatNavbar'
-// import NewGroupButton from './NewGroupButton'
+import NewGroupButton from './NewGroupButton'
 
 const name = 'NewChatScreen'
 
@@ -33,7 +33,7 @@ export default ({ history }: RouteComponentProps) => {
       <Navbar>
         <NewChatNavbar history={history} />
       </Navbar>
-      {/*<NewGroupButton history={history} />*/}
+      <NewGroupButton history={history} />
       <UsersList onUserPick={onUserPick} />
     </Style>
   )

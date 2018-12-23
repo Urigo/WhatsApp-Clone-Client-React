@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { Redirect } from 'react-router-dom'
-import { User } from '../graphql'
 
 export const withAuth = (Component: React.ComponentType) => {
   return (props) => getAuthHeader() ? (

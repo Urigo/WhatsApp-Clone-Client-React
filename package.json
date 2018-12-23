@@ -37,6 +37,7 @@
     "react-apollo-hooks": "^0.2.1",
     "react-dev-utils": "^5.0.2",
     "react-dom": "^16.7.0-alpha.2",
+    "react-fast-compare": "^2.0.4",
     "react-router-dom": "^4.3.1",
     "react-router-transition": "^1.2.1",
     "resolve": "1.6.0",

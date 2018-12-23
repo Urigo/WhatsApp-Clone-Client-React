@@ -23,7 +23,7 @@ export default () => (
       <Route exact path="/new-chat" component={withAuth(NewChatScreen)} />
       <Route exact path="/new-chat/group" component={withAuth(NewGroupScreen)} />
       <Route exact path="/new-chat/group/details" component={withAuth(GroupDetailsScreen)} />
-      <Route path="/" component={RedirectToChats} />
+      <Route component={RedirectToChats} />
     </AnimatedSwitch>
   </BrowserRouter>
 )

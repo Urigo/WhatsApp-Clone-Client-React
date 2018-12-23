@@ -61,9 +61,7 @@ interface ChatsListProps {
 }
 
 export default ({ history }: ChatsListProps) => {
-  const r = useGetChats()
-  debugger
-  const { data: { chats } } = r
+  const { data: { chats } } = useGetChats()
 
   const navToChat = (chatId) => {
     history.push(`chats/${chatId}`)

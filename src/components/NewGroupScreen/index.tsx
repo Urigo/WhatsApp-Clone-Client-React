@@ -18,6 +18,10 @@
 // export default ({ history }: RouteComponentProps) => {
 //   const [selectedUsers, setSelectedUsers] = useState([])
 
+//   const addGroup = useAddGroup({
+//     variables: selectedUsers
+//   })
+
 //   return (
 //     <Style className={`${name} Screen`}>
 //       <Navbar>
