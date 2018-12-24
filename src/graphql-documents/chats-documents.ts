@@ -14,22 +14,18 @@ export const addChatMutation = gql `
   ${fragments.message}
 `
 
-// export const addGroupMutation = gql`
-//   mutation AddGroup($recipientIds: [ID!]!, $groupName: String!) {
-//     addGroup(recipientIds: $recipientIds, groupName: $groupName) {
-//       ...ChatWithoutMessages
-//       messages {
-//         hasNextPage,
-//         cursor,
-//         messages {
-//           ...Message
-//         }
-//       }
-//     }
-//   }
-//   ${fragments.chatWithoutMessages}
-//   ${fragments.message}
-// `
+export const addGroupMutation = gql`
+  mutation AddGroup($recipientIds: [ID!]!, $groupName: String!) {
+    addGroup(recipientIds: $recipientIds, groupName: $groupName) {
+      ...ChatWithoutMessages
+      messages {
+        ...Message
+      }
+    }
+  }
+  ${fragments.chatWithoutMessages}
+  ${fragments.message}
+`
 
 export const chatAddedSubscription = gql`
   subscription chatAdded {

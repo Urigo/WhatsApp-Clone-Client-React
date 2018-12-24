@@ -79,7 +79,7 @@ export default ({ history }: ChatsListProps) => {
 
           return (
             <ListItem key={chat.id} className={`${name}-chat-item`} button onClick={navToChat.bind(null, chat.id)}>
-              <img className={`${name}-profile-pic`} src={chat.picture || '/assets/default-profile-pic.jpg'} />
+              <img className={`${name}-profile-pic`} src={chat.picture || (chat.isGroup ? '/assets/default-group-pic.jpg' : '/assets/default-profile-pic.jpg')} />
               <div className={`${name}-info`}>
                 <div className={`${name}-name`}>{chat.name}</div>
                 <div className={`${name}-last-message`}>{recentMessage.contents}</div>
