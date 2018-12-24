@@ -20,20 +20,25 @@ export default ({ history }: SignUpFormProps) => {
   const [username, setUsername] = useState('')
   const [oldPassword, setOldPassword] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
 
   const updateName = ({ target }) => {
+    setError('')
     setName(target.value)
   }
 
   const updateUsername = ({ target }) => {
+    setError('')
     setUsername(target.value)
   }
 
   const updateOldPassword = ({ target }) => {
+    setError('')
     setOldPassword(target.value)
   }
 
   const updateNewPassword = ({ target }) => {
+    setError('')
     setPassword(target.value)
   }
 
@@ -44,6 +49,9 @@ export default ({ history }: SignUpFormProps) => {
   const handleSignUp = () => {
     signUp({ username, password, name }).then(() => {
       history.push('/sign-in')
+    })
+    .catch((error) => {
+      setError(error.message || error)
     })
   }
 
@@ -94,6 +102,7 @@ export default ({ history }: SignUpFormProps) => {
           />
         </div>
         <Button type="button" color="secondary" variant="contained" disabled={!maySignUp()} onClick={handleSignUp}>Sign up</Button>
+        <div className="AuthScreen-error">{error}</div>
         <span className="AuthScreen-alternative">Already have an accout? <a onClick={handleSignIn}>Sign in!</a></span>
       </form>
     </Style>

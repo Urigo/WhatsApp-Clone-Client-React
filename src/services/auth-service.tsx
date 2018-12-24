@@ -25,8 +25,13 @@ export const signIn = ({ username, password }) => {
     headers: {
       'Authorization': auth
     }
-  }).then(() => {
-    storeAuthHeader(auth)
+  }).then((res) => {
+    if (res.status < 400) {
+      storeAuthHeader(auth)
+    }
+    else {
+      return Promise.reject(res.statusText)
+    }
   })
 }
 

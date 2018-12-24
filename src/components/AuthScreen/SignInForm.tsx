@@ -18,12 +18,15 @@ interface SignInFormProps {
 export default ({ history }: SignInFormProps) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
 
   const onUsernameChange = ({ target }) => {
+    setError('')
     setUsername(target.value)
   }
 
   const onPasswordChange = ({ target }) => {
+    setError('')
     setPassword(target.value)
   }
 
@@ -34,6 +37,9 @@ export default ({ history }: SignInFormProps) => {
   const handleSignIn = () => {
     signIn({ username, password }).then(() => {
       history.push('/chats')
+    })
+    .catch((error) => {
+      setError(error.message || error)
     })
   }
 
@@ -65,6 +71,7 @@ export default ({ history }: SignInFormProps) => {
           />
         </div>
         <Button type="button" color="secondary" variant="contained" disabled={!maySignIn()} onClick={handleSignIn}>Sign in</Button>
+        <div className="AuthScreen-error">{error}</div>
         <span className="AuthScreen-alternative">Don't have an account yet? <a onClick={handleSignUp}>Sign up!</a></span>
       </form>
     </Style>
