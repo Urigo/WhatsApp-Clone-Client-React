@@ -13,6 +13,11 @@ const Style = styled.div `
   .UsersList {
     height: calc(100% - 56px);
   }
+
+  .${name}-users-list {
+    height: calc(100% - 56px);
+    overflow-y: overlay;
+  }
 `
 
 export default ({ history }: RouteComponentProps) => {
@@ -33,8 +38,10 @@ export default ({ history }: RouteComponentProps) => {
       <Navbar>
         <NewChatNavbar history={history} />
       </Navbar>
-      <NewGroupButton history={history} />
-      <UsersList onUserPick={onUserPick} />
+      <div className={`${name}-users-list`}>
+        <NewGroupButton history={history} />
+        <UsersList onUserPick={onUserPick} />
+      </div>
     </Style>
   )
 }
