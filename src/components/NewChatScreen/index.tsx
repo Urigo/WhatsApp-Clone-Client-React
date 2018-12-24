@@ -28,8 +28,8 @@ export default ({ history }: RouteComponentProps) => {
       variables: {
         recipientId: user.id
       }
-    }).then(() => {
-      history.push('/chats')
+    }).then(({ data: { addChat } }) => {
+      history.push(`/chats/${addChat.id}`)
     })
   }
 
