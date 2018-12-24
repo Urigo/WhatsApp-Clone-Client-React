@@ -3,7 +3,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack'
 import { History } from 'history'
 import * as React from 'react'
 import styled from 'styled-components'
-import { useGetChat } from '../../graphql-hooks/chats-hooks'
+import { useGetChat } from '../../graphql-hooks'
 import { GetChat } from '../../types'
 
 const name = 'ChatNavbar'

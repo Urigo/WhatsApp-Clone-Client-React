@@ -3,7 +3,7 @@ import SendIcon from '@material-ui/icons/Send'
 import * as React from 'react'
 import { useState } from 'react'
 import styled from 'styled-components'
-import { useAddMessage } from '../../graphql-hooks/messages-hooks'
+import { useAddMessage } from '../../graphql-hooks'
 
 const name = 'MessageBox'
 

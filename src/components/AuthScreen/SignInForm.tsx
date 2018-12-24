@@ -4,7 +4,7 @@ import { History } from 'history'
 import * as React from 'react'
 import { useState } from 'react'
 import styled from 'styled-components'
-import { signIn } from '../../services/auth.service'
+import { signIn } from '../../services/auth-service'
 
 const name = 'SignInForm'
 

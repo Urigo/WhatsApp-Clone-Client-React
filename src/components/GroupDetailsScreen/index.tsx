@@ -72,7 +72,7 @@ export default ({ location, history }: RouteComponentProps) => {
       />
       <div className={`${name}-users-title`}>Participants: {users.length}</div>
       <ul className={`${name}-users-list`}>
-        {users.map(user => (
+        {users && users.map(user => (
           <div key={user.id} className={`${name}-user-item`}>
             <img src={user.picture || '/assets/default-profile-pic.jpg'} className={`${name}-user-picture`} />
             <span className={`${name}-user-name`}>{user.name}</span>

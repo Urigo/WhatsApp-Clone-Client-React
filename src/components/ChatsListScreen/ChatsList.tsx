@@ -5,7 +5,7 @@ import * as moment from 'moment'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import styled from 'styled-components'
-import { useGetChats } from '../../graphql-hooks/chats-hooks'
+import { useGetChats } from '../../graphql-hooks'
 
 const name = 'ChatsList'
 
@@ -74,7 +74,7 @@ export default ({ history }: ChatsListProps) => {
   return (
     <Style className={name}>
       <List className={`${name}-chats-list`}>
-        {chats.map(chat => {
+        {chats && chats.map(chat => {
           const recentMessage = pluckRecentMessage(chat)
 
           return (

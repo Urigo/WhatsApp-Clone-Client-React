@@ -2,9 +2,15 @@ import gql from 'graphql-tag'
 import { useEffect } from 'react'
 import { useQuery, useMutation } from 'react-apollo-hooks'
 import store from '../apollo-client'
-import { getChatQuery, getChatsQuery, addChatMutation, chatAddedSubscription, addGroupMutation } from '../graphql-documents/chats-documents'
 import { useSubscription } from '../polyfills/react-apollo-hooks'
 import { GetChat, GetChats, AddChat, ChatAdded, AddGroup } from '../types'
+import {
+  getChatQuery,
+  getChatsQuery,
+  addChatMutation,
+  chatAddedSubscription,
+  addGroupMutation,
+} from '../graphql-documents'
 
 export const useGetChats = (options?) => {
   const { data: { chatAdded } } = useSubscription<ChatAdded.Subscription>(chatAddedSubscription)

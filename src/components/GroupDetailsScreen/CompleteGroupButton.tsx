@@ -3,8 +3,8 @@ import ArrowRightIcon from '@material-ui/icons/ArrowRightAlt'
 import { History } from 'history'
 import * as React from 'react'
 import styled from 'styled-components'
-import { useAddGroup } from '../../graphql-hooks/chats-hooks'
-import { GetUsers } from '../../types/graphql'
+import { useAddGroup } from '../../graphql-hooks'
+import { GetUsers } from '../../types'
 
 const name = 'CompleteGroupButton'
 

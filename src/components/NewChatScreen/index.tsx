@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
 import Navbar from '../Navbar'
 import UsersList from '../UsersList'
-import { useAddChat } from '../../graphql-hooks/chats-hooks'
+import { useAddChat } from '../../graphql-hooks'
 import NewChatNavbar from './NewChatNavbar'
 import NewGroupButton from './NewGroupButton'
 

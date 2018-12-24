@@ -2,11 +2,15 @@ import { useEffect } from 'react'
 import { useQuery, useMutation, MutationUpdaterFn } from 'react-apollo-hooks'
 import { time as uniqid } from 'uniqid'
 import store from '../apollo-client'
-import { getChatsQuery, getChatQuery } from '../graphql-documents/chats-documents'
-import { addMessageMutation, messageAddedSubscription } from '../graphql-documents/messages-documents'
-import { getMeQuery } from '../graphql-documents/users-documents'
 import { useSubscription } from '../polyfills/react-apollo-hooks'
 import { AddMessage, GetChat, GetChats } from '../types'
+import {
+  getChatsQuery,
+  getChatQuery,
+  addMessageMutation,
+  messageAddedSubscription,
+  getMeQuery,
+} from '../graphql-documents'
 
 export const useAddMessage = (options: {
   variables: AddMessage.Variables,

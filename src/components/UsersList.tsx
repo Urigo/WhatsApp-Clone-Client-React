@@ -4,7 +4,7 @@ import CheckCircle from '@material-ui/icons/CheckCircle'
 import * as React from 'react'
 import { useState } from 'react'
 import styled from 'styled-components'
-import { useGetUsers } from '../graphql-hooks/users-hooks'
+import { useGetUsers } from '../graphql-hooks'
 import { GetUsers } from '../types'
 
 const name = 'UsersList'
@@ -78,7 +78,7 @@ export default (props: UsersListProps) => {
   return (
     <Style className={name} selectable={selectable}>
       <List className={`${name}-users-list`}>
-        {users.map(user => (
+        {users && users.map(user => (
           <ListItem className={`${name}-user-item`} key={user.id} button onClick={onListItemClick.bind(null, user)}>
             <img className={`${name}-profile-pic`} src={user.picture || '/assets/default-profile-pic.jpg'} />
             <div className={`${name}-name`}>{user.name}</div>

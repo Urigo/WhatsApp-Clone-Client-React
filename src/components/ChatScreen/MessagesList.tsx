@@ -100,7 +100,7 @@ export default ({ messages }: MessagesListProps) => {
 
   return (
     <Style className={name} ref={selfRef}>
-      {messages.map((message) => (
+      {messages && messages.map((message) => (
         <div key={message.id} className={`${name}-message ${message.ownership ? `${name}-message-mine` : `${name}-message-others`}`}>
           <div className={`${name}-message-contents`}>{message.content}</div>
           <span className={`${name}-message-timestamp`}>{moment(message.createdAt).format('HH:mm')}</span>

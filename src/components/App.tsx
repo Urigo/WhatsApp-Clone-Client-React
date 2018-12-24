@@ -8,7 +8,7 @@ import ChatsListScreen from '../components/ChatsListScreen'
 import GroupDetailsScreen from '../components/GroupDetailsScreen'
 import NewChatScreen from '../components/NewChatScreen'
 import NewGroupScreen from '../components/NewGroupScreen'
-import { withAuth } from '../services/auth.service'
+import { withAuth } from '../services/auth-service'
 
 const RedirectToChats = () => (
   <Redirect to="/chats" />
