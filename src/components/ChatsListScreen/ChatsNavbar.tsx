@@ -37,7 +37,13 @@ interface ChatsNavbarProps {
 export default ({ history }: ChatsNavbarProps) => {
   const [popped, setPopped] = useState(false)
 
+  const navToSettings = () => {
+    setPopped(false)
+    history.push('/settings')
+  }
+
   const handleSignOut = () => {
+    setPopped(false)
     signOut()
 
     history.push('/sign-in')
@@ -63,7 +69,7 @@ export default ({ history }: ChatsNavbarProps) => {
       >
         <Style>
           <List>
-            <ListItem className={`${name}-options-item`} button><SettingsIcon />Settings</ListItem>
+            <ListItem className={`${name}-options-item`} button onClick={navToSettings}><SettingsIcon />Settings</ListItem>
             <ListItem className={`${name}-options-item`} button onClick={handleSignOut}><SignOutIcon />Sign Out</ListItem>
           </List>
         </Style>

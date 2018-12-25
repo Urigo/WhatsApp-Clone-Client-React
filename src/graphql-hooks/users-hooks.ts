@@ -1,9 +1,10 @@
 import gql from 'graphql-tag'
-import { useQuery } from 'react-apollo-hooks'
-import { GetMe, GetUsers } from '../types'
+import { useQuery, useMutation } from 'react-apollo-hooks'
+import { GetMe, GetUsers, ChangeUserInfo } from '../types'
 import {
   getMeQuery,
   getUsersQuery,
+  changeUserInfoMutation,
 } from '../graphql-documents'
 
 export const useGetMe = (options?) => {
@@ -12,4 +13,8 @@ export const useGetMe = (options?) => {
 
 export const useGetUsers = (options?) => {
   return useQuery<GetUsers.Query, GetUsers.Variables>(getUsersQuery, options)
+}
+
+export const useChangeUserInfo = (options?) => {
+  return useMutation<ChangeUserInfo.Mutation, ChangeUserInfo.Variables>(changeUserInfoMutation, options)
 }

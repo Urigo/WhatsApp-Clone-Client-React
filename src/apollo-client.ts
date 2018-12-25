@@ -34,7 +34,7 @@ const authLink = setContext((_, { headers }) => {
       Authorization: auth,
     }
   }
-});
+})
 
 const terminatingLink = split(
   ({ query }) => {

@@ -3,9 +3,8 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack'
 import { History } from 'history'
 import * as React from 'react'
 import styled from 'styled-components'
-import { GetChat } from '../../types'
 
-const name = 'ChatNavbar'
+const name = 'SettingsNavbar'
 
 const Style = styled.div `
   padding: 0;
@@ -32,12 +31,11 @@ const Style = styled.div `
   }
 `
 
-interface ChatNavbarProps {
-  chat: GetChat.Chat;
+interface SettingsNavbarProps {
   history: History;
 }
 
-export default ({ chat, history }: ChatNavbarProps) => {
+export default ({ history }: SettingsNavbarProps) => {
   const navToChats = () => {
     history.push('/chats')
   }
@@ -47,8 +45,7 @@ export default ({ chat, history }: ChatNavbarProps) => {
       <Button className={`${name}-back-button`} onClick={navToChats}>
         <ArrowBackIcon />
       </Button>
-      <img className={`${name}-picture`} src={chat.picture || (chat.isGroup ? '/assets/default-group-pic.jpg' : '/assets/default-profile-pic.jpg')} />
-      <div className={`${name}-title`}>{chat.name}</div>
+      <div className={`${name}-title`}>Settings</div>
     </Style>
   )
 }

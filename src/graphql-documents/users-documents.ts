@@ -19,3 +19,9 @@ export const getUsersQuery = gql`
     }
   }
 `
+
+export const changeUserInfoMutation = gql `
+  mutation ChangeUserInfo {
+    changeUserInfo
+  }
+`
