@@ -3,7 +3,7 @@ import { useQuery, useMutation, MutationUpdaterFn } from 'react-apollo-hooks'
 import { time as uniqid } from 'uniqid'
 import store from '../apollo-client'
 import { useSubscription } from '../polyfills/react-apollo-hooks'
-import { AddMessage, GetChat, GetChats } from '../types'
+import { AddMessage, GetChat, GetChats, GetMe, MessageAdded } from '../types'
 import {
   getChatsQuery,
   getChatQuery,
@@ -16,20 +16,20 @@ export const useAddMessage = (options: {
   variables: AddMessage.Variables,
   [key: string]: any,
 }) => {
-  const { data: { messageAdded } } = useSubscription(messageAddedSubscription)
-  const { data: { me } } = useQuery(getMeQuery)
   const { chatId, content } = options.variables
+  const { data: { messageAdded } } = useSubscription<MessageAdded.Subscription, MessageAdded.Variables>(messageAddedSubscription, {
+    variables: { chatId }
+  })
+  const { data: { me } } = useQuery<GetMe.Query, GetMe.Variables>(getMeQuery)
 
-  useEffect(() => {
-    if (!messageAdded) return
-
-    {
+  const updateStore = (message) => {
+    try {
       const { chat }: GetChat.Query = store.readQuery({
         query: getChatQuery,
         variables: { chatId },
       })
 
-      chat.messages.push(messageAdded)
+      chat.messages.push(message)
 
       store.writeQuery({
         query: getChatQuery,
@@ -37,8 +37,11 @@ export const useAddMessage = (options: {
         data: { chat },
       })
     }
+    catch (e) {
 
-    {
+    }
+
+    try {
       const { chats }: GetChats.Query = store.readQuery({
         query: getChatsQuery,
       })
@@ -46,7 +49,7 @@ export const useAddMessage = (options: {
       const chat = chats.find(chat => chat.id === chatId)
 
       if (chat) {
-        chat.messages.push(messageAdded)
+        chat.messages.push(message)
 
         store.writeQuery({
           query: getChatsQuery,
@@ -54,7 +57,16 @@ export const useAddMessage = (options: {
         })
       }
     }
-  }, [messageAdded])
+    catch (e) {
+
+    }
+  }
+
+  useEffect(() => {
+    if (!messageAdded) return
+
+    updateStore(messageAdded)
+  }, [messageAdded && messageAdded.id])
 
   return useMutation<AddMessage.Mutation, AddMessage.Variables>(addMessageMutation, {
     variables: {
@@ -81,6 +93,9 @@ export const useAddMessage = (options: {
         recipients: [],
         ownership: true,
       },
+    },
+    update: (store, { data: { addMessage } }) => {
+      updateStore(addMessage)
     },
     ...options,
   })

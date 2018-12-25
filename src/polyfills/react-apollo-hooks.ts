@@ -25,14 +25,14 @@ export const useSubscription = <T, TVariables = OperationVariables>(
 
   useEffect(() => {
     prevOptions.current = options
-    const subscription = client.subscribe<T, TVariables>({
+    const subscription = client.subscribe<{ data: T }, TVariables>({
       ...options, query
     })
     .subscribe({
-      next: data => {
+      next: ({ data }) => {
         setData(data)
       },
-      error: err => {
+      error: (err) => {
         setError(err)
         setLoading(false)
       },
