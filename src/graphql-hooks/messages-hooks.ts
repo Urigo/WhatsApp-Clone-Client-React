@@ -22,44 +22,56 @@ export const useAddMessage = (options: {
   })
   const { data: { me } } = useQuery<GetMe.Query, GetMe.Variables>(getMeQuery)
 
-  const updateStore = (message) => {
+  const updateGetChat = (message) => {
+    let chat
     try {
-      const { chat }: GetChat.Query = store.readQuery({
+      chat = store.readQuery<GetChat.Query>({
         query: getChatQuery,
         variables: { chatId },
-      })
-
-      chat.messages.push(message)
-
-      store.writeQuery({
-        query: getChatQuery,
-        variables: { chatId },
-        data: { chat },
-      })
+      }).chat
     }
     catch (e) {
-
+      return
     }
 
+    if (chat.messages.some(({ id }) => id === message.id)) return
+
+    chat.messages.push(message)
+
+    store.writeQuery({
+      query: getChatQuery,
+      variables: { chatId },
+      data: { chat },
+    })
+  }
+
+  const updateGetChats = (message) => {
+    let chats
     try {
-      const { chats }: GetChats.Query = store.readQuery({
+      chats = store.readQuery<GetChats.Query>({
         query: getChatsQuery,
-      })
-
-      const chat = chats.find(chat => chat.id === chatId)
-
-      if (chat) {
-        chat.messages.push(message)
-
-        store.writeQuery({
-          query: getChatsQuery,
-          data: { chats },
-        })
-      }
+      }).chats
     }
     catch (e) {
-
+      return
     }
+
+    const chat = chats.find(chat => chat.id === chatId)
+
+    if (!chat) return
+    if (chat.messages.some(({ id }) => id === message.id)) return
+
+    chat.messages.push(message)
+
+    store.writeQuery({
+      query: getChatsQuery,
+      data: { chats },
+    })
+  }
+
+  const updateStore = (message) => {
+    updateGetChat(message)
+    updateGetChats(message)
   }
 
   useEffect(() => {

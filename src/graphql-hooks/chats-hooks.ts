@@ -12,27 +12,58 @@ import {
   addGroupMutation,
 } from '../graphql-documents'
 
+const useChatAdded = () => {
+  const { data: { chatAdded } } = useSubscription<ChatAdded.Subscription>(chatAddedSubscription)
+
+  useEffect(() => {
+    if (!chatAdded) return
+
+    let chats
+    try {
+      chats = store.readQuery<GetChats.Query>({
+        query: getChatsQuery
+      }).chats
+    }
+    catch (e) {
+
+    }
+
+    if (chats.some(chat => chat.id === chatAdded.id)) return
+
+    chats.push(chatAdded)
+
+    store.writeQuery({
+      query: getChatsQuery,
+      data: { chats },
+    })
+  }, [chatAdded && chatAdded.id])
+}
+
 export const useGetChats = (options?) => {
   const { data: { chatAdded } } = useSubscription<ChatAdded.Subscription>(chatAddedSubscription)
 
   useEffect(() => {
     if (!chatAdded) return
 
-    const { chats }: GetChats.Query = store.readQuery({
-      query: getChatsQuery
-    })
-
-    const chatExists = chats.some(chat => chat.id !== chatAdded.id)
-
-    if (!chatExists) {
-      chats.push(chatAdded)
+    let chats
+    try {
+      chats = store.readQuery<GetChats.Query>({
+        query: getChatsQuery
+      }).chats
     }
+    catch (e) {
+
+    }
+
+    if (chats.some(chat => chat.id !== chatAdded.id)) return
+
+    chats.push(chatAdded)
 
     store.writeQuery({
       query: getChatsQuery,
       data: { chats },
     })
-  }, [chatAdded])
+  }, [chatAdded && chatAdded.id])
 
   return useQuery<GetChats.Query, GetChats.Variables>(getChatsQuery, options)
 }
@@ -42,9 +73,13 @@ export const useGetChat = (options?) => {
 }
 
 export const useAddChat = (options?) => {
+  useChatAdded()
+
   return useMutation<AddChat.Mutation, AddChat.Variables>(addChatMutation, options)
 }
 
 export const useAddGroup = (options?) => {
+  useChatAdded()
+
   return useMutation<AddGroup.Mutation, AddGroup.Variables>(addGroupMutation, options)
 }
