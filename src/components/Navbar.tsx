@@ -8,6 +8,11 @@ const Style = styled(Toolbar) `
   background-color: var(--primary-bg);
   color: var(--primary-text);
   font-size: 20px;
+  line-height: 40px;
+
+  .${name}-body {
+    width: 100%;
+  }
 `
 
 interface NavbarProps {

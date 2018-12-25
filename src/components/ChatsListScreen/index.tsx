@@ -1,20 +1,26 @@
 import * as React from 'react'
 import { Suspense } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
+import styled from 'styled-components'
+import { SignOutIcon } from '../../icons'
 import Navbar from '../Navbar'
-import ChatsList from './ChatsList'
 import AddChatButton from './AddChatButton'
+import ChatsList from './ChatsList'
+import ChatsNavbar from './ChatsNavbar'
 
 const name = 'ChatsListScreen'
 
+const Style = styled.div `
+`
+
 export default ({ history }: RouteComponentProps) => (
-  <div className={`${name} Screen`}>
+  <Style className={`${name} Screen`}>
     <Navbar>
-      WhatsApp Clone
+      <ChatsNavbar history={history} />
     </Navbar>
     <Suspense fallback={null}>
       <ChatsList history={history} />
     </Suspense>
     <AddChatButton history={history} />
-  </div>
+  </Style>
 )

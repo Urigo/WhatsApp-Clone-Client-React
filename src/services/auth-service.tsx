@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { Redirect } from 'react-router-dom'
+import store from '../apollo-client'
 
 export const withAuth = (Component: React.ComponentType) => {
   return (props) => getAuthHeader() ? (
@@ -47,10 +48,17 @@ export const signUp = ({ username, password, name }) => {
   })
 }
 
+export const signOut = () => {
+  localStorage.removeItem('Authorization')
+
+  return store.clearStore()
+}
+
 export default {
   withAuth,
   storeAuthHeader,
   getAuthHeader,
   signIn,
   signUp,
+  signOut,
 }
