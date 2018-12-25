@@ -4,6 +4,7 @@ import { History } from 'history'
 import * as React from 'react'
 import { useState } from 'react'
 import styled from 'styled-components'
+import { signUp } from '../../services/auth-service'
 
 const name = 'SignUpForm'
 
@@ -18,33 +19,43 @@ export default ({ history }: SignUpFormProps) => {
   const [name, setName] = useState('')
   const [username, setUsername] = useState('')
   const [oldPassword, setOldPassword] = useState('')
-  const [newPassword, setNewPassword] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
 
   const updateName = ({ target }) => {
+    setError('')
     setName(target.value)
   }
 
   const updateUsername = ({ target }) => {
+    setError('')
     setUsername(target.value)
   }
 
   const updateOldPassword = ({ target }) => {
+    setError('')
     setOldPassword(target.value)
   }
 
   const updateNewPassword = ({ target }) => {
-    setNewPassword(target.value)
+    setError('')
+    setPassword(target.value)
   }
 
   const maySignUp = () => {
-    return !!(name && username && oldPassword && oldPassword === newPassword)
+    return !!(name && username && oldPassword && oldPassword === password)
   }
 
-  const signUp = () => {
-    history.push('/sign-in')
+  const handleSignUp = () => {
+    signUp({ username, password, name }).then(() => {
+      history.push('/sign-in')
+    })
+    .catch((error) => {
+      setError(error.message || error)
+    })
   }
 
-  const signIn = () => {
+  const handleSignIn = () => {
     history.push('/sign-in')
   }
 
@@ -84,14 +95,15 @@ export default ({ history }: SignUpFormProps) => {
             className="AuthScreen-text-field"
             label="New password"
             type="password"
-            value={newPassword}
+            value={password}
             onChange={updateNewPassword}
             autoComplete="off"
             margin="normal"
           />
         </div>
-        <Button type="submit" color="secondary" variant="contained" disabled={!maySignUp()} onClick={signUp}>Sign up</Button>
-        <span className="AuthScreen-alternative">Already have an accout? <a onClick={signIn}>Sign in!</a></span>
+        <Button type="button" color="secondary" variant="contained" disabled={!maySignUp()} onClick={handleSignUp}>Sign up</Button>
+        <div className="AuthScreen-error">{error}</div>
+        <span className="AuthScreen-alternative">Already have an accout? <a onClick={handleSignIn}>Sign in!</a></span>
       </form>
     </Style>
   )

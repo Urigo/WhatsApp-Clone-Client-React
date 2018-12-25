@@ -48,10 +48,6 @@ const Style = styled.div `
     line-height: 10px;
     font-size: 14px;
   }
-
-  .${name}-filler {
-    color: lig
-  }
 `
 
 export default ({ location, history }: RouteComponentProps) => {
@@ -76,14 +72,14 @@ export default ({ location, history }: RouteComponentProps) => {
       />
       <div className={`${name}-users-title`}>Participants: {users.length}</div>
       <ul className={`${name}-users-list`}>
-        {users.map(user => (
-          <div key={user._id} className={`${name}-user-item`}>
-            <img src={user.picture || 'assets/default-profile-pic.jpg'} className={`${name}-user-picture`} />
+        {users && users.map(user => (
+          <div key={user.id} className={`${name}-user-item`}>
+            <img src={user.picture || '/assets/default-profile-pic.jpg'} className={`${name}-user-picture`} />
             <span className={`${name}-user-name`}>{user.name}</span>
           </div>
         ))}
       </ul>
-      {groupName && <CompleteGroupButton history={history} />}
+      {groupName && <CompleteGroupButton history={history} groupName={groupName} users={users} />}
     </Style>
   )
 }

@@ -12,6 +12,7 @@ const name = 'NewGroupScreen'
 const Style = styled.div `
   .UsersList {
     height: calc(100% - 56px);
+    overflow-y: overlay;
   }
 `
 

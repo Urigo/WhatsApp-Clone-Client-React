@@ -12,7 +12,10 @@
     "no-shadowed-variable": false,
     "curly": false,
     "no-label": false,
-    "no-empty": false
+    "no-empty": false,
+    "no-debugger": false,
+    "no-console": false,
+    "array-type": false
   },
   "linterOptions": {
     "exclude": [

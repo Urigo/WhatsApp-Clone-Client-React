@@ -4,7 +4,7 @@ import CheckCircle from '@material-ui/icons/CheckCircle'
 import * as React from 'react'
 import { useState } from 'react'
 import styled from 'styled-components'
-import { useGetUsers } from '../graphql-hooks/users-hooks'
+import { useGetUsers } from '../graphql-hooks'
 import { GetUsers } from '../types'
 
 const name = 'UsersList'
@@ -44,12 +44,14 @@ const Style = styled.div `
 interface UsersListProps {
   selectable?: boolean;
   onSelectionChange?: (users: GetUsers.Users[]) => void;
+  onUserPick?: (user: GetUsers.Users) => void;
 }
 
 export default (props: UsersListProps) => {
-  const { selectable, onSelectionChange } = {
+  const { selectable, onSelectionChange, onUserPick } = {
     selectable: false,
     onSelectionChange: () => {},
+    onUserPick: () => {},
     ...props,
   }
 
@@ -57,7 +59,9 @@ export default (props: UsersListProps) => {
   const { data: { users } } = useGetUsers()
 
   const onListItemClick = (user) => {
-    if (!selectable) return
+    if (!selectable) {
+      return onUserPick(user)
+    }
 
     if (selectedUsers.includes(user)) {
       const index = selectedUsers.indexOf(user)
@@ -74,8 +78,8 @@ export default (props: UsersListProps) => {
   return (
     <Style className={name} selectable={selectable}>
       <List className={`${name}-users-list`}>
-        {users.map(user => (
-          <ListItem className={`${name}-user-item`} key={user._id} button onClick={onListItemClick.bind(null, user)}>
+        {users && users.map(user => (
+          <ListItem className={`${name}-user-item`} key={user.id} button onClick={onListItemClick.bind(null, user)}>
             <img className={`${name}-profile-pic`} src={user.picture || '/assets/default-profile-pic.jpg'} />
             <div className={`${name}-name`}>{user.name}</div>
 

@@ -1,81 +1,114 @@
-import gql from 'graphql-tag'
-import { useQuery, useMutation } from 'react-apollo-hooks'
-import { MutationUpdaterFn } from 'react-apollo-hooks'
+import { useEffect } from 'react'
+import { useQuery, useMutation, MutationUpdaterFn } from 'react-apollo-hooks'
 import { time as uniqid } from 'uniqid'
-import { GetMessages, GetChats, AddMessage } from '../types'
 import store from '../apollo-client'
-import { GET_CHATS } from '../graphql-documents/chats-documents'
-import { GET_MESSAGES, ADD_MESSAGE } from '../graphql-documents/messages-documents'
-import { GET_ME } from '../graphql-documents/users-documents'
+import { useSubscription } from '../polyfills/react-apollo-hooks'
+import { AddMessage, GetChat, GetChats, GetMe, MessageAdded } from '../types'
+import {
+  getChatsQuery,
+  getChatQuery,
+  addMessageMutation,
+  messageAddedSubscription,
+  getMeQuery,
+} from '../graphql-documents'
 
 export const useAddMessage = (options: {
   variables: AddMessage.Variables,
   [key: string]: any,
 }) => {
-  const { chatId, contents } = options.variables
-  const { me } = store.readQuery({ query: GET_ME })
+  const { chatId, content } = options.variables
+  const { data: { messageAdded } } = useSubscription<MessageAdded.Subscription, MessageAdded.Variables>(messageAddedSubscription, {
+    variables: { chatId }
+  })
+  const { data: { me } } = useQuery<GetMe.Query, GetMe.Variables>(getMeQuery)
 
-  return useMutation<AddMessage.Mutation, AddMessage.Variables>(ADD_MESSAGE, {
+  const updateGetChat = (message) => {
+    let chat
+    try {
+      chat = store.readQuery<GetChat.Query>({
+        query: getChatQuery,
+        variables: { chatId },
+      }).chat
+    }
+    catch (e) {
+      return
+    }
+
+    if (chat.messages.some(({ id }) => id === message.id)) return
+
+    chat.messages.push(message)
+
+    store.writeQuery({
+      query: getChatQuery,
+      variables: { chatId },
+      data: { chat },
+    })
+  }
+
+  const updateGetChats = (message) => {
+    let chats
+    try {
+      chats = store.readQuery<GetChats.Query>({
+        query: getChatsQuery,
+      }).chats
+    }
+    catch (e) {
+      return
+    }
+
+    const chat = chats.find(chat => chat.id === chatId)
+
+    if (!chat) return
+    if (chat.messages.some(({ id }) => id === message.id)) return
+
+    chat.messages.push(message)
+
+    store.writeQuery({
+      query: getChatsQuery,
+      data: { chats },
+    })
+  }
+
+  const updateStore = (message) => {
+    updateGetChat(message)
+    updateGetChats(message)
+  }
+
+  useEffect(() => {
+    if (!messageAdded) return
+
+    updateStore(messageAdded)
+  }, [messageAdded && messageAdded.id])
+
+  return useMutation<AddMessage.Mutation, AddMessage.Variables>(addMessageMutation, {
     variables: {
       chatId,
-      contents,
+      content,
     },
     optimisticResponse: {
       __typename: 'Mutation',
       addMessage: {
-        _id: uniqid(),
+        id: uniqid(),
         __typename: 'Message',
         chat: {
-          _id: chatId,
+          id: chatId,
           __typename: 'Chat',
         },
-        from: {
+        sender: {
+          id: me.id,
           __typename: 'User',
           name: me.name,
         },
-        contents,
-        sentAt: new Date(),
-        isMine: true,
+        content,
+        createdAt: new Date(),
+        type: 0,
+        recipients: [],
+        ownership: true,
       },
     },
-    update: ((store, { data: { addMessage } }) => {
-      {
-        const { chat }: GetMessages.Query = store.readQuery({
-          query: GET_MESSAGES,
-          variables: { chatId },
-        })
-
-        chat.messages.push(addMessage)
-
-        store.writeQuery({
-          query: GET_MESSAGES,
-          variables: { chatId },
-          data: { chat },
-        })
-      }
-
-      // TODO: See how we can provide
-      {
-        const { chats }: GetChats.Query = store.readQuery({
-          query: GET_CHATS,
-        })
-
-        const chat = chats.find(chat => chat._id === chatId)
-
-        if (chat) {
-          chat.recentMessage = addMessage
-
-          store.writeQuery({
-            query: GET_CHATS,
-            data: { chats },
-          })
-        }
-      }
-    }) as MutationUpdaterFn<AddMessage.Mutation>,
+    update: (store, { data: { addMessage } }) => {
+      updateStore(addMessage)
+    },
     ...options,
   })
-}
-
-export const useGetMessages = (options?) => {
-  return useQuery<GetMessages.Query, GetMessages.Variables>(GET_MESSAGES, options)
 }

@@ -4,6 +4,7 @@ import { History } from 'history'
 import * as React from 'react'
 import { useState } from 'react'
 import styled from 'styled-components'
+import { signIn } from '../../services/auth-service'
 
 const name = 'SignInForm'
 
@@ -17,12 +18,15 @@ interface SignInFormProps {
 export default ({ history }: SignInFormProps) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
 
   const onUsernameChange = ({ target }) => {
+    setError('')
     setUsername(target.value)
   }
 
   const onPasswordChange = ({ target }) => {
+    setError('')
     setPassword(target.value)
   }
 
@@ -30,11 +34,16 @@ export default ({ history }: SignInFormProps) => {
     return !!(username && password)
   }
 
-  const signIn = () => {
-    history.push('/chats')
+  const handleSignIn = () => {
+    signIn({ username, password }).then(() => {
+      history.push('/chats')
+    })
+    .catch((error) => {
+      setError(error.message || error)
+    })
   }
 
-  const signUp = () => {
+  const handleSignUp = () => {
     history.push('/sign-up')
   }
 
@@ -61,8 +70,9 @@ export default ({ history }: SignInFormProps) => {
             placeholder="Enter your password"
           />
         </div>
-        <Button type="submit" color="secondary" variant="contained" disabled={!maySignIn()} onClick={signIn}>Sign in</Button>
-        <span className="AuthScreen-alternative">Don't have an account yet? <a onClick={signUp}>Sign up!</a></span>
+        <Button type="button" color="secondary" variant="contained" disabled={!maySignIn()} onClick={handleSignIn}>Sign in</Button>
+        <div className="AuthScreen-error">{error}</div>
+        <span className="AuthScreen-alternative">Don't have an account yet? <a onClick={handleSignUp}>Sign up!</a></span>
       </form>
     </Style>
   )

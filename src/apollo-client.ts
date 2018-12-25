@@ -1,42 +1,64 @@
-import { InMemoryCache } from 'apollo-cache-inmemory';
-import { ApolloClient } from 'apollo-client';
-import { ApolloLink, split } from 'apollo-link';
-import { HttpLink } from 'apollo-link-http';
-import { WebSocketLink } from 'apollo-link-ws';
-import { getMainDefinition } from 'apollo-utilities';
-import { OperationDefinitionNode } from 'graphql';
-import { getAuthHeader } from './services/auth.service';
+import { InMemoryCache, defaultDataIdFromObject } from 'apollo-cache-inmemory'
+import { ApolloClient } from 'apollo-client'
+import { ApolloLink, split } from 'apollo-link'
+import { setContext } from 'apollo-link-context'
+import { HttpLink } from 'apollo-link-http'
+import { WebSocketLink } from 'apollo-link-ws'
+import { getMainDefinition } from 'apollo-utilities'
+import { OperationDefinitionNode } from 'graphql'
+import { getAuthHeader } from './services/auth-service'
+
+const httpUri = process.env.REACT_APP_SERVER_URL + '/graphql'
+const wsUri = httpUri.replace(/^https?/, 'ws')
 
 const httpLink = new HttpLink({
-  uri: `http://${process.env.REACT_APP_APOLLO_SERVER_URI}`,
-});
+  uri: httpUri,
+})
 
 const wsLink = new WebSocketLink({
-  uri: `ws://${process.env.REACT_APP_APOLLO_SERVER_URI}`,
+  uri: wsUri,
   options: {
     reconnect: true,
     connectionParams: () => ({
-      authToken: getAuthHeader() || null
+      authToken: getAuthHeader()
     }),
   },
+})
+
+const authLink = setContext((_, { headers }) => {
+  const auth = getAuthHeader()
+
+  return {
+    headers: {
+      ...headers,
+      Authorization: auth,
+    }
+  }
 });
 
 const terminatingLink = split(
   ({ query }) => {
-    const { kind, operation } = getMainDefinition(query) as OperationDefinitionNode;
-    return kind === 'OperationDefinition' && operation === 'subscription';
+    const { kind, operation } = getMainDefinition(query) as OperationDefinitionNode
+    return kind === 'OperationDefinition' && operation === 'subscription'
   },
   wsLink,
-  httpLink,
-);
+  authLink.concat(httpLink),
+)
 
-const link = ApolloLink.from([terminatingLink]);
+const link = ApolloLink.from([terminatingLink])
 
 const cache = new InMemoryCache({
-  dataIdFromObject: (obj: any) => obj._id
-});
+  dataIdFromObject: (object: any) => {
+    switch (object.__typename) {
+      case 'Message':
+        return `${object.chat.id}:${object.id}`
+      default:
+        return defaultDataIdFromObject(object)
+    }
+  }
+})
 
 export default new ApolloClient({
   link,
   cache,
-});
+})

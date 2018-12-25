@@ -3,8 +3,7 @@ import SendIcon from '@material-ui/icons/Send'
 import * as React from 'react'
 import { useState } from 'react'
 import styled from 'styled-components'
-import { useAddMessage } from '../../graphql-hooks/messages-hooks'
-import { useGetMe } from '../../graphql-hooks/users-hooks'
+import { useAddMessage } from '../../graphql-hooks'
 
 const name = 'MessageBox'
 
@@ -50,11 +49,10 @@ interface MessageBoxProps {
 
 export default ({ chatId }: MessageBoxProps) => {
   const [message, setMessage] = useState('')
-  const { data: { me } } = useGetMe()
   const addMessage = useAddMessage({
     variables: {
       chatId,
-      contents: message,
+      content: message,
     }
   })
 

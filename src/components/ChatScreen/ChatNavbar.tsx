@@ -3,7 +3,8 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack'
 import { History } from 'history'
 import * as React from 'react'
 import styled from 'styled-components'
-import { useGetChatInfo } from '../../graphql-hooks/chats-hooks'
+import { useGetChat } from '../../graphql-hooks'
+import { GetChat } from '../../types'
 
 const name = 'ChatNavbar'
 
@@ -33,15 +34,11 @@ const Style = styled.div `
 `
 
 interface ChatNavbarProps {
-  chatId: string;
+  chat: GetChat.Chat;
   history: History;
 }
 
-export default ({ chatId, history }: ChatNavbarProps) => {
-  const { data: { chat } } = useGetChatInfo({
-    variables: { chatId }
-  })
-
+export default ({ chat, history }: ChatNavbarProps) => {
   const navToChats = () => {
     history.push('/chats')
   }
@@ -51,7 +48,7 @@ export default ({ chatId, history }: ChatNavbarProps) => {
       <Button className={`${name}-back-button`} onClick={navToChats}>
         <ArrowBackIcon />
       </Button>
-      <img className={`${name}-picture`} src={chat.picture} />
+      <img className={`${name}-picture`} src={chat.picture || (chat.isGroup ? '/assets/default-group-pic.jpg' : '/assets/default-profile-pic.jpg')} />
       <div className={`${name}-title`}>{chat.name}</div>
     </Style>
   )

@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Suspense } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
-import { useGetMessages } from '../../graphql-hooks/messages-hooks'
+import { useGetChat } from '../../graphql-hooks'
 import Navbar from '../Navbar'
 import ChatNavbar from './ChatNavbar'
 import MessageBox from './MessageBox'
@@ -36,18 +36,24 @@ const Style = styled.div `
   }
 `
 
-export default ({ match, history }: RouteComponentProps) => (
-  <Style className={`${name} Screen`}>
-    <Navbar>
-      <Suspense fallback={null}>
-        <ChatNavbar chatId={match.params.chatId} history={history} />
-      </Suspense>
-    </Navbar>
-    <div className={`${name}-body`}>
-      <Suspense fallback={null}>
-        <MessagesList chatId={match.params.chatId} />
-      </Suspense>
-      <MessageBox chatId={match.params.chatId} />
-    </div>
-  </Style>
-)
+export default ({ match, history }: RouteComponentProps) => {
+  const { data: { chat } } = useGetChat({
+    variables: { chatId: match.params.chatId }
+  })
+
+  return (
+    <Style className={`${name} Screen`}>
+      <Navbar>
+        <Suspense fallback={null}>
+          <ChatNavbar chat={chat} history={history} />
+        </Suspense>
+      </Navbar>
+      <div className={`${name}-body`}>
+        <Suspense fallback={null}>
+          <MessagesList messages={chat.messages} />
+        </Suspense>
+        <MessageBox chatId={match.params.chatId} />
+      </div>
+    </Style>
+  )
+}

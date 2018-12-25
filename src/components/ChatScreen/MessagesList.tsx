@@ -3,7 +3,7 @@ import * as React from 'react'
 import { useRef, useEffect } from 'react'
 import * as ReactDOM from 'react-dom'
 import styled from 'styled-components'
-import { useGetMessages } from '../../graphql-hooks/messages-hooks'
+import { GetChat } from '../../types'
 
 const name = 'MessagesList'
 
@@ -82,13 +82,10 @@ const Style = styled.div `
 `
 
 interface MessagesListProps {
-  chatId: string;
+  messages: GetChat.Messages[]
 }
 
-export default ({ chatId }: MessagesListProps) => {
-  const { data: { chat: { messages } } } = useGetMessages({
-    variables: { chatId }
-  })
+export default ({ messages }: MessagesListProps) => {
   const selfRef = useRef(null)
 
   const resetScrollTop = () => {
@@ -103,10 +100,10 @@ export default ({ chatId }: MessagesListProps) => {
 
   return (
     <Style className={name} ref={selfRef}>
-      {messages.map((message) => (
-        <div key={message._id} className={`${name}-message ${message.isMine ? `${name}-message-mine` : `${name}-message-others`}`}>
-          <div className={`${name}-message-contents`}>{message.contents}</div>
-          <span className={`${name}-message-timestamp`}>{moment(message.sentAt).format('HH:mm')}</span>
+      {messages && messages.map((message) => (
+        <div key={message.id} className={`${name}-message ${message.ownership ? `${name}-message-mine` : `${name}-message-others`}`}>
+          <div className={`${name}-message-contents`}>{message.content}</div>
+          <span className={`${name}-message-timestamp`}>{moment(message.createdAt).format('HH:mm')}</span>
         </div>
       ))}
     </Style>
