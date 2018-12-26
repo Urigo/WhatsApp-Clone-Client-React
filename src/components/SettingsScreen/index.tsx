@@ -4,6 +4,7 @@ import * as React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
 import { useGetMe, useChangeUserInfo } from '../../graphql-hooks'
+import { pickPicture, uploadProfilePicture } from '../../services/picture-service'
 import Navbar from '../Navbar'
 import SettingsNavbar from './SettingsNavbar'
 
@@ -55,10 +56,12 @@ export default ({ history }: RouteComponentProps) => {
     })
   }
 
-  // TODO: Connect to FileStack
-  const updatePicture = (e) => {
+  const updatePicture = async () => {
+    const file = await pickPicture()
+    const { url } = await uploadProfilePicture(file)
+
     changeUserInfo({
-      variables: { picture: e.target.value }
+      variables: { picture: url }
     })
   }
 
@@ -69,7 +72,7 @@ export default ({ history }: RouteComponentProps) => {
       </Navbar>
       <div className={`${name}-picture`}>
         <img src={me.picture || '/assets/default-profile-pic.jpg'} />
-        <EditIcon />
+        <EditIcon onClick={updatePicture} />
       </div>
       <TextField
         className={`${name}-name-input`}

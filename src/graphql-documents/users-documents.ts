@@ -21,7 +21,7 @@ export const getUsersQuery = gql`
 `
 
 export const changeUserInfoMutation = gql `
-  mutation ChangeUserInfo {
-    changeUserInfo
+  mutation ChangeUserInfo($name: String, $picture: String) {
+    changeUserInfo(name: $name, picture: $picture)
   }
 `
