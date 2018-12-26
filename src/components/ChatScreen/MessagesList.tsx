@@ -82,10 +82,11 @@ const Style = styled.div `
 `
 
 interface MessagesListProps {
-  messages: GetChat.Messages[]
+  useGetChat: () => { data: GetChat.Query };
 }
 
-export default ({ messages }: MessagesListProps) => {
+export default ({ useGetChat }: MessagesListProps) => {
+  const { data: { chat: { messages } } } = useGetChat()
   const selfRef = useRef(null)
 
   const resetScrollTop = () => {

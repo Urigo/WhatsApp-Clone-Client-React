@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
 import Navbar from '../Navbar'
@@ -24,9 +24,11 @@ export default ({ history }: RouteComponentProps) => {
       <Navbar>
         <NewGroupNavbar history={history} />
       </Navbar>
-      <UsersList selectable onSelectionChange={setSelectedUsers} />
+      <Suspense fallback={null}>
+        <UsersList selectable onSelectionChange={setSelectedUsers} />
+      </Suspense>
 
-      {selectedUsers.length && (
+      {!!selectedUsers.length && (
         <CreateGroupButton history={history} users={selectedUsers} />
       )}
     </Style>

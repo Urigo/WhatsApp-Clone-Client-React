@@ -33,11 +33,13 @@ const Style = styled.div `
 `
 
 interface ChatNavbarProps {
-  chat: GetChat.Chat;
+  useGetChat: () => { data: GetChat.Query };
   history: History;
 }
 
-export default ({ chat, history }: ChatNavbarProps) => {
+export default ({ useGetChat, history }: ChatNavbarProps) => {
+  const { data: { chat } } = useGetChat()
+
   const navToChats = () => {
     history.push('/chats')
   }

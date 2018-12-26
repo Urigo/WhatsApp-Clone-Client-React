@@ -37,22 +37,26 @@ const Style = styled.div `
 `
 
 export default ({ match, history }: RouteComponentProps) => {
-  const { data: { chat } } = useGetChat({
-    variables: { chatId: match.params.chatId }
-  })
+  const useBoundGetChat = () => {
+    return useGetChat({
+      variables: { chatId: match.params.chatId }
+    })
+  }
 
   return (
     <Style className={`${name} Screen`}>
       <Navbar>
         <Suspense fallback={null}>
-          <ChatNavbar chat={chat} history={history} />
+          <ChatNavbar useGetChat={useBoundGetChat} history={history} />
         </Suspense>
       </Navbar>
       <div className={`${name}-body`}>
         <Suspense fallback={null}>
-          <MessagesList messages={chat.messages} />
+          <MessagesList useGetChat={useBoundGetChat} />
         </Suspense>
-        <MessageBox chatId={match.params.chatId} />
+        <Suspense fallback={null}>
+          <MessageBox chatId={match.params.chatId} />
+        </Suspense>
       </div>
     </Style>
   )

@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { Suspense } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
 import Navbar from '../Navbar'
@@ -40,7 +41,9 @@ export default ({ history }: RouteComponentProps) => {
       </Navbar>
       <div className={`${name}-users-list`}>
         <NewGroupButton history={history} />
-        <UsersList onUserPick={onUserPick} />
+        <Suspense fallback={null}>
+          <UsersList onUserPick={onUserPick} />
+        </Suspense>
       </div>
     </Style>
   )
