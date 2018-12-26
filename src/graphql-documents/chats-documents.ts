@@ -71,3 +71,13 @@ export const removeChatMutation = gql`
     removeChat(chatId: $chatId)
   }
 `
+
+export const chatInfoChangedSubscription = gql`
+  subscription ChatInfoChanged {
+    chatInfoChanged {
+      id,
+      name,
+      picture,
+    }
+  }
+`
