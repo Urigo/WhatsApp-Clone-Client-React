@@ -1,6 +1,7 @@
 import TextField from '@material-ui/core/TextField'
 import EditIcon from '@material-ui/icons/Edit'
 import * as React from 'react'
+import { useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
 import { useGetMe, useChangeUserInfo } from '../../graphql-hooks'
@@ -49,15 +50,24 @@ const Style = styled.div `
 export default ({ history }: RouteComponentProps) => {
   const { data: { me } } = useGetMe()
   const changeUserInfo = useChangeUserInfo()
+  const [myName, setMyName] = useState(me.name)
+  const [myPicture, setMyPicture] = useState(me.picture)
 
-  const updateName = (e) => {
+  const updateNameInput = ({ target }) => {
+    setMyName(target.value)
+  }
+
+  const updateName = () => {
     changeUserInfo({
-      variables: { name: e.target.value || '' }
+      variables: { name: myName }
     })
   }
 
   const updatePicture = async () => {
     const file = await pickPicture()
+
+    if (!file) return
+
     const { url } = await uploadProfilePicture(file)
 
     changeUserInfo({
@@ -68,14 +78,15 @@ export default ({ history }: RouteComponentProps) => {
   return (
     <Style className={name}>
       <div className={`${name}-picture`}>
-        <img src={me.picture || '/assets/default-profile-pic.jpg'} />
+        <img src={myPicture || '/assets/default-profile-pic.jpg'} />
         <EditIcon onClick={updatePicture} />
       </div>
       <TextField
         className={`${name}-name-input`}
         label="Name"
-        value={me.name}
-        onChange={updateName}
+        value={myName}
+        onChange={updateNameInput}
+        onBlur={updateName}
         margin="normal"
         placeholder="Enter your name"
       />

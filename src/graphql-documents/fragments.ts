@@ -8,6 +8,11 @@ export const chatWithoutMessages = gql `
     picture
     allTimeMembers {
       id
+      name
+      picture
+    }
+    owner {
+      id
     }
     unreadMessages
     isGroup

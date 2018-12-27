@@ -1,9 +1,13 @@
 import TextField from '@material-ui/core/TextField'
 import * as React from 'react'
 import { useState } from 'react'
+import { MutationHookOptions } from 'react-apollo-hooks'
+import { Redirect } from 'react-router-dom'
 import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
-import { GetUsers } from '../../types'
+import { useGetChat, useGetMe, useChangeChatInfo } from '../../graphql-hooks'
+import { pickPicture, uploadProfilePicture } from '../../services/picture-service'
+import { GetUsers, ChangeChatInfo } from '../../types'
 import Navbar from '../Navbar'
 import CompleteGroupButton from './CompleteGroupButton'
 import GroupDetailsNavbar from './GroupDetailsNavbar'
@@ -11,7 +15,7 @@ import GroupDetailsNavbar from './GroupDetailsNavbar'
 const name = 'GroupDetailsScreen'
 
 const Style = styled.div `
-  .${name}-name-input {
+  .${name}-group-name {
     width: calc(100% - 30px);
     margin: 15px;
   }
@@ -44,32 +48,117 @@ const Style = styled.div `
     margin-right: auto;
   }
 
+  .${name}-group-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
   .${name}-user-name {
     line-height: 10px;
     font-size: 14px;
   }
+
+  .${name}-group-picture {
+    width: 50px;
+    flex-basis: 50px;
+    border-radius: 50%;
+    margin-left: 15px;
+    object-fit: contain;
+    cursor: pointer;
+  }
 `
 
-export default ({ location, history }: RouteComponentProps) => {
-  const users = location.state.users as GetUsers.Users[]
-  const [groupName, setGroupName] = useState('')
+export default ({ location, match, history }: RouteComponentProps) => {
+  const chatId = match.params.chatId || ''
+
+  let myId: string
+  let chatName: string
+  let chatPicture: string
+  let ownerId: string
+  let users: GetUsers.Users[]
+  let changeChatInfo: (localOptions?: MutationHookOptions<ChangeChatInfo.Mutation, ChangeChatInfo.Variables>) => any;
+
+  if (chatId) {
+    const me = useGetMe().data.me
+    const chat = useGetChat({ variables: { chatId } }).data.chat
+    changeChatInfo = useChangeChatInfo()
+    myId = me.id
+    chatName = chat.name
+    chatPicture = chat.picture
+    ownerId = chat.owner.id
+    users = chat.allTimeMembers
+  }
+  else {
+    changeChatInfo = () => {}
+    myId = ''
+    chatName = ''
+    chatPicture = ''
+    ownerId = ''
+    users = location.state.users
+  }
+
+  if (!(users instanceof Array)) {
+    return (
+      <Redirect to="/chats" />
+    )
+  }
+
+  const [groupName, setGroupName] = useState(chatName)
+  const [groupPicture, setGroupPicture] = useState(chatPicture)
 
   const onGroupNameChange = ({ target }) => {
     setGroupName(target.value)
   }
 
+  const updateChatName = () => {
+    changeChatInfo({
+      variables: {
+        chatId,
+        name: groupName,
+      }
+    })
+  }
+
+  const updateChatPicture = async () => {
+    const file = await pickPicture()
+
+    if (!file) return
+
+    const { url } = await uploadProfilePicture(file)
+
+    setGroupPicture(url)
+
+    changeChatInfo({
+      variables: {
+        chatId,
+        picture: url,
+      }
+    })
+  }
+
   return (
     <Style className={`${name} Screen`}>
       <Navbar>
-        <GroupDetailsNavbar history={history} />
+        <GroupDetailsNavbar chatId={chatId} history={history} />
       </Navbar>
-      <TextField
-        label="Group name"
-        placeholder="Enter group name"
-        className={`${name}-name-input`}
-        onChange={onGroupNameChange}
-        autoFocus={true}
-      />
+      <div className={`${name}-group-info`}>
+        <img
+          className={`${name}-group-picture`}
+          src={groupPicture || '/assets/default-group-pic.jpg'}
+          onClick={updateChatPicture}
+        />
+        <TextField
+          label="Group name"
+          placeholder="Enter group name"
+          className={`${name}-group-name`}
+          value={groupName}
+          onChange={onGroupNameChange}
+          onBlur={updateChatName}
+          disabled={ownerId !== myId}
+          autoFocus={true}
+        />
+      </div>
       <div className={`${name}-users-title`}>Participants: {users.length}</div>
       <ul className={`${name}-users-list`}>
         {users && users.map(user => (
@@ -79,7 +168,7 @@ export default ({ location, history }: RouteComponentProps) => {
           </div>
         ))}
       </ul>
-      {groupName && <CompleteGroupButton history={history} groupName={groupName} users={users} />}
+      {!chatId && groupName && <CompleteGroupButton history={history} groupName={groupName} users={users} />}
     </Style>
   )
 }

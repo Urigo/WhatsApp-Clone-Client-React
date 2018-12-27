@@ -3,11 +3,20 @@ import { useEffect } from 'react'
 import { useQuery, useMutation } from 'react-apollo-hooks'
 import store from '../apollo-client'
 import { useSubscription } from '../polyfills/react-apollo-hooks'
-import { GetChat, GetChats, AddChat, ChatAdded, AddGroup, ChatInfoChanged } from '../types'
+import {
+  AddChat,
+  AddGroup,
+  ChangeChatInfo,
+  ChatAdded,
+  ChatInfoChanged,
+  GetChat,
+  GetChats,
+} from '../types'
 import {
   getChatQuery,
   getChatsQuery,
   addChatMutation,
+  changeChatInfoMutation,
   chatInfoChangedSubscription,
   chatAddedSubscription,
   addGroupMutation,
@@ -121,6 +130,10 @@ export const useGetChats = (options?) => {
   }, [chatInfoChanged && chatInfoChanged.id])
 
   return useQuery<GetChats.Query, GetChats.Variables>(getChatsQuery, options)
+}
+
+export const useChangeChatInfo = (options?) => {
+  return useMutation<ChangeChatInfo.Mutation, ChangeChatInfo.Variables>(changeChatInfoMutation, options)
 }
 
 export const useGetChat = (options?) => {

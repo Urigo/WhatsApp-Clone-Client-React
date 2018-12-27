@@ -27,6 +27,15 @@ export const addGroupMutation = gql`
   ${fragments.message}
 `
 
+export const changeChatInfoMutation = gql`
+  mutation ChangeChatInfo($chatId: ID!, $name: String, $picture: String) {
+    changeChatInfo(chatId: $chatId, name: $name, picture: $picture) {
+      ...ChatWithoutMessages
+    }
+  }
+  ${fragments.chatWithoutMessages}
+`
+
 export const chatAddedSubscription = gql`
   subscription chatAdded {
     chatAdded {

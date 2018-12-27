@@ -1,5 +1,6 @@
 import Button from '@material-ui/core/Button'
 import ArrowBackIcon from '@material-ui/icons/ArrowBack'
+import InfoIcon from '@material-ui/icons/Info'
 import { History } from 'history'
 import * as React from 'react'
 import styled from 'styled-components'
@@ -30,6 +31,19 @@ const Style = styled.div `
     padding: 5px;
     border-radius: 50%;
   }
+
+  .${name}-rest {
+    flex: 1;
+    justify-content: flex-end;
+  }
+
+  .${name}-options-btn {
+    float: right;
+    height: 100%;
+    font-size: 1.2em;
+    margin-right: -15px;
+    color: var(--primary-text);
+  }
 `
 
 interface ChatNavbarProps {
@@ -44,6 +58,10 @@ export default ({ useGetChat, history }: ChatNavbarProps) => {
     history.push('/chats')
   }
 
+  const navToGroupDetails = () => {
+    history.push(`/chats/${chat.id}/details`, { chat })
+  }
+
   return (
     <Style className={name}>
       <Button className={`${name}-back-button`} onClick={navToChats}>
@@ -51,6 +69,13 @@ export default ({ useGetChat, history }: ChatNavbarProps) => {
       </Button>
       <img className={`${name}-picture`} src={chat.picture || (chat.isGroup ? '/assets/default-group-pic.jpg' : '/assets/default-profile-pic.jpg')} />
       <div className={`${name}-title`}>{chat.name}</div>
+      {chat.isGroup && (
+        <div className={`${name}-rest`}>
+          <Button className={`${name}-options-btn`} onClick={navToGroupDetails}>
+            <InfoIcon />
+          </Button>
+        </div>
+      )}
     </Style>
   )
 }
