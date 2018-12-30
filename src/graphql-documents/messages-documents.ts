@@ -11,8 +11,8 @@ export const addMessageMutation = gql`
 `
 
 export const messageAddedSubscription = gql`
-  subscription messageAdded($chatId: ID) {
-    messageAdded(chatId: $chatId) {
+  subscription messageAdded($chatsIds: [ID!]!) {
+    messageAdded(chatsIds: $chatsIds) {
       ...Message
       chat {
         id,
@@ -20,16 +20,4 @@ export const messageAddedSubscription = gql`
     }
   }
   ${fragments.message}
-`
-
-export const removeAllMessagesMutation = gql`
-  mutation RemoveAllMessages($chatId: ID!, $all: Boolean) {
-    removeMessages(chatId: $chatId, all: $all)
-  }
-`
-
-export const removeMessagesMutation = gql`
-  mutation RemoveMessages($chatId: ID!, $messageIds: [ID]) {
-    removeMessages(chatId: $chatId, messageIds: $messageIds)
-  }
 `

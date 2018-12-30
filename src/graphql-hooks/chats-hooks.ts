@@ -20,6 +20,7 @@ import {
   chatInfoChangedSubscription,
   chatAddedSubscription,
   addGroupMutation,
+  messageAddedSubscription,
 } from '../graphql-documents'
 
 const useChatAdded = () => {

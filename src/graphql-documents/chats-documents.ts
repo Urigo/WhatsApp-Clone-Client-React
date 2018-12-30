@@ -75,12 +75,6 @@ export const getChatsQuery = gql`
   ${fragments.message}
 `
 
-export const removeChatMutation = gql`
-  mutation RemoveChat($chatId: ID!) {
-    removeChat(chatId: $chatId)
-  }
-`
-
 export const chatInfoChangedSubscription = gql`
   subscription ChatInfoChanged {
     chatInfoChanged {

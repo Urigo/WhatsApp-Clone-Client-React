@@ -5,7 +5,7 @@ import * as moment from 'moment'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import styled from 'styled-components'
-import { useGetChats } from '../../graphql-hooks'
+import { useGetChats, useMessageAdded } from '../../graphql-hooks'
 
 const name = 'ChatsList'
 
@@ -66,6 +66,11 @@ interface ChatsListProps {
 
 export default ({ history }: ChatsListProps) => {
   const { data: { chats } } = useGetChats()
+  const chatsIds = chats.map(chat => chat.id)
+
+  useMessageAdded({
+    variables: { chatsIds }
+  })
 
   const navToChat = (chatId) => {
     history.push(`chats/${chatId}`)
