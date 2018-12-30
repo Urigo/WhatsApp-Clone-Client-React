@@ -1,6 +1,14 @@
 import gql from 'graphql-tag'
 import { DocumentNode } from 'graphql'
 
+export const user = gql `
+  fragment User on User {
+    id
+    name
+    picture
+  }
+`
+
 export const chatWithoutMessages = gql `
   fragment ChatWithoutMessages on Chat {
     id
@@ -14,7 +22,6 @@ export const chatWithoutMessages = gql `
     owner {
       id
     }
-    unreadMessages
     isGroup
   }
 `

@@ -1,41 +1,38 @@
 import gql from 'graphql-tag'
+import * as fragments from './fragments'
 
 export const getMeQuery = gql`
   query GetMe {
     me {
-      id,
-      name,
-      picture,
+      ...User
     }
   }
+  ${fragments.user}
 `
 
 export const getUsersQuery = gql`
   query GetUsers {
     users {
-      id,
-      name,
-      picture,
+      ...User
     }
   }
+  ${fragments.user}
 `
 
 export const changeUserInfoMutation = gql `
   mutation ChangeUserInfo($name: String, $picture: String) {
     changeUserInfo(name: $name, picture: $picture) {
-      id,
-      name,
-      picture,
+      ...User
     }
   }
+  ${fragments.user}
 `
 
 export const userInfoChangedSubscription = gql `
   subscription UserInfoChanged {
     userInfoChanged {
-      id,
-      name,
-      picture,
+      ...User
     }
   }
+  ${fragments.user}
 `
