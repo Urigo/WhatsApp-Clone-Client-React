@@ -19,10 +19,11 @@ const Style = styled.div `
     margin-top: 50px;
 
     img {
-      object-fit: contain;
+      object-fit: fill;
       border-radius: 50%;
       margin-bottom: -34px;
-      width: 100%;
+      width: 300px;
+      height: 300px;
     }
 
     svg {
@@ -69,6 +70,8 @@ export default ({ history }: RouteComponentProps) => {
     if (!file) return
 
     const { url } = await uploadProfilePicture(file)
+
+    setMyPicture(url)
 
     changeUserInfo({
       variables: { picture: url }

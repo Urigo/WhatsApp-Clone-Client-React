@@ -41,7 +41,7 @@ const Style = styled.div `
     flex: 0 1 50px;
     height: 50px;
     width: 50px;
-    object-fit: contain;
+    object-fit: fill;
     border-radius: 50%;
     display: block;
     margin-left: auto;
