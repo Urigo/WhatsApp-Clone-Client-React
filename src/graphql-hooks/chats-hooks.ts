@@ -9,18 +9,22 @@ import {
   ChangeChatInfo,
   ChatAdded,
   ChatInfoChanged,
+  ChatRemoved,
   GetChat,
   GetChats,
+  RemoveChat,
 } from '../types'
 import {
+  addChatMutation,
+  addGroupMutation,
+  changeChatInfoMutation,
+  chatAddedSubscription,
+  chatRemovedSubscription,
+  chatInfoChangedSubscription,
   getChatQuery,
   getChatsQuery,
-  addChatMutation,
-  changeChatInfoMutation,
-  chatInfoChangedSubscription,
-  chatAddedSubscription,
-  addGroupMutation,
   messageAddedSubscription,
+  removeChatMutation,
 } from '../graphql-documents'
 
 const useChatAdded = () => {
@@ -49,6 +53,37 @@ const useChatAdded = () => {
       data: { chats },
     })
   }, [chatAdded && chatAdded.id])
+}
+
+const useChatRemoved = () => {
+  const { data: { chatRemoved } } = useSubscription<ChatRemoved.Subscription>(chatRemovedSubscription)
+
+  useEffect(() => {
+    if (!chatRemoved) return
+
+    let chats
+    try {
+      chats = store.readQuery<GetChats.Query>({
+        query: getChatsQuery
+      }).chats
+    }
+    catch (e) {
+
+    }
+
+    if (!chats) return
+
+    const index = chats.findIndex(chat => chat.id === chatRemoved)
+
+    if (index === -1) return
+
+    chats.splice(index, 1)
+
+    store.writeQuery({
+      query: getChatsQuery,
+      data: { chats },
+    })
+  }, [chatRemoved])
 }
 
 export const useGetChats = (options?) => {
@@ -145,6 +180,12 @@ export const useAddChat = (options?) => {
   useChatAdded()
 
   return useMutation<AddChat.Mutation, AddChat.Variables>(addChatMutation, options)
+}
+
+export const useRemoveChat = (options?) => {
+  useChatRemoved()
+
+  return useMutation<RemoveChat.Mutation, RemoveChat.Variables>(removeChatMutation, options)
 }
 
 export const useAddGroup = (options?) => {
