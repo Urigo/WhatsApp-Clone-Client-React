@@ -24,7 +24,7 @@ const Style = styled.div `
   .${name}-profile-pic {
     height: 50px;
     width: 50px;
-    object-fit: fill;
+    object-fit: cover;
     border-radius: 50%;
   }
 

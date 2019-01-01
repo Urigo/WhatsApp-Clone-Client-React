@@ -41,7 +41,7 @@ const Style = styled.div `
     flex: 0 1 50px;
     height: 50px;
     width: 50px;
-    object-fit: fill;
+    object-fit: cover;
     border-radius: 50%;
     display: block;
     margin-left: auto;
@@ -64,7 +64,7 @@ const Style = styled.div `
     flex-basis: 50px;
     border-radius: 50%;
     margin-left: 15px;
-    object-fit: contain;
+    object-fit: cover;
     cursor: pointer;
   }
 `

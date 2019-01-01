@@ -25,7 +25,7 @@ const Style = styled.div `
     width: 40px;
     margin-top: 3px;
     margin-left: -22px;
-    object-fit: contain;
+    object-fit: cover;
     padding: 5px;
     border-radius: 50%;
   }

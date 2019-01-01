@@ -25,7 +25,7 @@ const Style = styled.div `
   .${name}-icon {
     height: 50px;
     width: 50px;
-    object-fit: contain;
+    object-fit: cover;
     border-radius: 50%;
     color: white;
     background-color: var(--secondary-bg);

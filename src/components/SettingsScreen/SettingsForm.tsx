@@ -19,7 +19,7 @@ const Style = styled.div `
     margin-top: 50px;
 
     img {
-      object-fit: fill;
+      object-fit: cover;
       border-radius: 50%;
       margin-bottom: -34px;
       width: 300px;
