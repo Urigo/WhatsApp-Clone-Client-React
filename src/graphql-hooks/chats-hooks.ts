@@ -27,96 +27,64 @@ import {
   removeChatMutation,
 } from '../graphql-documents'
 
-const useChatAdded = () => {
-  const { data: { chatAdded } } = useSubscription<ChatAdded.Subscription>(chatAddedSubscription)
+export const useChatAdded = () => {
+  useSubscription<ChatAdded.Subscription>(chatAddedSubscription, {
+    onSubscriptionData: ({ client, subscriptionData: { chatAdded } }) => {
+      let chats
+      try {
+        chats = client.readQuery<GetChats.Query>({
+          query: getChatsQuery
+        }).chats
+      }
+      catch (e) {
 
-  useEffect(() => {
-    if (!chatAdded) return
+      }
 
-    let chats
-    try {
-      chats = store.readQuery<GetChats.Query>({
-        query: getChatsQuery
-      }).chats
+      if (!chats) return
+      if (chats.some(chat => chat.id === chatAdded.id)) return
+
+      chats.push(chatAdded)
+
+      client.writeQuery({
+        query: getChatsQuery,
+        data: { chats },
+      })
     }
-    catch (e) {
-
-    }
-
-    if (!chats) return
-    if (chats.some(chat => chat.id === chatAdded.id)) return
-
-    chats.push(chatAdded)
-
-    store.writeQuery({
-      query: getChatsQuery,
-      data: { chats },
-    })
-  }, [chatAdded && chatAdded.id])
+  })
 }
 
-const useChatRemoved = () => {
-  const { data: { chatRemoved } } = useSubscription<ChatRemoved.Subscription>(chatRemovedSubscription)
+export const useChatRemoved = () => {
+  useSubscription<ChatRemoved.Subscription>(chatRemovedSubscription, {
+    onSubscriptionData: ({ client, subscriptionData: { chatRemoved } }) => {
+      let chats
+      try {
+        chats = client.readQuery<GetChats.Query>({
+          query: getChatsQuery
+        }).chats
+      }
+      catch (e) {
 
-  useEffect(() => {
-    if (!chatRemoved) return
+      }
 
-    let chats
-    try {
-      chats = store.readQuery<GetChats.Query>({
-        query: getChatsQuery
-      }).chats
+      if (!chats) return
+
+      const index = chats.findIndex(chat => chat.id === chatRemoved)
+
+      if (index === -1) return
+
+      chats.splice(index, 1)
+
+      client.writeQuery({
+        query: getChatsQuery,
+        data: { chats },
+      })
     }
-    catch (e) {
-
-    }
-
-    if (!chats) return
-
-    const index = chats.findIndex(chat => chat.id === chatRemoved)
-
-    if (index === -1) return
-
-    chats.splice(index, 1)
-
-    store.writeQuery({
-      query: getChatsQuery,
-      data: { chats },
-    })
-  }, [chatRemoved])
+  })
 }
 
-export const useGetChats = (options?) => {
-  const { data: { chatAdded } } = useSubscription<ChatAdded.Subscription>(chatAddedSubscription)
-  const { data: { chatInfoChanged } } = useSubscription<ChatInfoChanged.Subscription>(chatInfoChangedSubscription)
-
-  useEffect(() => {
-    if (!chatAdded) return
-
-    let chats
-    try {
-      chats = store.readQuery<GetChats.Query>({
-        query: getChatsQuery
-      }).chats
-    }
-    catch (e) {
-
-    }
-
-    if (chats.some(chat => chat.id !== chatAdded.id)) return
-
-    chats.push(chatAdded)
-
-    store.writeQuery({
-      query: getChatsQuery,
-      data: { chats },
-    })
-  }, [chatAdded && chatAdded.id])
-
-  useEffect(() => {
-    if (!chatInfoChanged) return
-
-    {
+export const useChatInfoChanged = () => {
+  useSubscription<ChatInfoChanged.Subscription>(chatInfoChangedSubscription, {
+    onSubscriptionData: ({ client, subscriptionData: { chatInfoChanged } }) => {
       let chat
       try {
         chat = store.readQuery<GetChat.Query>({
@@ -125,45 +93,26 @@ export const useGetChats = (options?) => {
         }).chat
       }
       catch (e) {
-        return
+
       }
 
-      if (chat) {
-        chat.name = chatInfoChanged.name
-        chat.picture = chatInfoChanged.picture
+      if (!chat) return
 
-        store.writeQuery({
-          query: getChatQuery,
-          variables: { chatId: chatInfoChanged.id },
-          data: { chat },
-        })
-      }
+      chat.name = chatInfoChanged.name
+      chat.picture = chatInfoChanged.picture
+
+      store.writeQuery({
+        query: getChatQuery,
+        variables: { chatId: chatInfoChanged.id },
+        data: { chat },
+      })
     }
+  })
+}
 
-    {
-      let chats
-      try {
-        chats = store.readQuery<GetChats.Query>({
-          query: getChatsQuery,
-        }).chats
-      }
-      catch (e) {
-        return
-      }
-
-      const chat = chats.find(chat => chat.id === chatInfoChanged.id)
-
-      if (chat) {
-        chat.name = chatInfoChanged.name
-        chat.picture = chatInfoChanged.picture
-
-        store.writeQuery({
-          query: getChatsQuery,
-          data: { chats },
-        })
-      }
-    }
-  }, [chatInfoChanged && chatInfoChanged.id])
+export const useGetChats = (options?) => {
+  useChatAdded()
+  useChatInfoChanged()
 
   return useQuery<GetChats.Query, GetChats.Variables>(getChatsQuery, options)
 }

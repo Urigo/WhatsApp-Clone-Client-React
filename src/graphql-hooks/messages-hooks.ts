@@ -1,7 +1,7 @@
+import { DataProxy } from 'apollo-cache'
 import { useEffect } from 'react'
 import { useQuery, useMutation, MutationUpdaterFn } from 'react-apollo-hooks'
 import { time as uniqid } from 'uniqid'
-import store from '../apollo-client'
 import { useSubscription } from '../polyfills/react-apollo-hooks'
 import { AddMessage, GetChat, GetChats, GetMe, MessageAdded } from '../types'
 import {
@@ -12,10 +12,10 @@ import {
   getMeQuery,
 } from '../graphql-documents'
 
-const updateGetChat = (message: AddMessage.AddMessage, { chatId }: { chatId: string }) => {
+const updateGetChat = (client: DataProxy, message: AddMessage.AddMessage, { chatId }: { chatId: string }) => {
   let chat
   try {
-    chat = store.readQuery<GetChat.Query>({
+    chat = client.readQuery<GetChat.Query>({
       query: getChatQuery,
       variables: { chatId },
     }).chat
@@ -28,17 +28,17 @@ const updateGetChat = (message: AddMessage.AddMessage, { chatId }: { chatId: str
 
   chat.messages.push(message)
 
-  store.writeQuery({
+  client.writeQuery({
     query: getChatQuery,
     variables: { chatId },
     data: { chat },
   })
 }
 
-const updateGetChats = (message: AddMessage.AddMessage, { chatId }: { chatId: string }) => {
+const updateGetChats = (client: DataProxy, message: AddMessage.AddMessage, { chatId }: { chatId: string }) => {
   let chats
   try {
-    chats = store.readQuery<GetChats.Query>({
+    chats = client.readQuery<GetChats.Query>({
       query: getChatsQuery,
     }).chats
   }
@@ -53,22 +53,21 @@ const updateGetChats = (message: AddMessage.AddMessage, { chatId }: { chatId: st
 
   chat.messages.push(message)
 
-  store.writeQuery({
+  client.writeQuery({
     query: getChatsQuery,
     data: { chats },
   })
 }
 
 export const useMessageAdded = (options) => {
-  const { data: { messageAdded } } = useSubscription<MessageAdded.Subscription, MessageAdded.Variables>(messageAddedSubscription, options)
-
-  useEffect(() => {
-    if (!messageAdded) return
-
-    const chatId = messageAdded.chat.id
-    updateGetChat(messageAdded, { chatId })
-    updateGetChats(messageAdded, { chatId })
-  }, [messageAdded && messageAdded.id])
+  useSubscription<MessageAdded.Subscription, MessageAdded.Variables>(messageAddedSubscription, {
+    onSubscriptionData: ({ client, subscriptionData: { messageAdded } }) => {
+      const chatId = messageAdded.chat.id
+      updateGetChat(client, messageAdded, { chatId })
+      updateGetChats(client, messageAdded, { chatId })
+    },
+    ...options,
+  })
 }
 
 export const useAddMessage = (options: {
@@ -101,9 +100,9 @@ export const useAddMessage = (options: {
         ownership: true,
       },
     },
-    update: (store, { data: { addMessage } }) => {
-      updateGetChat(addMessage, options.variables)
-      updateGetChats(addMessage, options.variables)
+    update: (client, { data: { addMessage } }) => {
+      updateGetChat(client, addMessage, options.variables)
+      updateGetChats(client, addMessage, options.variables)
     },
     ...options,
   })

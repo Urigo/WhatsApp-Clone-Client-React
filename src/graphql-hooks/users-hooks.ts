@@ -2,7 +2,6 @@ import gql from 'graphql-tag'
 import { useEffect } from 'react'
 import { useQuery, useMutation } from 'react-apollo-hooks'
 import { time as uniqid } from 'uniqid'
-import store from '../apollo-client'
 import { useSubscription } from '../polyfills/react-apollo-hooks'
 import { GetMe, GetUsers, ChangeUserInfo, UserInfoChanged } from '../types'
 import {
@@ -12,38 +11,40 @@ import {
   userInfoChangedSubscription,
 } from '../graphql-documents'
 
+export const useUserInfoChanged = () => {
+  useSubscription<UserInfoChanged.Subscription>(userInfoChangedSubscription, {
+    onSubscriptionData: ({ client, subscriptionData: { userInfoChanged } }) => {
+      let users
+      try {
+        users = client.readQuery<GetUsers.Query>({
+          query: getUsersQuery
+        }).users
+      }
+      catch (e) {
+
+      }
+
+      const targetUser = users.find(candiUser => candiUser.id === userInfoChanged.id)
+
+      if (!targetUser) return
+
+      targetUser.picture = userInfoChanged.picture
+      targetUser.name = userInfoChanged.name
+
+      client.writeQuery({
+        query: getUsersQuery,
+        data: users,
+      })
+    }
+  })
+}
+
 export const useGetMe = (options?) => {
   return useQuery<GetMe.Query, GetMe.Variables>(getMeQuery, options)
 }
 
 export const useGetUsers = (options?) => {
-  const { data: { userInfoChanged } } = useSubscription<UserInfoChanged.Subscription>(userInfoChangedSubscription)
-
-  useEffect(() => {
-    if (!userInfoChanged) return
-
-    let users
-    try {
-      users = store.readQuery<GetUsers.Query>({
-        query: getUsersQuery
-      }).users
-    }
-    catch (e) {
-      return
-    }
-
-    const targetUser = users.find(candiUser => candiUser.id === userInfoChanged.id)
-
-    if (targetUser) {
-      targetUser.picture = userInfoChanged.picture
-      targetUser.name = userInfoChanged.name
-
-      store.writeQuery({
-        query: getUsersQuery,
-        data: users,
-      })
-    }
-  }, [userInfoChanged && userInfoChanged.id])
+  useUserInfoChanged()
 
   return useQuery<GetUsers.Query, GetUsers.Variables>(getUsersQuery, options)
 }
