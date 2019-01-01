@@ -77,7 +77,7 @@ export default ({ history }: ChatsListProps) => {
   }
 
   const pluckRecentMessage = (chat) => {
-    return chat.messages[chat.messages.length - 1] || {}
+    return chat.messages[chat.messages.length - 1]
   }
 
   return (
@@ -91,8 +91,12 @@ export default ({ history }: ChatsListProps) => {
               <img className={`${name}-profile-pic`} src={chat.picture || (chat.isGroup ? '/assets/default-group-pic.jpg' : '/assets/default-profile-pic.jpg')} />
               <div className={`${name}-info`}>
                 <div className={`${name}-name`}>{chat.name}</div>
-                <div className={`${name}-last-message`}>{recentMessage.content}</div>
-                <div className={`${name}-timestamp`}>{moment(recentMessage.createdAt).format('HH:mm')}</div>
+                {recentMessage && (
+                  <React.Fragment>
+                    <div className={`${name}-last-message`}>{recentMessage.content}</div>
+                    <div className={`${name}-timestamp`}>{moment(recentMessage.createdAt).format('HH:mm')}</div>
+                  </React.Fragment>
+                )}
               </div>
             </ListItem>
           )
