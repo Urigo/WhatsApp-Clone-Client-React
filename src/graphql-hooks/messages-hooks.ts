@@ -46,12 +46,16 @@ const updateGetChats = (client: DataProxy, message: AddMessage.AddMessage, { cha
     return
   }
 
-  const chat = chats.find(chat => chat.id === chatId)
+  const index = chats.findIndex(chat => chat.id === chatId)
+  const chat = chats[index]
 
   if (!chat) return
-  if (chat.messages.some(({ id }) => id === message.id)) return
 
-  chat.messages.push(message)
+  // The query fetches only the most recent message
+  chat.messages = [message]
+  // Move chat to the top of the stack
+  chats.splice(index, 1)
+  chats.unshift(chat)
 
   client.writeQuery({
     query: getChatsQuery,

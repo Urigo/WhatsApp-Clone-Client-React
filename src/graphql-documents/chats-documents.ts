@@ -78,7 +78,7 @@ export const getChatsQuery = gql`
   query GetChats {
     chats {
       ...ChatWithoutMessages
-      messages {
+      messages(amount: 1) {
         ...Message
       }
     }
