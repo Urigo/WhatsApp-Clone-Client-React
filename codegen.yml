@@ -2,7 +2,7 @@ schema: ../WhatsApp-Clone-server/src/schema.ts
 documents: ./src/graphql-documents/**/*.ts
 overwrite: true
 require:
-  - graphql-code-generator/../../../WhatsApp-Clone-server/src/babel-register.ts
+  - graphql-code-generator/../../../WhatsApp-Clone-server/src/codegen-interpreter.ts
 generates:
   ./src/types/graphql.ts:
     plugins:
