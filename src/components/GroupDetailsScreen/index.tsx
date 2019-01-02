@@ -20,24 +20,24 @@ const Style = styled.div `
     margin: 15px;
   }
 
-  .${name}-users-title {
+  .${name}-participants-title {
     margin-top: 10px;
     margin-left: 15px;
   }
 
-  .${name}-users-list {
+  .${name}-participants-list {
     display: flex;
     overflow: overlay;
     padding: 0;
   }
 
-  .${name}-user-item {
+  .${name}-participant-item {
     padding: 10px;
     flex-flow: row wrap;
     text-align: center;
   }
 
-  .${name}-user-picture {
+  .${name}-participant-picture {
     flex: 0 1 50px;
     height: 50px;
     width: 50px;
@@ -54,7 +54,7 @@ const Style = styled.div `
     align-items: center;
   }
 
-  .${name}-user-name {
+  .${name}-participant-name {
     line-height: 10px;
     font-size: 14px;
   }
@@ -77,10 +77,12 @@ export default ({ location, match, history }: RouteComponentProps) => {
   let chatPicture: string
   let ownerId: string
   let users: GetUsers.Users[]
+  let participants: GetUsers.Users[]
   let changeChatInfo: (localOptions?: MutationHookOptions<ChangeChatInfo.Mutation, ChangeChatInfo.Variables>) => any;
 
+  const { data: { me } } = useGetMe()
+
   if (chatId) {
-    const me = useGetMe().data.me
     const chat = useGetChat({ variables: { chatId } }).data.chat
     changeChatInfo = useChangeChatInfo()
     myId = me.id
@@ -88,6 +90,7 @@ export default ({ location, match, history }: RouteComponentProps) => {
     chatPicture = chat.picture
     ownerId = chat.owner.id
     users = chat.allTimeMembers
+    participants = users.slice()
   }
   else {
     changeChatInfo = () => {}
@@ -96,12 +99,21 @@ export default ({ location, match, history }: RouteComponentProps) => {
     chatPicture = ''
     ownerId = ''
     users = location.state.users
+    participants = [me].concat(users)
   }
 
+  // Users are missing from state
   if (!(users instanceof Array)) {
     return (
       <Redirect to="/chats" />
     )
+  }
+
+  // Put me first
+  {
+    const index = participants.findIndex(participant => participant.id === me.id)
+    participants.splice(index, 1)
+    participants.unshift(me)
   }
 
   const [groupName, setGroupName] = useState(chatName)
@@ -159,12 +171,12 @@ export default ({ location, match, history }: RouteComponentProps) => {
           autoFocus={true}
         />
       </div>
-      <div className={`${name}-users-title`}>Participants: {users.length}</div>
-      <ul className={`${name}-users-list`}>
-        {users && users.map(user => (
-          <div key={user.id} className={`${name}-user-item`}>
-            <img src={user.picture || '/assets/default-profile-pic.jpg'} className={`${name}-user-picture`} />
-            <span className={`${name}-user-name`}>{user.name}</span>
+      <div className={`${name}-participants-title`}>Participants: {participants.length}</div>
+      <ul className={`${name}-participants-list`}>
+        {participants.map(participant => (
+          <div key={participant.id} className={`${name}-participant-item`}>
+            <img src={participant.picture || '/assets/default-profile-pic.jpg'} className={`${name}-participant-picture`} />
+            <span className={`${name}-participant-name`}>{participant.name}</span>
           </div>
         ))}
       </ul>

@@ -49,6 +49,7 @@ const Style = styled.div `
     margin-top: 5px;
     text-overflow: ellipsis;
     overflow: hidden;
+    white-space: nowrap;
   }
 
   .${name}-timestamp {
