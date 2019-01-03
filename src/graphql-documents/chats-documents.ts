@@ -46,7 +46,7 @@ export const chatAddedSubscription = gql`
   subscription chatAdded {
     chatAdded {
       ...ChatWithoutMessages
-      messages {
+      messages(amount: 1) {
         ...Message
       }
     }

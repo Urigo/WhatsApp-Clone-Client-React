@@ -43,7 +43,7 @@ export const useChatAdded = () => {
       if (!chats) return
       if (chats.some(chat => chat.id === chatAdded.id)) return
 
-      chats.push(chatAdded)
+      chats.unshift(chatAdded)
 
       client.writeQuery({
         query: getChatsQuery,
