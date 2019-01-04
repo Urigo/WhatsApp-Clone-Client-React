@@ -45,7 +45,7 @@
     "style-loader": "0.19.0",
     "styled-components": "^4.1.2",
     "subscriptions-transport-ws": "0.9.15",
-    "sw-precache-webpack-plugin": "0.11.4",
+    "sw-precache-webpack-plugin": "0.11.5",
     "ts-jest": "22.0.1",
     "ts-loader": "^2.3.7",
     "tsconfig-paths-webpack-plugin": "^2.0.0",
