@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import * as fragments from './fragments'
+import * as fragments from '../fragments'
 
 export const addMessageMutation = gql`
   mutation AddMessage($chatId: ID!, $content: String!) {

@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import * as fragments from './fragments'
+import * as fragments from '../fragments'
 
 export const getMeQuery = gql`
   query GetMe {

@@ -1,9 +1,12 @@
+import gql from 'graphql-tag'
 import * as moment from 'moment'
 import * as React from 'react'
 import { useRef, useEffect } from 'react'
+import { useQuery, useMutation } from 'react-apollo-hooks'
 import * as ReactDOM from 'react-dom'
 import styled from 'styled-components'
-import { GetChat } from '../../types'
+import * as fragments from '../../fragments'
+import { MessagesListQuery } from '../../types'
 
 const name = 'MessagesList'
 
@@ -81,12 +84,27 @@ const Style = styled.div `
   }
 `
 
+const query = gql `
+  query MessagesListQuery($chatId: ID!) {
+    chat(chatId: $chatId) {
+      ...Chat
+      messages {
+        ...Message
+      }
+    }
+  }
+  ${fragments.chat}
+  ${fragments.message}
+`
+
 interface MessagesListProps {
-  useGetChat: () => { data: GetChat.Query };
+  chatId: string;
 }
 
-export default ({ useGetChat }: MessagesListProps) => {
-  const { data: { chat: { messages } } } = useGetChat()
+export default ({ chatId }: MessagesListProps) => {
+  const { data: { chat: { messages } } } = useQuery<MessagesListQuery.Query, MessagesListQuery.Variables>(query, {
+    variables: { chatId }
+  })
   const selfRef = useRef(null)
 
   const resetScrollTop = () => {

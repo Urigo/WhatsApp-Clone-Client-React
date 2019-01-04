@@ -1,5 +1,4 @@
 import gql from 'graphql-tag'
-import { DocumentNode } from 'graphql'
 
 export const user = gql `
   fragment User on User {
@@ -9,8 +8,8 @@ export const user = gql `
   }
 `
 
-export const chatWithoutMessages = gql `
-  fragment ChatWithoutMessages on Chat {
+export const chat = gql `
+  fragment Chat on Chat {
     id
     name
     picture

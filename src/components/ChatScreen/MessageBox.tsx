@@ -1,9 +1,14 @@
 import Button from '@material-ui/core/Button'
 import SendIcon from '@material-ui/icons/Send'
+import gql from 'graphql-tag'
 import * as React from 'react'
 import { useState } from 'react'
+import { useQuery, useMutation } from 'react-apollo-hooks'
 import styled from 'styled-components'
-import { useAddMessage, useMessageAdded } from '../../graphql-hooks'
+import { time as uniqid } from 'uniqid'
+import * as fragments from '../../fragments'
+import { useSubscription } from '../../polyfills/react-apollo-hooks'
+import { MessageBoxQuery, MessageBoxMutation, MessageBoxSubscription } from '../../types'
 
 const name = 'MessageBox'
 
@@ -43,21 +48,85 @@ const Style = styled.div `
   }
 `
 
+const query = gql `
+  query MessageBoxQuery {
+    me {
+      ...User
+    }
+    ${fragments.user}
+  }
+`
+
+const mutation = gql `
+  mutation MessageBoxMutation($chatId: ID!, $content: String!) {
+    addMessage(chatId: $chatId, content: $content) {
+      ...Message
+    }
+  }
+  ${fragments.message}
+`
+
+const subscription = gql `
+  subscription MessageBoxSubscription($chatsIds: [ID!]!) {
+    messageAdded(chatsIds: $chatsIds) {
+      ...Message
+    }
+  }
+  ${fragments.message}
+`
+
 interface MessageBoxProps {
   chatId: string;
 }
 
 export default ({ chatId }: MessageBoxProps) => {
   const [message, setMessage] = useState('')
-  const addMessage = useAddMessage({
+  const { data: { me } } = useQuery<MessageBoxQuery.Query, MessageBoxQuery.Variables>(query)
+
+  const addMessage = useMutation<MessageBoxMutation.Mutation, MessageBoxMutation.Variables>(mutation, {
     variables: {
       chatId,
       content: message,
-    }
+    },
+    optimisticResponse: {
+      __typename: 'Mutation',
+      addMessage: {
+        id: uniqid(),
+        __typename: 'Message',
+        chat: {
+          id: chatId,
+          __typename: 'Chat',
+        },
+        sender: {
+          id: me.id,
+          __typename: 'User',
+          name: me.name,
+        },
+        content: message,
+        createdAt: new Date(),
+        type: 0,
+        recipients: [],
+        ownership: true,
+      },
+    },
+    update: (client, { data: { addMessage } }) => {
+      client.writeFragment({
+        id: addMessage.id,
+        fragment: fragments.message,
+        data: addMessage,
+      })
+    },
   })
 
-  useMessageAdded({
-    variables: { chatsIds: [chatId] }
+  useSubscription<MessageBoxSubscription.Subscription, MessageBoxSubscription.Variables>(subscription, {
+    variables: { chatsIds: [chatId] },
+    onSubscriptionData: ({ client, subscriptionData: { messageAdded } }) => {
+      client.writeFragment({
+        id: messageAdded.id,
+        fragment: fragments.message,
+        data: messageAdded,
+      })
+    },
   })
 
   const onKeyPress = (e) => {

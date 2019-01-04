@@ -6,12 +6,14 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack'
 import DeleteIcon from '@material-ui/icons/Delete'
 import InfoIcon from '@material-ui/icons/Info'
 import MoreIcon from '@material-ui/icons/MoreVert'
+import gql from 'graphql-tag'
 import { History } from 'history'
 import * as React from 'react'
 import { useState } from 'react'
+import { useQuery, useMutation } from 'react-apollo-hooks'
 import styled from 'styled-components'
-import { useRemoveChat } from '../../graphql-hooks'
-import { GetChat } from '../../types'
+import * as fragments from '../../fragments'
+import { ChatNavbarMutation, ChatNavbarQuery } from '../../types'
 
 const name = 'ChatNavbar'
 
@@ -58,15 +60,36 @@ const Style = styled.div `
   }
 `
 
+const query = gql `
+  query ChatNavbarQuery($chatId: ID!) {
+    chat(chatId: $chatId) {
+      ...Chat
+      messages {
+        ...Message
+      }
+    }
+  }
+  ${fragments.chat}
+  ${fragments.message}
+`
+
+const mutation = gql `
+  mutation ChatNavbarMutation($chatId: ID!) {
+    removeChat(chatId: $chatId)
+  }
+`
+
 interface ChatNavbarProps {
-  useGetChat: () => { data: GetChat.Query };
+  chatId: string;
   history: History;
 }
 
-export default ({ useGetChat, history }: ChatNavbarProps) => {
-  const { data: { chat } } = useGetChat()
-  const removeChat = useRemoveChat({
-    variables: { chatId: chat.id }
+export default ({ chatId, history }: ChatNavbarProps) => {
+  const { data: { chat } } = useQuery<ChatNavbarQuery.Query, ChatNavbarQuery.Variables>(query, {
+    variables: { chatId }
+  })
+  const removeChat = useMutation<ChatNavbarMutation.Mutation, ChatNavbarMutation.Variables>(mutation, {
+    variables: { chatId }
   })
   const [popped, setPopped] = useState(false)
 
@@ -76,10 +99,10 @@ export default ({ useGetChat, history }: ChatNavbarProps) => {
 
   const navToGroupDetails = () => {
     setPopped(false)
-    history.push(`/chats/${chat.id}/details`, { chat })
+    history.push(`/chats/${chatId}/details`, { chat })
   }
 
-  const handleDeleteChat = () => {
+  const handleRemoveChat = () => {
     setPopped(false)
     removeChat().then(navToChats)
   }
@@ -113,7 +136,7 @@ export default ({ useGetChat, history }: ChatNavbarProps) => {
             {chat.isGroup && (
               <ListItem className={`${name}-options-item`} button onClick={navToGroupDetails}><InfoIcon />Details</ListItem>
             )}
-            <ListItem className={`${name}-options-item`} button onClick={handleDeleteChat}><DeleteIcon />Delete</ListItem>
+            <ListItem className={`${name}-options-item`} button onClick={handleRemoveChat}><DeleteIcon />Delete</ListItem>
           </List>
         </Style>
       </Popover>
