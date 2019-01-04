@@ -31,7 +31,7 @@
     "object-assign": "4.1.1",
     "postcss-flexbugs-fixes": "3.2.0",
     "postcss-loader": "2.0.8",
-    "promise": "8.0.1",
+    "promise": "8.0.2",
     "raf": "3.4.0",
     "react": "^16.7.0-alpha.2",
     "react-apollo-hooks": "^0.2.1",
