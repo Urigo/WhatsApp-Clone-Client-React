@@ -3,7 +3,7 @@ import AddIcon from '@material-ui/icons/Add'
 import { History } from 'history'
 import * as React from 'react'
 import styled from 'styled-components'
-import { GetUsers } from '../../types'
+import { User } from '../../types'
 
 const name = 'CreateGroupButton'
 
@@ -24,7 +24,7 @@ const Style = styled.div `
 
 interface CreateGroupButtonProps {
   history: History;
-  users: GetUsers.Users[];
+  users: User.Fragment[];
 }
 
 export default ({ history, users }: CreateGroupButtonProps) => {

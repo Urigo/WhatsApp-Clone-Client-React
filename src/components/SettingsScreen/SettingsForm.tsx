@@ -1,12 +1,15 @@
 import TextField from '@material-ui/core/TextField'
 import EditIcon from '@material-ui/icons/Edit'
+import gql from 'graphql-tag'
 import * as React from 'react'
 import { useState } from 'react'
+import { useQuery, useMutation } from 'react-apollo-hooks'
 import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
-import { useGetMe, useChangeUserInfo } from '../../graphql-hooks'
+import * as fragments from '../../fragments'
 import { pickPicture, uploadProfilePicture } from '../../services/picture-service'
 import Navbar from '../Navbar'
+import { SettingsFormQuery, SettingsFormMutation } from '../types'
 import SettingsNavbar from './SettingsNavbar'
 
 const name = 'SettingsForm'
@@ -48,9 +51,27 @@ const Style = styled.div `
   }
 `
 
+const query = gql `
+  query SettingsFormQuery {
+    me {
+      ...User
+    }
+  }
+  ${fragments.user}
+`
+
+const mutation = gql `
+  mutation SettingsFormMutation($name: String, $picture: String) {
+    changeUserInfo(name: $name, picture: $picture) {
+      ...User
+    }
+  }
+  ${fragments.user}
+`
+
 export default ({ history }: RouteComponentProps) => {
-  const { data: { me } } = useGetMe()
-  const changeUserInfo = useChangeUserInfo()
+  const { data: { me } } = useQuery<SettingsFormQuery.Query>(query)
+  const changeUserInfo = useMutation<SettingsFormMutation.Mutation, SettingsFormMutation.Variables>(mutation)
   const [myName, setMyName] = useState(me.name)
   const [myPicture, setMyPicture] = useState(me.picture)
 
