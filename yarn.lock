@@ -4137,6 +4137,11 @@ graphql-codegen-core@0.15.0-alpha.fe653a0b:
     ts-log "2.1.4"
     winston "3.1.0"
 
+graphql-codegen-introspection@^0.15.2:
+  version "0.15.2"
+  resolved "https://registry.yarnpkg.com/graphql-codegen-introspection/-/graphql-codegen-introspection-0.15.2.tgz#6b0a4442a0bf6547511619ab16f29d50fe400fbb"
+  integrity sha512-MdKCO0pA97+Tq02eUHXgy7wmBm6VD3dUYseqKVy7hAc52SsEAcLB1iDwIMR1DuM6wwjP7SzelQmDKtCACGBipg==
+
 graphql-codegen-plugin-helpers@0.15.0-alpha.fe653a0b:
   version "0.15.0-alpha.fe653a0b"
   resolved "https://registry.yarnpkg.com/graphql-codegen-plugin-helpers/-/graphql-codegen-plugin-helpers-0.15.0-alpha.fe653a0b.tgz#809ea9bb4bb04d87a60518bb4c55c75ef5551cef"
