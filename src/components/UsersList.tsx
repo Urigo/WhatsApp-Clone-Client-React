@@ -3,9 +3,10 @@ import ListItem from '@material-ui/core/ListItem'
 import CheckCircle from '@material-ui/icons/CheckCircle'
 import * as React from 'react'
 import { useState } from 'react'
+import { useQuery } from 'react-apollo-hooks'
 import styled from 'styled-components'
-import { useGetUsers } from '../graphql-hooks'
-import { GetUsers } from '../types'
+import * as fragments from '../fragments'
+import { UsersListQuery, User } from '../types'
 
 const name = 'UsersList'
 
@@ -41,6 +42,24 @@ const Style = styled.div `
   }
 `
 
+const query = gql `
+  query UsersListQuery {
+    users {
+      ...User
+    }
+  }
+  ${fragments.user}
+`
+
+const subscription = gql `
+  subscription UsersListSubscription {
+    userInfoChanged {
+      ...User
+    }
+  }
+  ${fragments.user}
+`
+
 interface UsersListProps {
   selectable?: boolean;
   onSelectionChange?: (users: GetUsers.Users[]) => void;
@@ -56,7 +75,17 @@ export default (props: UsersListProps) => {
   }
 
   const [selectedUsers, setSelectedUsers] = useState([])
-  const { data: { users } } = useGetUsers()
+  const { data: { users } } = useQuery<UsersListQuery>(query)
+
+  useSubscription(subscription, {
+    onSubscriptionData: ({ client, subscriptionData: { userInfoChanged } }) => {
+      client.writeFragment({
+        id: userInfoChanged,
+        fragment: fragments.user,
+        data: userInfoChanged,
+      })
+    }
+  })
 
   const onListItemClick = (user) => {
     if (!selectable) {
