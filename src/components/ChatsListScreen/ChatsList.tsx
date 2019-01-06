@@ -1,11 +1,15 @@
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
+import gql from 'graphql-tag'
 import { History } from 'history'
 import * as moment from 'moment'
 import * as React from 'react'
+import { useQuery } from 'react-apollo-hooks'
 import * as ReactDOM from 'react-dom'
 import styled from 'styled-components'
-import { useGetChats, useMessageAdded } from '../../graphql-hooks'
+import * as fragments from '../../fragments'
+import { useSubscription } from '../../polyfills/react-apollo-hooks'
+import { ChatsListQuery, ChatsListSubscription } from '../../types'
 
 const name = 'ChatsList'
 
@@ -61,16 +65,45 @@ const Style = styled.div `
   }
 `
 
+const query = gql `
+  query ChatsListQuery {
+    chats {
+      ...Chat
+      messages(amount: 1) {
+        ...Message
+      }
+    }
+    ${fragments.chat}
+    ${fragments.message}
+  }
+`
+
+const subscription = gql `
+  subscription ChatsListSubscription($chatsIds: [ID!]!) {
+    messageAdded(chatsIds: $chatsIds) {
+      ...Message
+    }
+  }
+  ${fragments.message}
+`
+
 interface ChatsListProps {
   history: History
 }
 
 export default ({ history }: ChatsListProps) => {
-  const { data: { chats } } = useGetChats()
+  const { data: { chats } } = useQuery<ChatsListQuery.Query, ChatsListQuery.Variables>(query)
   const chatsIds = chats.map(chat => chat.id)
 
-  useMessageAdded({
-    variables: { chatsIds }
+  useSubscription<ChatsListSubscription.Subscription, ChatsListSubscription.Variables>(subscription, {
+    variables: { chatsIds },
+    onSubscriptionData: ({ client, subscriptionData: { messageAdded } }) => {
+      client.writeFragment({
+        id: messageAdded.id,
+        fragment: fragments.message,
+        data: messageAdded,
+      })
+    }
   })
 
   const navToChat = (chatId) => {
