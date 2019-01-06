@@ -15,23 +15,21 @@ import styled from 'styled-components'
 import * as fragments from '../../fragments'
 import { ChatNavbarMutation, ChatNavbarQuery } from '../../types'
 
-const name = 'ChatNavbar'
-
 const Style = styled.div `
   padding: 0;
   display: flex;
   flex-direction: row;
   margin-left: -20px;
 
-  .${name}-title {
+  .ChatNavbar-title {
     line-height: 56px;
   }
 
-  .${name}-back-button {
+  .ChatNavbar-back-button {
     color: var(--primary-text);
   }
 
-  .${name}-picture {
+  .ChatNavbar-picture {
     height: 40px;
     width: 40px;
     margin-top: 3px;
@@ -41,12 +39,12 @@ const Style = styled.div `
     border-radius: 50%;
   }
 
-  .${name}-rest {
+  .ChatNavbar-rest {
     flex: 1;
     justify-content: flex-end;
   }
 
-  .${name}-options-btn {
+  .ChatNavbar-options-btn {
     float: right;
     height: 100%;
     font-size: 1.2em;
@@ -54,7 +52,7 @@ const Style = styled.div `
     color: var(--primary-text);
   }
 
-  .${name}-options-item svg {
+  .ChatNavbar-options-item svg {
     margin-right: 10px;
     padding-left: 15px;
   }
@@ -116,13 +114,13 @@ export default ({ chatId, history }: ChatNavbarProps) => {
 
   return (
     <Style className={name}>
-      <Button className={`${name}-back-button`} onClick={navToChats}>
+      <Button className="ChatNavbar-back-button" onClick={navToChats}>
         <ArrowBackIcon />
       </Button>
-      <img className={`${name}-picture`} src={chat.picture || (chat.isGroup ? '/assets/default-group-pic.jpg' : '/assets/default-profile-pic.jpg')} />
-      <div className={`${name}-title`}>{chat.name}</div>
-      <div className={`${name}-rest`}>
-        <Button className={`${name}-options-btn`} onClick={setPopped.bind(null, true)}>
+      <img className="ChatNavbar-picture" src={chat.picture || (chat.isGroup ? '/assets/default-group-pic.jpg' : '/assets/default-profile-pic.jpg')} />
+      <div className="ChatNavbar-title">{chat.name}</div>
+      <div className="ChatNavbar-rest">
+        <Button className="ChatNavbar-options-btn" onClick={setPopped.bind(null, true)}>
           <MoreIcon />
         </Button>
       </div>
@@ -141,9 +139,9 @@ export default ({ chatId, history }: ChatNavbarProps) => {
         <Style style={{ marginLeft: '-15px' }}>
           <List>
             {chat.isGroup && (
-              <ListItem className={`${name}-options-item`} button onClick={navToGroupDetails}><InfoIcon />Details</ListItem>
+              <ListItem className="ChatNavbar-options-item" button onClick={navToGroupDetails}><InfoIcon />Details</ListItem>
             )}
-            <ListItem className={`${name}-options-item`} button onClick={handleRemoveChat}><DeleteIcon />Delete</ListItem>
+            <ListItem className="ChatNavbar-options-item" button onClick={handleRemoveChat}><DeleteIcon />Delete</ListItem>
           </List>
         </Style>
       </Popover>

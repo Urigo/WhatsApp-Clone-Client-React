@@ -9,32 +9,35 @@ import * as ReactDOM from 'react-dom'
 import styled from 'styled-components'
 import * as fragments from '../../fragments'
 import { useSubscription } from '../../polyfills/react-apollo-hooks'
-import { ChatsListQuery, ChatsListSubscription } from '../../types'
-
-const name = 'ChatsList'
+import {
+  ChatsListQuery,
+  MessageAddedToChatsList,
+  ChatAddedToChatsList,
+  ChatUpdatedInChatsList,
+} from '../../types'
 
 const Style = styled.div `
   height: calc(100% - 56px);
   overflow-y: overlay;
 
-  .${name}-chats-list {
+  .ChatsList-chats-list {
     padding: 0;
   }
 
-  .${name}-chat-item {
+  .ChatsList-chat-item {
     height: 76px;
     padding: 0 15px;
     display: flex;
   }
 
-  .${name}-profile-pic {
+  .ChatsList-profile-pic {
     height: 50px;
     width: 50px;
     object-fit: cover;
     border-radius: 50%;
   }
 
-  .${name}-info {
+  .ChatsList-info {
     width: calc(100% - 60px);
     height: calc(100% - 30px);
     padding: 15px 0;
@@ -43,11 +46,11 @@ const Style = styled.div `
     position: relative;
   }
 
-  .${name}-name {
+  .ChatsList-name {
     margin-top: 5px;
   }
 
-  .${name}-last-message {
+  .ChatsList-last-message {
     color: gray;
     font-size: 15px;
     margin-top: 5px;
@@ -56,7 +59,7 @@ const Style = styled.div `
     white-space: nowrap;
   }
 
-  .${name}-timestamp {
+  .ChatsList-timestamp {
     position: absolute;
     color: gray;
     top: 20px;
@@ -73,62 +76,73 @@ const query = gql `
         ...Message
       }
     }
-    ${fragments.chat}
-    ${fragments.message}
-  }
-`
-
-const subscription = gql `
-  subscription ChatsListSubscription($chatsIds: [ID!]!) {
-    messageAdded(chatsIds: $chatsIds) {
-      ...Message
-    }
-    chatAdded {
-      ...Chat
-    }
-    chatRemoved
   }
   ${fragments.chat}
   ${fragments.message}
 `
+
+const subscriptions = {
+  messageAdded: gql `
+    subscription MessageAddedToChatsList($chatsIds: [ID!]!) {
+      messageAdded(chatsIds: $chatsIds) {
+        ...Message
+      }
+    }
+    ${fragments.message}
+  `,
+  chatAdded: gql `
+    subscription ChatAddedToChatsList {
+      chatAdded {
+        ...Chat
+      }
+    }
+    ${fragments.chat}
+  `,
+  chatUpdated: gql `
+    subscription ChatUpdatedInChatsList {
+      chatInfoChanged {
+        ...Chat
+      }
+    }
+    ${fragments.chat}
+  `
+}
 
 interface ChatsListProps {
   history: History
 }
 
 export default ({ history }: ChatsListProps) => {
-  const { data: { chats } } = useQuery<ChatsListQuery.Query, ChatsListQuery.Variables>(query)
+  const { data: { chats } } = useQuery<ChatsListQuery.Query>(query)
   const chatsIds = chats.map(chat => chat.id)
 
-  useSubscription<ChatsListSubscription.Subscription, ChatsListSubscription.Variables>(subscription, {
-    variables: { chatsIds },
-    onSubscriptionData: ({ client, subscriptionData: { messageAdded, chatAdded, chatRemoved } }) => {
-      // Update last message
-      if (messageAdded) {
-        client.writeFragment({
-          id: messageAdded.id,
-          fragment: fragments.message,
-          data: messageAdded,
-        })
-      }
+  useSubscription<MessageAddedToChatsList.Subscription>(subscriptions.messageAdded, {
+    onSubscriptionData: ({ client, subscriptionData: { messageAdded } }) => {
+      client.writeFragment({
+        id: messageAdded.id,
+        fragment: fragments.chat,
+        data: messageAdded,
+      })
+    }
+  })
 
-      // Add to list
-      if (chatAdded) {
-        client.writeFragment({
-          id: chatAdded.id,
-          fragment: fragments.chat,
-          data: chatAdded,
-        })
-      }
+  useSubscription<ChatAddedToChatsList.Subscription>(subscriptions.chatAdded, {
+    onSubscriptionData: ({ client, subscriptionData: { chatAdded } }) => {
+      client.writeFragment({
+        id: chatAdded.id,
+        fragment: fragments.chat,
+        data: chatAdded,
+      })
+    }
+  })
 
-      // Remove from list
-      if (chatRemoved) {
-        client.writeFragment({
-          id: chatRemoved,
-          fragment: fragments.chat,
-          data: null,
-        })
-      }
+  useSubscription<ChatUpdatedInChatsList.Subscription>(subscriptions.chatUpdated, {
+    onSubscriptionData: ({ client, subscriptionData: { chatInfoChanged } }) => {
+      client.writeFragment({
+        id: chatInfoChanged.id,
+        fragment: fragments.chat,
+        data: chatInfoChanged,
+      })
     }
   })
 
@@ -141,20 +155,20 @@ export default ({ history }: ChatsListProps) => {
   }
 
   return (
-    <Style className={name}>
-      <List className={`${name}-chats-list`}>
+    <Style className="ChatsList">
+      <List className="ChatsList-chats-list">
         {chats && chats.map(chat => {
           const recentMessage = pluckRecentMessage(chat)
 
           return (
-            <ListItem key={chat.id} className={`${name}-chat-item`} button onClick={navToChat.bind(null, chat.id)}>
-              <img className={`${name}-profile-pic`} src={chat.picture || (chat.isGroup ? '/assets/default-group-pic.jpg' : '/assets/default-profile-pic.jpg')} />
-              <div className={`${name}-info`}>
-                <div className={`${name}-name`}>{chat.name}</div>
+            <ListItem key={chat.id} className="ChatsList-chat-item" button onClick={navToChat.bind(null, chat.id)}>
+              <img className="ChatsList-profile-pic" src={chat.picture || (chat.isGroup ? '/assets/default-group-pic.jpg' : '/assets/default-profile-pic.jpg')} />
+              <div className="ChatsList-info">
+                <div className="ChatsList-name">{chat.name}</div>
                 {recentMessage && (
                   <React.Fragment>
-                    <div className={`${name}-last-message`}>{recentMessage.content}</div>
-                    <div className={`${name}-timestamp`}>{moment(recentMessage.createdAt).format('HH:mm')}</div>
+                    <div className="ChatsList-last-message">{recentMessage.content}</div>
+                    <div className="ChatsList-timestamp">{moment(recentMessage.createdAt).format('HH:mm')}</div>
                   </React.Fragment>
                 )}
               </div>

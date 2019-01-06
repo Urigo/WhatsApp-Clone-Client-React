@@ -6,19 +6,17 @@ import AnimatedSwitch from '../AnimatedSwitch'
 import SignInForm from './SignInForm'
 import SignUpForm from './SignUpForm'
 
-const name = 'AuthScreen'
-
 const Style = styled.div `
   background: radial-gradient(rgb(34,65,67), rgb(17,48,50)), url(/assets/chat-background.jpg) no-repeat;
   background-size: cover;
   background-blend-mode: multiply;
   color: white;
 
-  .${name}-intro {
+  .AuthScreen-intro {
     height: 265px;
   }
 
-  .${name}-icon {
+  .AuthScreen-icon {
     width: 125px;
     height: auto;
     margin-left: auto;
@@ -27,29 +25,29 @@ const Style = styled.div `
     display: block;
   }
 
-  .${name}-title {
+  .AuthScreen-title {
     width: 100%;
     text-align: center;
     color: white;
   }
 
-  .${name}-text-field {
+  .AuthScreen-text-field {
     width: 100%;
     position: relative;
   }
 
-  .${name}-text-field > div::before {
+  .AuthScreen-text-field > div::before {
     border-color: white !important;
   }
 
-  .${name}-error {
+  .AuthScreen-error {
     position: absolute;
     color: red;
     font-size: 15px;
     margin-top: 20px;
   }
 
-  .${name}-alternative {
+  .AuthScreen-alternative {
     position: absolute;
     bottom: 10px;
     left: 10px;
@@ -106,10 +104,10 @@ const Style = styled.div `
 `
 
 export default ({ history, location }: RouteComponentProps) => (
-  <Style className={`${name} Screen`}>
-    <div className={`${name}-intro`}>
-      <img src="assets/whatsapp-icon.png" className={`${name}-icon`} />
-      <h2 className={`${name}-title`}>WhatsApp Clone</h2>
+  <Style className="AuthScreen Screen">
+    <div className="AuthScreen-intro">
+      <img src="assets/whatsapp-icon.png" className="AuthScreen-icon" />
+      <h2 className="AuthScreen-title">WhatsApp Clone</h2>
     </div>
     <AnimatedSwitch>
       <Route exact path="/sign-in" component={SignInForm} />

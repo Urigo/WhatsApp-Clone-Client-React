@@ -3,13 +3,7 @@ import TextField from '@material-ui/core/TextField'
 import { History } from 'history'
 import * as React from 'react'
 import { useState } from 'react'
-import styled from 'styled-components'
 import { signIn } from '../../services/auth-service'
-
-const name = 'SignInForm'
-
-const Style = styled.div `
-`
 
 interface SignInFormProps {
   history: History;
@@ -48,7 +42,7 @@ export default ({ history }: SignInFormProps) => {
   }
 
   return (
-    <Style className={`${name} Screen`}>
+    <div className="SignInForm Screen">
       <form>
         <legend>Sign in</legend>
         <div style={{ width: '100%' }}>
@@ -74,6 +68,6 @@ export default ({ history }: SignInFormProps) => {
         <div className="AuthScreen-error">{error}</div>
         <span className="AuthScreen-alternative">Don't have an account yet? <a onClick={handleSignUp}>Sign up!</a></span>
       </form>
-    </Style>
+    </div>
   )
 }

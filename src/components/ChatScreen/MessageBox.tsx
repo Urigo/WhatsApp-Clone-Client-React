@@ -7,9 +7,8 @@ import { useQuery, useMutation } from 'react-apollo-hooks'
 import styled from 'styled-components'
 import { time as uniqid } from 'uniqid'
 import * as fragments from '../../fragments'
-import { MessageBoxQuery, MessageBoxMutation } from '../../types'
-
-const name = 'MessageBox'
+import { useMe } from '../../services/auth-service'
+import { MessageBoxMutation } from '../../types'
 
 const Style = styled.div `
   display: flex;
@@ -17,7 +16,7 @@ const Style = styled.div `
   padding: 5px;
   width: calc(100% - 10px);
 
-  .${name}-input {
+  .MessageBox-input {
     width: calc(100% - 50px);
     border: none;
     border-radius: 999px;
@@ -31,7 +30,7 @@ const Style = styled.div `
     line-height: 45px;
   }
 
-  .${name}-button {
+  .MessageBox-button {
     min-width: 50px;
     width: 50px;
     border-radius: 999px;
@@ -44,15 +43,6 @@ const Style = styled.div `
     svg {
       margin-left: -3px;
     }
-  }
-`
-
-const query = gql `
-  query MessageBoxQuery {
-    me {
-      ...User
-    }
-    ${fragments.user}
   }
 `
 
@@ -71,7 +61,7 @@ interface MessageBoxProps {
 
 export default ({ chatId }: MessageBoxProps) => {
   const [message, setMessage] = useState('')
-  const { data: { me } } = useQuery<MessageBoxQuery.Query, MessageBoxQuery.Variables>(query)
+  const { data: { me } } = useMe()
 
   const addMessage = useMutation<MessageBoxMutation.Mutation, MessageBoxMutation.Variables>(mutation, {
     variables: {
@@ -126,9 +116,9 @@ export default ({ chatId }: MessageBoxProps) => {
   }
 
   return (
-    <Style className={name}>
-      <input className={`${name}-input`} type="text" placeholder="Type a message" value={message} onKeyPress={onKeyPress} onChange={onChange} />
-      <Button variant="contained" color="primary" className={`${name}-button`} onClick={submitMessage}>
+    <Style className="MessageBox">
+      <input className="MessageBox-input" type="text" placeholder="Type a message" value={message} onKeyPress={onKeyPress} onChange={onChange} />
+      <Button variant="contained" color="primary" className="MessageBox-button" onClick={submitMessage}>
         <SendIcon />
       </Button>
     </Style>

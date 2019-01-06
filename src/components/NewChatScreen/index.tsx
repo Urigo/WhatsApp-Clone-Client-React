@@ -11,14 +11,12 @@ import UsersList from '../UsersList'
 import NewChatNavbar from './NewChatNavbar'
 import NewGroupButton from './NewGroupButton'
 
-const name = 'NewChatScreen'
-
 const Style = styled.div `
   .UsersList {
     height: calc(100% - 56px);
   }
 
-  .${name}-users-list {
+  .NewChatScreen-users-list {
     height: calc(100% - 56px);
     overflow-y: overlay;
   }
@@ -29,7 +27,7 @@ const mutation = gql `
     addChat(recipientId: $recipientId) {
       ...Chat
       messages {
-        ...Messages
+        ...Message
       }
     }
   }
@@ -38,7 +36,15 @@ const mutation = gql `
 `
 
 export default ({ history }: RouteComponentProps) => {
-  const addChat = useMutation<NewChatScreenMutation.Munation, NewChatScreenMutation.Variables>(mutation)
+  const addChat = useMutation<NewChatScreenMutation.Mutation, NewChatScreenMutation.Variables>(mutation, {
+    update: (client, { data: { addChat } }) => {
+      client.writeFragment({
+        id: addChat.id,
+        fragment: fragments.chat,
+        data: addChat,
+      })
+    }
+  })
 
   const onUserPick = (user) => {
     addChat({
@@ -51,11 +57,11 @@ export default ({ history }: RouteComponentProps) => {
   }
 
   return (
-    <Style className={`${name} Screen`}>
+    <Style className="NewChatScreen Screen">
       <Navbar>
         <NewChatNavbar history={history} />
       </Navbar>
-      <div className={`${name}-users-list`}>
+      <div className="NewChatScreen-users-list">
         <NewGroupButton history={history} />
         <Suspense fallback={null}>
           <UsersList onUserPick={onUserPick} />

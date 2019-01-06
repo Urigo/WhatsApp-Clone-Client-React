@@ -1,12 +1,14 @@
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import CheckCircle from '@material-ui/icons/CheckCircle'
+import gql from 'graphql-tag'
 import * as React from 'react'
 import { useState } from 'react'
 import { useQuery } from 'react-apollo-hooks'
 import styled from 'styled-components'
+import { useSubscription } from '../polyfills/react-apollo-hooks'
 import * as fragments from '../fragments'
-import { UsersListQuery, User } from '../types'
+import { UsersListQuery, UsersListSubscription, User } from '../types'
 
 const name = 'UsersList'
 
@@ -62,8 +64,8 @@ const subscription = gql `
 
 interface UsersListProps {
   selectable?: boolean;
-  onSelectionChange?: (users: GetUsers.Users[]) => void;
-  onUserPick?: (user: GetUsers.Users) => void;
+  onSelectionChange?: (users: User.Fragment[]) => void;
+  onUserPick?: (user: User.Fragment) => void;
 }
 
 export default (props: UsersListProps) => {
@@ -75,12 +77,12 @@ export default (props: UsersListProps) => {
   }
 
   const [selectedUsers, setSelectedUsers] = useState([])
-  const { data: { users } } = useQuery<UsersListQuery>(query)
+  const { data: { users } } = useQuery<UsersListQuery.Query>(query)
 
-  useSubscription(subscription, {
+  useSubscription<UsersListSubscription.Subscription>(subscription, {
     onSubscriptionData: ({ client, subscriptionData: { userInfoChanged } }) => {
       client.writeFragment({
-        id: userInfoChanged,
+        id: userInfoChanged.id,
         fragment: fragments.user,
         data: userInfoChanged,
       })

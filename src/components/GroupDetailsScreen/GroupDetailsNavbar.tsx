@@ -12,11 +12,11 @@ const Style = styled.div `
   flex-direction: row;
   margin-left: -20px;
 
-  .${name}-title {
+  .GroupDetailsNavbar-title {
     line-height: 56px;
   }
 
-  .${name}-back-button {
+  .GroupDetailsNavbar-back-button {
     color: var(--primary-text);
   }
 `
@@ -38,10 +38,10 @@ export default ({ history, chatId }: GroupDetailsNavbarProps) => {
 
   return (
     <Style className={name}>
-      <Button className={`${name}-back-button`} onClick={navToNewGroup}>
+      <Button className="GroupDetailsNavbar-back-button" onClick={navToNewGroup}>
         <ArrowBackIcon />
       </Button>
-      <div className={`${name}-title`}>Group Details</div>
+      <div className="GroupDetailsNavbar-title">Group Details</div>
     </Style>
   )
 }

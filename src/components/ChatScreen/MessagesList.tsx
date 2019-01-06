@@ -9,8 +9,6 @@ import * as fragments from '../../fragments'
 import { useSubscription } from '../../polyfills/react-apollo-hooks'
 import { MessagesListQuery, MessagesListSubscription } from '../../types'
 
-const name = 'MessagesList'
-
 const Style = styled.div `
   display: block;
   height: 100%;
@@ -18,7 +16,7 @@ const Style = styled.div `
   overflow-y: overlay;
   padding: 0 15px;
 
-  .${name}-message {
+  .MessagesList-message {
     display: inline-block;
     position: relative;
     max-width: 100%;
@@ -35,7 +33,7 @@ const Style = styled.div `
     }
   }
 
-  .${name}-message-mine {
+  .MessagesList-message-mine {
     float: right;
     background-color: #DCF8C6;
 
@@ -45,7 +43,7 @@ const Style = styled.div `
     }
   }
 
-  .${name}-message-others {
+  .MessagesList-message-others {
     float: left;
     background-color: #FFF;
 
@@ -55,7 +53,7 @@ const Style = styled.div `
     }
   }
 
-  .${name}-message-others::before, .${name}-message-mine::before {
+  .MessagesList-message-others::before, .MessagesList-message-mine::before {
     content: "";
     position: absolute;
     bottom: 3px;
@@ -66,7 +64,7 @@ const Style = styled.div `
     background-size: contain;
   }
 
-  .${name}-message-contents {
+  .MessagesList-message-contents {
     padding: 5px 7px;
     word-wrap: break-word;
 
@@ -76,7 +74,7 @@ const Style = styled.div `
     }
   }
 
-  .${name}-message-timestamp {
+  .MessagesList-message-timestamp {
     position: absolute;
     bottom: 2px;
     right: 7px;
@@ -141,9 +139,9 @@ export default ({ chatId }: MessagesListProps) => {
   return (
     <Style className={name} ref={selfRef}>
       {messages && messages.map((message) => (
-        <div key={message.id} className={`${name}-message ${message.ownership ? `${name}-message-mine` : `${name}-message-others`}`}>
-          <div className={`${name}-message-contents`}>{message.content}</div>
-          <span className={`${name}-message-timestamp`}>{moment(message.createdAt).format('HH:mm')}</span>
+        <div key={message.id} className={`MessagesList-message ${message.ownership ? 'MessagesList-message-mine' : 'MessagesList-message-others'}`}>
+          <div className="MessagesList-message-contents">{message.content}</div>
+          <span className="MessagesList-message-timestamp">{moment(message.createdAt).format('HH:mm')}</span>
         </div>
       ))}
     </Style>

@@ -1,19 +1,13 @@
 import * as React from 'react'
 import { Suspense } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
-import styled from 'styled-components'
 import Navbar from '../Navbar'
 import AddChatButton from './AddChatButton'
 import ChatsList from './ChatsList'
 import ChatsNavbar from './ChatsNavbar'
 
-const name = 'ChatsListScreen'
-
-const Style = styled.div `
-`
-
 export default ({ history }: RouteComponentProps) => (
-  <Style className={`${name} Screen`}>
+  <div className="ChatsListScreen Screen">
     <Navbar>
       <ChatsNavbar history={history} />
     </Navbar>
@@ -21,5 +15,5 @@ export default ({ history }: RouteComponentProps) => (
       <ChatsList history={history} />
     </Suspense>
     <AddChatButton history={history} />
-  </Style>
+  </div>
 )

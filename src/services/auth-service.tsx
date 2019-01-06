@@ -1,6 +1,19 @@
+import gql from 'graphql-tag'
 import * as React from 'react'
+import { useQuery } from 'react-apollo-hooks'
 import { Redirect } from 'react-router-dom'
 import store from '../apollo-client'
+import * as fragments from '../fragments'
+import { Me } from '../types'
+
+const meQuery = gql `
+  query Me {
+    me {
+      ...User
+    }
+  }
+  ${fragments.user}
+`
 
 export const withAuth = (Component: React.ComponentType) => {
   return (props) => getAuthHeader() ? (
@@ -8,6 +21,10 @@ export const withAuth = (Component: React.ComponentType) => {
   ) : (
     <Redirect to="/sign-in" />
   )
+}
+
+export const useMe = () => {
+  return useQuery<Me.Query>(meQuery)
 }
 
 export const storeAuthHeader = (auth: string) => {

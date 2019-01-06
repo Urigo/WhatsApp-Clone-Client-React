@@ -5,8 +5,6 @@ import * as React from 'react'
 import styled from 'styled-components'
 import { User } from '../../types'
 
-const name = 'CreateGroupButton'
-
 const Style = styled.div `
   position: fixed;
   right: 10px;
@@ -35,7 +33,7 @@ export default ({ history, users }: CreateGroupButtonProps) => {
   }
 
   return (
-    <Style className={name}>
+    <Style className="CreateGroupButton">
       <Button variant="contained" color="secondary" onClick={onClick}>
         <AddIcon />
       </Button>

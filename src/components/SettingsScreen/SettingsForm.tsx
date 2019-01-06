@@ -7,15 +7,14 @@ import { useQuery, useMutation } from 'react-apollo-hooks'
 import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
 import * as fragments from '../../fragments'
+import { useMe } from '../../services/auth-service'
 import { pickPicture, uploadProfilePicture } from '../../services/picture-service'
+import { SettingsFormMutation } from '../../types'
 import Navbar from '../Navbar'
-import { SettingsFormQuery, SettingsFormMutation } from '../types'
 import SettingsNavbar from './SettingsNavbar'
 
-const name = 'SettingsForm'
-
 const Style = styled.div `
-  .${name}-picture {
+  .SettingsForm-picture {
     max-width: 300px;
     display: block;
     margin: auto;
@@ -39,7 +38,7 @@ const Style = styled.div `
     }
   }
 
-  .${name}-name-input {
+  .SettingsForm-name-input {
     display: block;
     margin: auto;
     width: calc(100% - 50px);
@@ -49,15 +48,6 @@ const Style = styled.div `
       width: 100%;
     }
   }
-`
-
-const query = gql `
-  query SettingsFormQuery {
-    me {
-      ...User
-    }
-  }
-  ${fragments.user}
 `
 
 const mutation = gql `
@@ -70,7 +60,7 @@ const mutation = gql `
 `
 
 export default ({ history }: RouteComponentProps) => {
-  const { data: { me } } = useQuery<SettingsFormQuery.Query>(query)
+  const { data: { me } } = useMe()
   const changeUserInfo = useMutation<SettingsFormMutation.Mutation, SettingsFormMutation.Variables>(mutation)
   const [myName, setMyName] = useState(me.name)
   const [myPicture, setMyPicture] = useState(me.picture)
@@ -101,12 +91,12 @@ export default ({ history }: RouteComponentProps) => {
 
   return (
     <Style className={name}>
-      <div className={`${name}-picture`}>
+      <div className="SettingsForm-picture">
         <img src={myPicture || '/assets/default-profile-pic.jpg'} />
         <EditIcon onClick={updatePicture} />
       </div>
       <TextField
-        className={`${name}-name-input`}
+        className="SettingsForm-name-input"
         label="Name"
         value={myName}
         onChange={updateNameInput}

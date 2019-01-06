@@ -8,39 +8,37 @@ import { Redirect } from 'react-router-dom'
 import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
 import * as fragments from '../../fragments'
-import { useGetChat, useGetMe, useChangeChatInfo } from '../../graphql-hooks'
+import { useMe } from '../../services/auth-service'
 import { pickPicture, uploadProfilePicture } from '../../services/picture-service'
 import { GroupDetailsScreenQuery, GroupDetailsScreenMutation, User } from '../../types'
 import Navbar from '../Navbar'
 import CompleteGroupButton from './CompleteGroupButton'
 import GroupDetailsNavbar from './GroupDetailsNavbar'
 
-const name = 'GroupDetailsScreen'
-
 const Style = styled.div `
-  .${name}-group-name {
+  .GroupDetailsScreen-group-name {
     width: calc(100% - 30px);
     margin: 15px;
   }
 
-  .${name}-participants-title {
+  .GroupDetailsScreen-participants-title {
     margin-top: 10px;
     margin-left: 15px;
   }
 
-  .${name}-participants-list {
+  .GroupDetailsScreen-participants-list {
     display: flex;
     overflow: overlay;
     padding: 0;
   }
 
-  .${name}-participant-item {
+  .GroupDetailsScreen-participant-item {
     padding: 10px;
     flex-flow: row wrap;
     text-align: center;
   }
 
-  .${name}-participant-picture {
+  .GroupDetailsScreen-participant-picture {
     flex: 0 1 50px;
     height: 50px;
     width: 50px;
@@ -51,18 +49,18 @@ const Style = styled.div `
     margin-right: auto;
   }
 
-  .${name}-group-info {
+  .GroupDetailsScreen-group-info {
     display: flex;
     flex-direction: row;
     align-items: center;
   }
 
-  .${name}-participant-name {
+  .GroupDetailsScreen-participant-name {
     line-height: 10px;
     font-size: 14px;
   }
 
-  .${name}-group-picture {
+  .GroupDetailsScreen-group-picture {
     width: 50px;
     flex-basis: 50px;
     border-radius: 50%;
@@ -73,16 +71,12 @@ const Style = styled.div `
 `
 
 const query = gql `
-  query GroupDetailsScreenQuery($withMe: Boolean!, $withChat: Boolean!, $chatId: ID) {
-    me @include(if: $withMe) {
-      ...User
-    }
-    chat(chatId: $chatId) @include(if: $withChat) {
+  query GroupDetailsScreenQuery($chatId: ID!) {
+    chat(chatId: $chatId) {
       ...Chat
     }
   }
   ${fragments.chat}
-  ${fragments.user}
 `
 
 const mutation = gql `
@@ -94,16 +88,6 @@ const mutation = gql `
   ${fragments.chat}
 `
 
-const subscription = gql `
-  subscription GroupDetailsScreenSubscription($chatId: ID!) {
-    chatInfoChanged(chatId: $chatId) {
-      id
-      name
-      picture
-    }
-  }
-`
-
 export default ({ location, match, history }: RouteComponentProps) => {
   const chatId = match.params.chatId || ''
 
@@ -113,17 +97,23 @@ export default ({ location, match, history }: RouteComponentProps) => {
   let ownerId: string
   let users: User.Fragment[]
   let participants: User.Fragment[]
-  let changeChatInfo: (localOptions?: MutationHookOptions<ChangeChatInfo.Mutation, ChangeChatInfo.Variables>) => any;
+  let changeChatInfo: (localOptions?: MutationHookOptions<GroupDetailsScreenMutation.Mutation, GroupDetailsScreenMutation.Variables>) => any;
 
-  const { data: { me } } = useQuery<GroupDetailsScreenQuery.Query, GroupDetailsScreenQuery.Variables>(query, {
-    variables: { withMe: true }
-  })
+  const { data: { me } } = useMe()
 
   if (chatId) {
     const chat = useQuery<GroupDetailsScreenQuery.Query, GroupDetailsScreenQuery.Variables>(query, {
-      variables: { withChat: true, chatId }
+      variables: { chatId }
     }).data.chat
-    changeChatInfo = useMutation<GroupDetailsScreenMutation.Mutation, GroupDetailsScreenMutation.Variables>(mutation)
+    changeChatInfo = useMutation<GroupDetailsScreenMutation.Mutation, GroupDetailsScreenMutation.Variables>(mutation, {
+      update: (client, { data: { changeChatInfo } }) => {
+        client.writeFragment({
+          id: changeChatInfo.id,
+          fragment: fragments.chat,
+          data: changeChatInfo,
+        })
+      }
+    })
     myId = me.id
     chatName = chat.name
     chatPicture = chat.picture
@@ -189,20 +179,20 @@ export default ({ location, match, history }: RouteComponentProps) => {
   }
 
   return (
-    <Style className={`${name} Screen`}>
+    <Style className="GroupDetailsScreen Screen">
       <Navbar>
         <GroupDetailsNavbar chatId={chatId} history={history} />
       </Navbar>
-      <div className={`${name}-group-info`}>
+      <div className="GroupDetailsScreen-group-info">
         <img
-          className={`${name}-group-picture`}
+          className="GroupDetailsScreen-group-picture"
           src={groupPicture || '/assets/default-group-pic.jpg'}
           onClick={updateChatPicture}
         />
         <TextField
           label="Group name"
           placeholder="Enter group name"
-          className={`${name}-group-name`}
+          className="GroupDetailsScreen-group-name"
           value={groupName}
           onChange={onGroupNameChange}
           onBlur={updateChatName}
@@ -210,12 +200,12 @@ export default ({ location, match, history }: RouteComponentProps) => {
           autoFocus={true}
         />
       </div>
-      <div className={`${name}-participants-title`}>Participants: {participants.length}</div>
-      <ul className={`${name}-participants-list`}>
+      <div className="GroupDetailsScreen-participants-title">Participants: {participants.length}</div>
+      <ul className="GroupDetailsScreen-participants-list">
         {participants.map(participant => (
-          <div key={participant.id} className={`${name}-participant-item`}>
-            <img src={participant.picture || '/assets/default-profile-pic.jpg'} className={`${name}-participant-picture`} />
-            <span className={`${name}-participant-name`}>{participant.name}</span>
+          <div key={participant.id} className="GroupDetailsScreen-participant-item">
+            <img src={participant.picture || '/assets/default-profile-pic.jpg'} className="GroupDetailsScreen-participant-picture" />
+            <span className="GroupDetailsScreen-participant-name">{participant.name}</span>
           </div>
         ))}
       </ul>

@@ -7,10 +7,8 @@ import ChatNavbar from './ChatNavbar'
 import MessageBox from './MessageBox'
 import MessagesList from './MessagesList'
 
-const name = 'ChatScreen'
-
 const Style = styled.div `
-  .${name}-body {
+  .ChatScreen-body {
     position: relative;
     background: url(/assets/chat-background.jpg);
     width: 100%;
@@ -39,13 +37,13 @@ export default ({ match, history }: RouteComponentProps) => {
   const chatId = match.params.chatId
 
   return (
-    <Style className={`${name} Screen`}>
+    <Style className="ChatScreen Screen">
       <Navbar>
         <Suspense fallback={null}>
           <ChatNavbar chatId={chatId} history={history} />
         </Suspense>
       </Navbar>
-      <div className={`${name}-body`}>
+      <div className="ChatScreen-body">
         <Suspense fallback={null}>
           <MessagesList chatId={chatId} />
         </Suspense>

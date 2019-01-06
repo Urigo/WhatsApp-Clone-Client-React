@@ -9,8 +9,6 @@ import * as fragments from '../../fragments'
 import { useSubscription } from '../../polyfills/react-apollo-hooks'
 import { User, CompleteGroupButtonMutation, CompleteGroupButtonSubscription } from '../../types'
 
-const name = 'CompleteGroupButton'
-
 const Style = styled.div `
   position: fixed;
   right: 10px;
@@ -83,7 +81,7 @@ export default ({ history, users, groupName }: CompleteGroupButtonProps) => {
   }
 
   return (
-    <Style className={name}>
+    <Style className="CompleteGroupButton">
       <Button variant="contained" color="secondary" onClick={onClick}>
         <ArrowRightIcon />
       </Button>
