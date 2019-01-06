@@ -1,10 +1,13 @@
+import gql from 'graphql-tag'
 import * as React from 'react'
 import { Suspense } from 'react'
+import { useMutation } from 'react-apollo-hooks'
 import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
+import * as fragments from '../../fragments'
+import { NewChatScreenMutation } from '../../types'
 import Navbar from '../Navbar'
 import UsersList from '../UsersList'
-import { useAddChat } from '../../graphql-hooks'
 import NewChatNavbar from './NewChatNavbar'
 import NewGroupButton from './NewGroupButton'
 
@@ -21,8 +24,21 @@ const Style = styled.div `
   }
 `
 
+const mutation = gql `
+  mutation NewChatScreenMutation($recipientId: ID!) {
+    addChat(recipientId: $recipientId) {
+      ...Chat
+      messages {
+        ...Messages
+      }
+    }
+  }
+  ${fragments.chat}
+  ${fragments.message}
+`
+
 export default ({ history }: RouteComponentProps) => {
-  const addChat = useAddChat()
+  const addChat = useMutation<NewChatScreenMutation.Munation, NewChatScreenMutation.Variables>(mutation)
 
   const onUserPick = (user) => {
     addChat({
