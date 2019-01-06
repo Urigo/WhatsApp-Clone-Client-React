@@ -89,7 +89,14 @@ export default ({ chatId, history }: ChatNavbarProps) => {
     variables: { chatId }
   })
   const removeChat = useMutation<ChatNavbarMutation.Mutation, ChatNavbarMutation.Variables>(mutation, {
-    variables: { chatId }
+    variables: { chatId },
+    update: (client, { data: { removeChat } }) => {
+      client.writeFragment({
+        id: removeChat,
+        fragment: fragments.chat,
+        data: null,
+      })
+    }
   })
   const [popped, setPopped] = useState(false)
 

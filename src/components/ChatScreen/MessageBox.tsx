@@ -7,8 +7,7 @@ import { useQuery, useMutation } from 'react-apollo-hooks'
 import styled from 'styled-components'
 import { time as uniqid } from 'uniqid'
 import * as fragments from '../../fragments'
-import { useSubscription } from '../../polyfills/react-apollo-hooks'
-import { MessageBoxQuery, MessageBoxMutation, MessageBoxSubscription } from '../../types'
+import { MessageBoxQuery, MessageBoxMutation } from '../../types'
 
 const name = 'MessageBox'
 
@@ -66,15 +65,6 @@ const mutation = gql `
   ${fragments.message}
 `
 
-const subscription = gql `
-  subscription MessageBoxSubscription($chatsIds: [ID!]!) {
-    messageAdded(chatsIds: $chatsIds) {
-      ...Message
-    }
-  }
-  ${fragments.message}
-`
-
 interface MessageBoxProps {
   chatId: string;
 }
@@ -114,17 +104,6 @@ export default ({ chatId }: MessageBoxProps) => {
         id: addMessage.id,
         fragment: fragments.message,
         data: addMessage,
-      })
-    },
-  })
-
-  useSubscription<MessageBoxSubscription.Subscription, MessageBoxSubscription.Variables>(subscription, {
-    variables: { chatsIds: [chatId] },
-    onSubscriptionData: ({ client, subscriptionData: { messageAdded } }) => {
-      client.writeFragment({
-        id: messageAdded.id,
-        fragment: fragments.message,
-        data: messageAdded,
       })
     },
   })

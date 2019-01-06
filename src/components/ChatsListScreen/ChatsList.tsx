@@ -83,7 +83,12 @@ const subscription = gql `
     messageAdded(chatsIds: $chatsIds) {
       ...Message
     }
+    chatAdded {
+      ...Chat
+    }
+    chatRemoved
   }
+  ${fragments.chat}
   ${fragments.message}
 `
 
@@ -97,12 +102,33 @@ export default ({ history }: ChatsListProps) => {
 
   useSubscription<ChatsListSubscription.Subscription, ChatsListSubscription.Variables>(subscription, {
     variables: { chatsIds },
-    onSubscriptionData: ({ client, subscriptionData: { messageAdded } }) => {
-      client.writeFragment({
-        id: messageAdded.id,
-        fragment: fragments.message,
-        data: messageAdded,
-      })
+    onSubscriptionData: ({ client, subscriptionData: { messageAdded, chatAdded, chatRemoved } }) => {
+      // Update last message
+      if (messageAdded) {
+        client.writeFragment({
+          id: messageAdded.id,
+          fragment: fragments.message,
+          data: messageAdded,
+        })
+      }
+
+      // Add to list
+      if (chatAdded) {
+        client.writeFragment({
+          id: chatAdded.id,
+          fragment: fragments.chat,
+          data: chatAdded,
+        })
+      }
+
+      // Remove from list
+      if (chatRemoved) {
+        client.writeFragment({
+          id: chatRemoved,
+          fragment: fragments.chat,
+          data: null,
+        })
+      }
     }
   })
 

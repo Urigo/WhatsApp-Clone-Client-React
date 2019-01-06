@@ -6,7 +6,8 @@ import { useQuery, useMutation } from 'react-apollo-hooks'
 import * as ReactDOM from 'react-dom'
 import styled from 'styled-components'
 import * as fragments from '../../fragments'
-import { MessagesListQuery } from '../../types'
+import { useSubscription } from '../../polyfills/react-apollo-hooks'
+import { MessagesListQuery, MessagesListSubscription } from '../../types'
 
 const name = 'MessagesList'
 
@@ -97,6 +98,15 @@ const query = gql `
   ${fragments.message}
 `
 
+const subscription = gql `
+  subscription MessagesListSubscription($chatsIds: [ID!]!) {
+    messageAdded(chatsIds: $chatsIds) {
+      ...Message
+    }
+  }
+  ${fragments.message}
+`
+
 interface MessagesListProps {
   chatId: string;
 }
@@ -106,6 +116,17 @@ export default ({ chatId }: MessagesListProps) => {
     variables: { chatId }
   })
   const selfRef = useRef(null)
+
+  useSubscription<MessagesListSubscription.Subscription, MessagesListSubscription.Variables>(subscription, {
+    variables: { chatsIds: [chatId] },
+    onSubscriptionData: ({ client, subscriptionData: { messageAdded } }) => {
+      client.writeFragment({
+        id: messageAdded.id,
+        fragment: fragments.message,
+        data: messageAdded,
+      })
+    },
+  })
 
   const resetScrollTop = () => {
     if (!selfRef.current) return

@@ -1,13 +1,16 @@
 import TextField from '@material-ui/core/TextField'
+import gql from 'graphql-tag'
 import * as React from 'react'
 import { useState } from 'react'
 import { MutationHookOptions } from 'react-apollo-hooks'
+import { useQuery, useMutation } from 'react-apollo-hooks'
 import { Redirect } from 'react-router-dom'
 import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
+import * as fragments from '../../fragments'
 import { useGetChat, useGetMe, useChangeChatInfo } from '../../graphql-hooks'
 import { pickPicture, uploadProfilePicture } from '../../services/picture-service'
-import { GetUsers, ChangeChatInfo } from '../../types'
+import { GroupDetailsScreenQuery, GroupDetailsScreenMutation, User } from '../../types'
 import Navbar from '../Navbar'
 import CompleteGroupButton from './CompleteGroupButton'
 import GroupDetailsNavbar from './GroupDetailsNavbar'
@@ -69,6 +72,38 @@ const Style = styled.div `
   }
 `
 
+const query = gql `
+  query GroupDetailsScreenQuery($withMe: Boolean!, $withChat: Boolean!, $chatId: ID) {
+    me @include(if: $withMe) {
+      ...User
+    }
+    chat(chatId: $chatId) @include(if: $withChat) {
+      ...Chat
+    }
+  }
+  ${fragments.chat}
+  ${fragments.user}
+`
+
+const mutation = gql `
+  mutation GroupDetailsScreenMutation($chatId: ID!, $name: String, $picture: String) {
+    changeChatInfo(chatId: $chatId, name: $name, picture: $picture) {
+      ...Chat
+    }
+  }
+  ${fragments.chat}
+`
+
+const subscription = gql `
+  subscription GroupDetailsScreenSubscription($chatId: ID!) {
+    chatInfoChanged(chatId: $chatId) {
+      id
+      name
+      picture
+    }
+  }
+`
+
 export default ({ location, match, history }: RouteComponentProps) => {
   const chatId = match.params.chatId || ''
 
@@ -76,15 +111,19 @@ export default ({ location, match, history }: RouteComponentProps) => {
   let chatName: string
   let chatPicture: string
   let ownerId: string
-  let users: GetUsers.Users[]
-  let participants: GetUsers.Users[]
+  let users: User.Fragment[]
+  let participants: User.Fragment[]
   let changeChatInfo: (localOptions?: MutationHookOptions<ChangeChatInfo.Mutation, ChangeChatInfo.Variables>) => any;
 
-  const { data: { me } } = useGetMe()
+  const { data: { me } } = useQuery<GroupDetailsScreenQuery.Query, GroupDetailsScreenQuery.Variables>(query, {
+    variables: { withMe: true }
+  })
 
   if (chatId) {
-    const chat = useGetChat({ variables: { chatId } }).data.chat
-    changeChatInfo = useChangeChatInfo()
+    const chat = useQuery<GroupDetailsScreenQuery.Query, GroupDetailsScreenQuery.Variables>(query, {
+      variables: { withChat: true, chatId }
+    }).data.chat
+    changeChatInfo = useMutation<GroupDetailsScreenMutation.Mutation, GroupDetailsScreenMutation.Variables>(mutation)
     myId = me.id
     chatName = chat.name
     chatPicture = chat.picture
