@@ -28,6 +28,7 @@ export const useSubscriptions = () => {
       client.writeFragment({
         id: chatAdded.id,
         fragment: fragments.lightChat,
+        fragmentName: 'LightChat',
         data: chatAdded,
       })
 
@@ -72,6 +73,7 @@ export const useSubscriptions = () => {
         fullChat = client.readFragment<FullChat.Fragment>({
           id: messageAdded.chat.id,
           fragment: fragments.fullChat,
+          fragmentName: 'FullChat',
         })
       }
       catch (e) {
@@ -87,6 +89,7 @@ export const useSubscriptions = () => {
         client.writeFragment({
           id: fullChat.id,
           fragment: fragments.fullChat,
+          fragmentName: 'FullChat',
           data: fullChat,
         })
       }
@@ -96,6 +99,7 @@ export const useSubscriptions = () => {
         lightChat = client.readFragment<LightChat.Fragment>({
           id: messageAdded.chat.id,
           fragment: fragments.lightChat,
+          fragmentName: 'LightChat',
         })
       }
       catch (e) {
@@ -108,6 +112,7 @@ export const useSubscriptions = () => {
         client.writeFragment({
           id: lightChat.id,
           fragment: fragments.lightChat,
+          fragmentName: 'LightChat',
           data: lightChat,
         })
       }
