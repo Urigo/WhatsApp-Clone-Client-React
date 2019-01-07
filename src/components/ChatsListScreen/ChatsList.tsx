@@ -7,14 +7,9 @@ import * as React from 'react'
 import { useQuery } from 'react-apollo-hooks'
 import * as ReactDOM from 'react-dom'
 import styled from 'styled-components'
-import * as fragments from '../../fragments'
+import * as fragments from '../../graphql/fragments'
 import { useSubscription } from '../../polyfills/react-apollo-hooks'
-import {
-  ChatsListQuery,
-  MessageAddedToChatsList,
-  ChatAddedToChatsList,
-  ChatUpdatedInChatsList,
-} from '../../types'
+import { ChatsListQuery } from '../../graphql/types'
 
 const Style = styled.div `
   height: calc(100% - 56px);
@@ -77,33 +72,6 @@ const query = gql `
   ${fragments.lightChat}
 `
 
-const subscriptions = {
-  messageAdded: gql `
-    subscription MessageAddedToChatsList($chatsIds: [ID!]!) {
-      messageAdded(chatsIds: $chatsIds) {
-        ...Message
-      }
-    }
-    ${fragments.message}
-  `,
-  chatAdded: gql `
-    subscription ChatAddedToChatsList {
-      chatAdded {
-        ...LightChat
-      }
-    }
-    ${fragments.lightChat}
-  `,
-  chatUpdated: gql `
-    subscription ChatUpdatedInChatsList {
-      chatInfoChanged {
-        ...Chat
-      }
-    }
-    ${fragments.chat}
-  `
-}
-
 interface ChatsListProps {
   history: History
 }
@@ -111,36 +79,6 @@ interface ChatsListProps {
 export default ({ history }: ChatsListProps) => {
   const { data: { chats } } = useQuery<ChatsListQuery.Query>(query)
   const chatsIds = chats.map(chat => chat.id)
-
-  useSubscription<MessageAddedToChatsList.Subscription>(subscriptions.messageAdded, {
-    onSubscriptionData: ({ client, subscriptionData: { messageAdded } }) => {
-      client.writeFragment({
-        id: messageAdded.id,
-        fragment: fragments.chat,
-        data: messageAdded,
-      })
-    }
-  })
-
-  useSubscription<ChatAddedToChatsList.Subscription>(subscriptions.chatAdded, {
-    onSubscriptionData: ({ client, subscriptionData: { chatAdded } }) => {
-      client.writeFragment({
-        id: chatAdded.id,
-        fragment: fragments.lightChat,
-        data: chatAdded,
-      })
-    }
-  })
-
-  useSubscription<ChatUpdatedInChatsList.Subscription>(subscriptions.chatUpdated, {
-    onSubscriptionData: ({ client, subscriptionData: { chatInfoChanged } }) => {
-      client.writeFragment({
-        id: chatInfoChanged.id,
-        fragment: fragments.chat,
-        data: chatInfoChanged,
-      })
-    }
-  })
 
   const navToChat = (chatId) => {
     history.push(`chats/${chatId}`)

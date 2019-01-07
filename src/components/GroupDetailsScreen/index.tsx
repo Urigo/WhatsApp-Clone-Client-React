@@ -7,10 +7,10 @@ import { useQuery, useMutation } from 'react-apollo-hooks'
 import { Redirect } from 'react-router-dom'
 import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
-import * as fragments from '../../fragments'
+import * as fragments from '../../graphql/fragments'
 import { useMe } from '../../services/auth-service'
 import { pickPicture, uploadProfilePicture } from '../../services/picture-service'
-import { GroupDetailsScreenQuery, GroupDetailsScreenMutation, User } from '../../types'
+import { GroupDetailsScreenQuery, GroupDetailsScreenMutation, User } from '../../graphql/types'
 import Navbar from '../Navbar'
 import CompleteGroupButton from './CompleteGroupButton'
 import GroupDetailsNavbar from './GroupDetailsNavbar'
@@ -81,7 +81,7 @@ const query = gql `
 
 const mutation = gql `
   mutation GroupDetailsScreenMutation($chatId: ID!, $name: String, $picture: String) {
-    changeChatInfo(chatId: $chatId, name: $name, picture: $picture) {
+    updateChat(chatId: $chatId, name: $name, picture: $picture) {
       ...Chat
     }
   }
@@ -97,7 +97,7 @@ export default ({ location, match, history }: RouteComponentProps) => {
   let ownerId: string
   let users: User.Fragment[]
   let participants: User.Fragment[]
-  let changeChatInfo: (localOptions?: MutationHookOptions<GroupDetailsScreenMutation.Mutation, GroupDetailsScreenMutation.Variables>) => any;
+  let updateChat: (localOptions?: MutationHookOptions<GroupDetailsScreenMutation.Mutation, GroupDetailsScreenMutation.Variables>) => any;
 
   const { data: { me } } = useMe()
 
@@ -105,12 +105,12 @@ export default ({ location, match, history }: RouteComponentProps) => {
     const chat = useQuery<GroupDetailsScreenQuery.Query, GroupDetailsScreenQuery.Variables>(query, {
       variables: { chatId }
     }).data.chat
-    changeChatInfo = useMutation<GroupDetailsScreenMutation.Mutation, GroupDetailsScreenMutation.Variables>(mutation, {
-      update: (client, { data: { changeChatInfo } }) => {
+    updateChat = useMutation<GroupDetailsScreenMutation.Mutation, GroupDetailsScreenMutation.Variables>(mutation, {
+      update: (client, { data: { updateChat } }) => {
         client.writeFragment({
-          id: changeChatInfo.id,
+          id: updateChat.id,
           fragment: fragments.chat,
-          data: changeChatInfo,
+          data: updateChat,
         })
       }
     })
@@ -122,7 +122,7 @@ export default ({ location, match, history }: RouteComponentProps) => {
     participants = users.slice()
   }
   else {
-    changeChatInfo = () => {}
+    updateChat = () => {}
     myId = ''
     chatName = ''
     chatPicture = ''
@@ -153,7 +153,7 @@ export default ({ location, match, history }: RouteComponentProps) => {
   }
 
   const updateChatName = () => {
-    changeChatInfo({
+    updateChat({
       variables: {
         chatId,
         name: groupName,
@@ -170,7 +170,7 @@ export default ({ location, match, history }: RouteComponentProps) => {
 
     setGroupPicture(url)
 
-    changeChatInfo({
+    updateChat({
       variables: {
         chatId,
         picture: url,

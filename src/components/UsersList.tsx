@@ -6,9 +6,8 @@ import * as React from 'react'
 import { useState } from 'react'
 import { useQuery } from 'react-apollo-hooks'
 import styled from 'styled-components'
-import { useSubscription } from '../polyfills/react-apollo-hooks'
-import * as fragments from '../fragments'
-import { UsersListQuery, UsersListSubscription, User } from '../types'
+import * as fragments from '../graphql/fragments'
+import { UsersListQuery, User } from '../graphql/types'
 
 const name = 'UsersList'
 
@@ -53,15 +52,6 @@ const query = gql `
   ${fragments.user}
 `
 
-const subscription = gql `
-  subscription UsersListSubscription {
-    userInfoChanged {
-      ...User
-    }
-  }
-  ${fragments.user}
-`
-
 interface UsersListProps {
   selectable?: boolean;
   onSelectionChange?: (users: User.Fragment[]) => void;
@@ -78,16 +68,6 @@ export default (props: UsersListProps) => {
 
   const [selectedUsers, setSelectedUsers] = useState([])
   const { data: { users } } = useQuery<UsersListQuery.Query>(query)
-
-  useSubscription<UsersListSubscription.Subscription>(subscription, {
-    onSubscriptionData: ({ client, subscriptionData: { userInfoChanged } }) => {
-      client.writeFragment({
-        id: userInfoChanged.id,
-        fragment: fragments.user,
-        data: userInfoChanged,
-      })
-    }
-  })
 
   const onListItemClick = (user) => {
     if (!selectable) {

@@ -3,28 +3,33 @@ import * as React from 'react'
 import { useQuery } from 'react-apollo-hooks'
 import { Redirect } from 'react-router-dom'
 import store from '../apollo-client'
-import * as fragments from '../fragments'
-import { Me } from '../types'
-
-const meQuery = gql `
-  query Me {
-    me {
-      ...User
-    }
-  }
-  ${fragments.user}
-`
-
-export const withAuth = (Component: React.ComponentType) => {
-  return (props) => getAuthHeader() ? (
-    <Component {...props} />
-  ) : (
-    <Redirect to="/sign-in" />
-  )
-}
+import * as queries from '../graphql/queries'
+import { Me } from '../graphql/types'
+import { useSubscriptions } from './cache-service'
 
 export const useMe = () => {
-  return useQuery<Me.Query>(meQuery)
+  return useQuery<Me.Query>(queries.me)
+}
+
+export const withAuth = (Component: React.ComponentType) => {
+  return (props) => {
+    if (!getAuthHeader()) return (
+      <Redirect to="/sign-in" />
+    )
+
+    // Validating against server
+    const { data: isSignedIn } = useMe()
+
+    if (!isSignedIn) return (
+      <Redirect to="/sign-in" />
+    )
+
+    useSubscriptions()
+
+    return (
+      <Component {...props} />
+    )
+  }
 }
 
 export const storeAuthHeader = (auth: string) => {

@@ -5,9 +5,8 @@ import { useRef, useEffect } from 'react'
 import { useQuery, useMutation } from 'react-apollo-hooks'
 import * as ReactDOM from 'react-dom'
 import styled from 'styled-components'
-import * as fragments from '../../fragments'
-import { useSubscription } from '../../polyfills/react-apollo-hooks'
-import { MessagesListQuery, MessagesListSubscription, LightChat, FullChat } from '../../types'
+import * as fragments from '../../graphql/fragments'
+import { MessagesListQuery } from '../../graphql/types'
 
 const Style = styled.div `
   display: block;
@@ -92,15 +91,6 @@ const query = gql `
   ${fragments.fullChat}
 `
 
-const subscription = gql `
-  subscription MessagesListSubscription($chatsIds: [ID!]!) {
-    messageAdded(chatsIds: $chatsIds) {
-      ...Message
-    }
-  }
-  ${fragments.message}
-`
-
 interface MessagesListProps {
   chatId: string;
 }
@@ -110,41 +100,6 @@ export default ({ chatId }: MessagesListProps) => {
     variables: { chatId }
   })
   const selfRef = useRef(null)
-
-  useSubscription<MessagesListSubscription.Subscription, MessagesListSubscription.Variables>(subscription, {
-    variables: { chatsIds: [chatId] },
-    onSubscriptionData: ({ client, subscriptionData: { messageAdded } }) => {
-      const fullChat = client.readFragment<FullChat.Fragment>({
-        id: chatId,
-        fragment: fragments.fullChat,
-      })
-
-      if (fullChat.messages.findIndex(message => message.id === messageAdded.id) === -1) {
-        fullChat.messages.push(messageAdded)
-      }
-
-      client.writeFragment({
-        id: chatId,
-        fragment: fragments.fullChat,
-        data: messageAdded,
-      })
-
-      const lightChat = client.readFragment<LightChat.Fragment>({
-        id: chatId,
-        fragment: fragments.lightChat,
-      })
-
-      if (lightChat) {
-        lightChat.messages = [messageAdded]
-
-        client.writeFragment({
-          id: chatId,
-          fragment: fragments.lightChat,
-          data: lightChat,
-        })
-      }
-    },
-  })
 
   const resetScrollTop = () => {
     if (!selfRef.current) return

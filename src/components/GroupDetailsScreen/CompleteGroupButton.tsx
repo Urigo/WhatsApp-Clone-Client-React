@@ -5,9 +5,8 @@ import { History } from 'history'
 import * as React from 'react'
 import { useMutation } from 'react-apollo-hooks'
 import styled from 'styled-components'
-import * as fragments from '../../fragments'
-import { useSubscription } from '../../polyfills/react-apollo-hooks'
-import { User, CompleteGroupButtonMutation, CompleteGroupButtonSubscription } from '../../types'
+import * as fragments from '../../graphql/fragments'
+import { User, CompleteGroupButtonMutation } from '../../graphql/types'
 
 const Style = styled.div `
   position: fixed;
@@ -31,19 +30,6 @@ const mutation = gql `
     }
   }
   ${fragments.chat}
-`
-
-const subscription = gql `
-  subscription CompleteGroupButtonSubscription {
-    chatAdded {
-      ...Chat
-      messages(amount: 1) {
-        ...Message
-      }
-    }
-  }
-  ${fragments.chat}
-  ${fragments.message}
 `
 
 interface CompleteGroupButtonProps {

@@ -12,8 +12,9 @@ import * as React from 'react'
 import { useState } from 'react'
 import { useQuery, useMutation } from 'react-apollo-hooks'
 import styled from 'styled-components'
-import * as fragments from '../../fragments'
-import { ChatNavbarMutation, ChatNavbarQuery } from '../../types'
+import * as fragments from '../../graphql/fragments'
+import * as queries from '../../graphql/queries'
+import { ChatNavbarMutation, ChatNavbarQuery, Chats } from '../../graphql/types'
 
 const Style = styled.div `
   padding: 0;
@@ -90,6 +91,29 @@ export default ({ chatId, history }: ChatNavbarProps) => {
         fragment: fragments.chat,
         data: null,
       })
+
+      let chats
+      try {
+        chats = client.readQuery<Chats.Query>({
+          query: queries.chats
+        })
+      }
+      catch (e) {
+
+      }
+
+      if (
+        chats &&
+        chats.some(chat => chat.id === removeChat)
+      ) {
+        const index = chats.findIndex(chat => chat.id === removeChat)
+        chats.splice(index, 1)
+
+        client.writeQuery({
+          query: queries.chats,
+          data: { chats }
+        })
+      }
     }
   })
   const [popped, setPopped] = useState(false)

@@ -6,10 +6,10 @@ import { useState } from 'react'
 import { useQuery, useMutation } from 'react-apollo-hooks'
 import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
-import * as fragments from '../../fragments'
+import * as fragments from '../../graphql/fragments'
 import { useMe } from '../../services/auth-service'
 import { pickPicture, uploadProfilePicture } from '../../services/picture-service'
-import { SettingsFormMutation } from '../../types'
+import { SettingsFormMutation } from '../../graphql/types'
 import Navbar from '../Navbar'
 import SettingsNavbar from './SettingsNavbar'
 
@@ -52,7 +52,7 @@ const Style = styled.div `
 
 const mutation = gql `
   mutation SettingsFormMutation($name: String, $picture: String) {
-    changeUserInfo(name: $name, picture: $picture) {
+    updateUser(name: $name, picture: $picture) {
       ...User
     }
   }
@@ -61,7 +61,7 @@ const mutation = gql `
 
 export default ({ history }: RouteComponentProps) => {
   const { data: { me } } = useMe()
-  const changeUserInfo = useMutation<SettingsFormMutation.Mutation, SettingsFormMutation.Variables>(mutation)
+  const updateUser = useMutation<SettingsFormMutation.Mutation, SettingsFormMutation.Variables>(mutation)
   const [myName, setMyName] = useState(me.name)
   const [myPicture, setMyPicture] = useState(me.picture)
 
@@ -70,7 +70,7 @@ export default ({ history }: RouteComponentProps) => {
   }
 
   const updateName = () => {
-    changeUserInfo({
+    updateUser({
       variables: { name: myName }
     })
   }
@@ -84,7 +84,7 @@ export default ({ history }: RouteComponentProps) => {
 
     setMyPicture(url)
 
-    changeUserInfo({
+    updateUser({
       variables: { picture: url }
     })
   }

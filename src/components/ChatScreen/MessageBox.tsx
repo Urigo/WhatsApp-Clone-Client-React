@@ -6,9 +6,9 @@ import { useState } from 'react'
 import { useQuery, useMutation } from 'react-apollo-hooks'
 import styled from 'styled-components'
 import { time as uniqid } from 'uniqid'
-import * as fragments from '../../fragments'
+import * as fragments from '../../graphql/fragments'
 import { useMe } from '../../services/auth-service'
-import { MessageBoxMutation, FullChat, LightChat } from '../../types'
+import { MessageBoxMutation, FullChat, LightChat } from '../../graphql/types'
 
 const Style = styled.div `
   display: flex;
@@ -90,31 +90,46 @@ export default ({ chatId }: MessageBoxProps) => {
       },
     },
     update: (client, { data: { addMessage } }) => {
-      const fullChat = client.readFragment<FullChat.Fragment>({
-        id: chatId,
-        fragment: fragments.fullChat,
-      })
+      let fullChat
+      try {
+        fullChat = client.readFragment<FullChat.Fragment>({
+          id: addMessage.chat.id,
+          fragment: fragments.fullChat,
+        })
+      }
+      catch (e) {
 
-      if (fullChat.messages.findIndex(message => message.id === addMessage.id) === -1) {
-        fullChat.messages.push(addMessage)
       }
 
-      client.writeFragment({
-        id: chatId,
-        fragment: fragments.fullChat,
-        data: addMessage,
-      })
+      if (
+        fullChat &&
+        !fullChat.messages.some(message => message.id === addMessage.id)
+      ) {
+        fullChat.messages.push(addMessage)
 
-      const lightChat = client.readFragment<LightChat.Fragment>({
-        id: chatId,
-        fragment: fragments.lightChat,
-      })
+        client.writeFragment({
+          id: fullChat.id,
+          fragment: fragments.fullChat,
+          data: fullChat,
+        })
+      }
+
+      let lightChat
+      try {
+        lightChat = client.readFragment<LightChat.Fragment>({
+          id: addMessage.chat.id,
+          fragment: fragments.lightChat,
+        })
+      }
+      catch (e) {
+
+      }
 
       if (lightChat) {
         lightChat.messages = [addMessage]
 
         client.writeFragment({
-          id: chatId,
+          id: lightChat.id,
           fragment: fragments.lightChat,
           data: lightChat,
         })

@@ -3,7 +3,7 @@ import AddIcon from '@material-ui/icons/Add'
 import { History } from 'history'
 import * as React from 'react'
 import styled from 'styled-components'
-import { User } from '../../types'
+import { User } from '../../graphql/types'
 
 const Style = styled.div `
   position: fixed;
