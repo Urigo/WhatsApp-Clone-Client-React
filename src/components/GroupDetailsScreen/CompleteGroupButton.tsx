@@ -28,13 +28,9 @@ const mutation = gql `
   mutation CompleteGroupButtonMutation($recipientIds: [ID!]!, $groupName: String!) {
     addGroup(recipientIds: $recipientIds, groupName: $groupName) {
       ...Chat
-      messages {
-        ...Message
-      }
     }
   }
   ${fragments.chat}
-  ${fragments.message}
 `
 
 const subscription = gql `
@@ -61,15 +57,12 @@ export default ({ history, users, groupName }: CompleteGroupButtonProps) => {
     variables: {
       recipientIds: users.map(user => user.id),
       groupName,
-    }
-  })
-
-  useSubscription<CompleteGroupButtonSubscription.Subscription>(subscription, {
-    onSubscriptionData: ({ client, subscriptionData: { chatAdded } }) => {
+    },
+    update: (client, { data: { addGroup } }) => {
       client.writeFragment({
-        id: chatAdded.id,
+        id: addGroup.id,
         fragment: fragments.chat,
-        data: chatAdded,
+        data: addGroup,
       })
     }
   })

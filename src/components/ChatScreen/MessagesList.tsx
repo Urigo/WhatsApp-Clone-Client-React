@@ -86,14 +86,10 @@ const Style = styled.div `
 const query = gql `
   query MessagesListQuery($chatId: ID!) {
     chat(chatId: $chatId) {
-      ...Chat
-      messages {
-        ...Message
-      }
+      ...FullChat
     }
   }
-  ${fragments.chat}
-  ${fragments.message}
+  ${fragments.fullChat}
 `
 
 const subscription = gql `
@@ -118,10 +114,32 @@ export default ({ chatId }: MessagesListProps) => {
   useSubscription<MessagesListSubscription.Subscription, MessagesListSubscription.Variables>(subscription, {
     variables: { chatsIds: [chatId] },
     onSubscriptionData: ({ client, subscriptionData: { messageAdded } }) => {
+      const fullChat = client.readFragment({
+        id: chatId,
+        fragment: fragments.fullChat,
+      })
+
+      if (fullChat.messages.findIndex(message => message.id === addMessage) === -1) {
+        fullChat.messages.push(addMessage)
+      }
+
       client.writeFragment({
-        id: messageAdded.id,
-        fragment: fragments.message,
-        data: messageAdded,
+        id: chatId,
+        fragment: fragments.fullChat,
+        data: addMessage,
+      })
+
+      const lightChat = client.readFragment({
+        id: chatId,
+        fragment: fragments.lightChat,
+      })
+
+      lightChat.messages = [addMessage]
+
+      client.writeFragment({
+        id: chatId,
+        fragment: fragments.lightChat,
+        data: lightChat,
       })
     },
   })

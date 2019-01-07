@@ -62,13 +62,9 @@ const query = gql `
   query ChatNavbarQuery($chatId: ID!) {
     chat(chatId: $chatId) {
       ...Chat
-      messages {
-        ...Message
-      }
     }
   }
   ${fragments.chat}
-  ${fragments.message}
 `
 
 const mutation = gql `

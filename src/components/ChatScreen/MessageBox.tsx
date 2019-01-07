@@ -90,10 +90,32 @@ export default ({ chatId }: MessageBoxProps) => {
       },
     },
     update: (client, { data: { addMessage } }) => {
+      const fullChat = client.readFragment({
+        id: chatId,
+        fragment: fragments.fullChat,
+      })
+
+      if (fullChat.messages.findIndex(message => message.id === addMessage) === -1) {
+        fullChat.messages.push(addMessage)
+      }
+
       client.writeFragment({
-        id: addMessage.id,
-        fragment: fragments.message,
+        id: chatId,
+        fragment: fragments.fullChat,
         data: addMessage,
+      })
+
+      const lightChat = client.readFragment({
+        id: chatId,
+        fragment: fragments.lightChat,
+      })
+
+      lightChat.messages = [addMessage]
+
+      client.writeFragment({
+        id: chatId,
+        fragment: fragments.lightChat,
+        data: lightChat,
       })
     },
   })

@@ -26,13 +26,9 @@ const mutation = gql `
   mutation NewChatScreenMutation($recipientId: ID!) {
     addChat(recipientId: $recipientId) {
       ...Chat
-      messages {
-        ...Message
-      }
     }
   }
   ${fragments.chat}
-  ${fragments.message}
 `
 
 export default ({ history }: RouteComponentProps) => {

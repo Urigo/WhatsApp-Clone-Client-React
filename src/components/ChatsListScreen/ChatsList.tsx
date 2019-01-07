@@ -71,14 +71,10 @@ const Style = styled.div `
 const query = gql `
   query ChatsListQuery {
     chats {
-      ...Chat
-      messages(amount: 1) {
-        ...Message
-      }
+      ...LightChat
     }
   }
-  ${fragments.chat}
-  ${fragments.message}
+  ${fragments.lightChat}
 `
 
 const subscriptions = {
@@ -93,10 +89,10 @@ const subscriptions = {
   chatAdded: gql `
     subscription ChatAddedToChatsList {
       chatAdded {
-        ...Chat
+        ...LightChat
       }
     }
-    ${fragments.chat}
+    ${fragments.lightChat}
   `,
   chatUpdated: gql `
     subscription ChatUpdatedInChatsList {
@@ -130,7 +126,7 @@ export default ({ history }: ChatsListProps) => {
     onSubscriptionData: ({ client, subscriptionData: { chatAdded } }) => {
       client.writeFragment({
         id: chatAdded.id,
-        fragment: fragments.chat,
+        fragment: fragments.lightChat,
         data: chatAdded,
       })
     }

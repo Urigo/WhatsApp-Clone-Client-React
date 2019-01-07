@@ -8,23 +8,6 @@ export const user = gql `
   }
 `
 
-export const chat = gql `
-  fragment Chat on Chat {
-    id
-    name
-    picture
-    allTimeMembers {
-      id
-      name
-      picture
-    }
-    owner {
-      id
-    }
-    isGroup
-  }
-`
-
 export const message = gql`
   fragment Message on Message {
     id
@@ -56,4 +39,44 @@ export const message = gql`
     }
     ownership
   }
+`
+
+export const lightChat = gql `
+  fragment Chat on Chat {
+    id
+    name
+    picture
+    allTimeMembers {
+      id
+      name
+      picture
+    }
+    owner {
+      id
+    }
+    isGroup
+  }
+  ${message}
+`
+
+export const lightChat = gql `
+  fragment LightChat on Chat {
+    ...Chat
+    messages(amount: 1) {
+      ...Message
+    }
+  }
+  ${chat}
+  ${message}
+`
+
+export const fullChat = gql `
+  fragment FullChat on Chat {
+    ...Chat
+    messages {
+      ...Message
+    }
+  }
+  ${chat}
+  ${message}
 `
