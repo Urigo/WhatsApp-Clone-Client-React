@@ -18,9 +18,10 @@ export const withAuth = (Component: React.ComponentType) => {
     )
 
     // Validating against server
-    const { error: isSignedOut } = useMe()
+    const isSignedIn = useMe()
 
-    if (isSignedOut) return (
+    // Override TypeScript definition issue with the current version
+    if (isSignedIn['error']) return (
       <Redirect to="/sign-in" />
     )
 
@@ -77,6 +78,7 @@ export const signOut = () => {
 }
 
 export default {
+  useMe,
   withAuth,
   storeAuthHeader,
   getAuthHeader,
