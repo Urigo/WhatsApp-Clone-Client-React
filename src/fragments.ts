@@ -41,7 +41,7 @@ export const message = gql`
   }
 `
 
-export const lightChat = gql `
+export const chat = gql `
   fragment Chat on Chat {
     id
     name
@@ -56,7 +56,6 @@ export const lightChat = gql `
     }
     isGroup
   }
-  ${message}
 `
 
 export const lightChat = gql `

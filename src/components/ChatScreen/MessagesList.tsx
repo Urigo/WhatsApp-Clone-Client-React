@@ -7,7 +7,7 @@ import * as ReactDOM from 'react-dom'
 import styled from 'styled-components'
 import * as fragments from '../../fragments'
 import { useSubscription } from '../../polyfills/react-apollo-hooks'
-import { MessagesListQuery, MessagesListSubscription } from '../../types'
+import { MessagesListQuery, MessagesListSubscription, LightChat, FullChat } from '../../types'
 
 const Style = styled.div `
   display: block;
@@ -114,33 +114,35 @@ export default ({ chatId }: MessagesListProps) => {
   useSubscription<MessagesListSubscription.Subscription, MessagesListSubscription.Variables>(subscription, {
     variables: { chatsIds: [chatId] },
     onSubscriptionData: ({ client, subscriptionData: { messageAdded } }) => {
-      const fullChat = client.readFragment({
+      const fullChat = client.readFragment<FullChat.Fragment>({
         id: chatId,
         fragment: fragments.fullChat,
       })
 
-      if (fullChat.messages.findIndex(message => message.id === addMessage) === -1) {
-        fullChat.messages.push(addMessage)
+      if (fullChat.messages.findIndex(message => message.id === messageAdded.id) === -1) {
+        fullChat.messages.push(messageAdded)
       }
 
       client.writeFragment({
         id: chatId,
         fragment: fragments.fullChat,
-        data: addMessage,
+        data: messageAdded,
       })
 
-      const lightChat = client.readFragment({
+      const lightChat = client.readFragment<LightChat.Fragment>({
         id: chatId,
         fragment: fragments.lightChat,
       })
 
-      lightChat.messages = [addMessage]
+      if (lightChat) {
+        lightChat.messages = [messageAdded]
 
-      client.writeFragment({
-        id: chatId,
-        fragment: fragments.lightChat,
-        data: lightChat,
-      })
+        client.writeFragment({
+          id: chatId,
+          fragment: fragments.lightChat,
+          data: lightChat,
+        })
+      }
     },
   })
 

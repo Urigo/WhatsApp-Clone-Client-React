@@ -8,7 +8,7 @@ import styled from 'styled-components'
 import { time as uniqid } from 'uniqid'
 import * as fragments from '../../fragments'
 import { useMe } from '../../services/auth-service'
-import { MessageBoxMutation } from '../../types'
+import { MessageBoxMutation, FullChat, LightChat } from '../../types'
 
 const Style = styled.div `
   display: flex;
@@ -90,12 +90,12 @@ export default ({ chatId }: MessageBoxProps) => {
       },
     },
     update: (client, { data: { addMessage } }) => {
-      const fullChat = client.readFragment({
+      const fullChat = client.readFragment<FullChat.Fragment>({
         id: chatId,
         fragment: fragments.fullChat,
       })
 
-      if (fullChat.messages.findIndex(message => message.id === addMessage) === -1) {
+      if (fullChat.messages.findIndex(message => message.id === addMessage.id) === -1) {
         fullChat.messages.push(addMessage)
       }
 
@@ -105,18 +105,20 @@ export default ({ chatId }: MessageBoxProps) => {
         data: addMessage,
       })
 
-      const lightChat = client.readFragment({
+      const lightChat = client.readFragment<LightChat.Fragment>({
         id: chatId,
         fragment: fragments.lightChat,
       })
 
-      lightChat.messages = [addMessage]
+      if (lightChat) {
+        lightChat.messages = [addMessage]
 
-      client.writeFragment({
-        id: chatId,
-        fragment: fragments.lightChat,
-        data: lightChat,
-      })
+        client.writeFragment({
+          id: chatId,
+          fragment: fragments.lightChat,
+          data: lightChat,
+        })
+      }
     },
   })
 
