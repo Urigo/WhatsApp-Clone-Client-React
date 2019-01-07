@@ -18,9 +18,9 @@ export const withAuth = (Component: React.ComponentType) => {
     )
 
     // Validating against server
-    const { data: isSignedIn } = useMe()
+    const { error: isSignedOut } = useMe()
 
-    if (!isSignedIn) return (
+    if (isSignedOut) return (
       <Redirect to="/sign-in" />
     )
 
