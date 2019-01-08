@@ -77,7 +77,8 @@ export default ({ history }: RouteComponentProps) => {
       }
     },
     update: (client, { data: { updateUser } }) => {
-      Object.assign(me, updateUser)
+      me.picture = myPicture
+      me.name = myPicture
 
       client.writeFragment({
         id: defaultDataIdFromObject(me),

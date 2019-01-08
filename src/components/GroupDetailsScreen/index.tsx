@@ -9,9 +9,9 @@ import { Redirect } from 'react-router-dom'
 import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
 import * as fragments from '../../graphql/fragments'
+import { GroupDetailsScreenQuery, GroupDetailsScreenMutation, User } from '../../graphql/types'
 import { useMe } from '../../services/auth-service'
 import { pickPicture, uploadProfilePicture } from '../../services/picture-service'
-import { GroupDetailsScreenQuery, GroupDetailsScreenMutation, User } from '../../graphql/types'
 import Navbar from '../Navbar'
 import CompleteGroupButton from './CompleteGroupButton'
 import GroupDetailsNavbar from './GroupDetailsNavbar'
@@ -67,7 +67,7 @@ const Style = styled.div `
     border-radius: 50%;
     margin-left: 15px;
     object-fit: cover;
-    cursor: pointer;
+    ${props => props.ownedByMe && 'cursor: pointer;'}
   }
 `
 
@@ -90,33 +90,80 @@ const mutation = gql `
 `
 
 export default ({ location, match, history }: RouteComponentProps) => {
-  const chatId = match.params.chatId || ''
-
+  const chatId = match.params.chatId
   const { data: { me } } = useMe()
-  // Not gonna find anything necessarily
-  const { data: { chat } } = useQuery<GroupDetailsScreenQuery.Query, GroupDetailsScreenQuery.Variables>(query, {
-    variables: { chatId }
-  })
-  let myId: string
-  let chatName: string
-  let chatPicture: string
-  let ownerId: string
+
+  let ownedByMe: boolean
   let users: User.Fragment[]
   let participants: User.Fragment[]
+  let updateChat: () => any
+  let chatNameState
+  let chatPictureState
 
-  if (chat) {
-    myId = me.id
-    chatName = chat.name
-    chatPicture = chat.picture
-    ownerId = chat.owner.id
+  // The entire component functionality will be determined by the provided route param
+  if (chatId) {
+    const { data: { chat } } = useQuery<GroupDetailsScreenQuery.Query, GroupDetailsScreenQuery.Variables>(query, {
+      variables: { chatId }
+    })
+    ownedByMe = chat.owner.id === me.id
     users = chat.allTimeMembers
     participants = users.slice()
+
+    // Read-only if not owned by me
+    if (ownedByMe) {
+      chatNameState = useState(chat.name)
+      chatPictureState = useState(chat.picture)
+    }
+    else {
+      chatNameState = [chat.name, Function]
+      chatPictureState = [chat.picture, Function]
+    }
+
+    const [chatName] = chatNameState
+    const [chatPicture] = chatPictureState
+
+    updateChat = useMutation<GroupDetailsScreenMutation.Mutation, GroupDetailsScreenMutation.Variables>(mutation, {
+      variables: {
+        chatId,
+        name: chatName,
+        picture: chatPicture,
+      },
+      optimisticResponse: {
+        __typename: 'Mutation',
+        updateChat: {
+          __typename: 'Chat',
+          id: chat.id,
+          picture: chatPicture,
+          name: chatName,
+          owner: null,
+          allTimeMembers: null,
+          isGroup: null,
+        }
+      },
+      update: (client, { data: { updateChat } }) => {
+        chat.picture = chatPicture
+        chat.name = chatName
+
+        client.writeFragment({
+          id: defaultDataIdFromObject(chat),
+          fragment: fragments.chat,
+          data: chat,
+        })
+      }
+    })
+
+    // Update picture once changed
+    useEffect(() => {
+      if (chatPicture !== chat.picture) {
+        updateChat()
+      }
+    }, [chatPicture])
   }
   else {
-    myId = ''
-    chatName = ''
-    chatPicture = ''
-    ownerId = ''
+    ownedByMe = true
+    updateChat = Function
+    chatNameState = useState('')
+    chatPictureState = useState('')
     users = location.state.users
     participants = [me].concat(users)
   }
@@ -135,50 +182,16 @@ export default ({ location, match, history }: RouteComponentProps) => {
     participants.unshift(me)
   }
 
-  const [groupName, setGroupName] = useState(chatName)
-  const [groupPicture, setGroupPicture] = useState(chatPicture)
-  let updateChat: () => any
+  const [chatName, setChatName] = chatNameState
+  const [chatPicture, setChatPicture] = chatPictureState
 
-  if (chat) {
-    updateChat = useMutation<GroupDetailsScreenMutation.Mutation, GroupDetailsScreenMutation.Variables>(mutation, {
-      optimisticResponse: {
-        __typename: 'Mutation',
-        updateChat: {
-          __typename: 'Chat',
-          id: chat.id,
-          picture: groupPicture,
-          name: groupName,
-        }
-      },
-      update: (client, { data: { updateChat } }) => {
-        Object.assign(chat, updateChat)
-
-        client.writeFragment({
-          id: defaultDataIdFromObject(chat),
-          fragment: fragments.chat,
-          data: chat,
-        })
-      }
-    })
-  }
-  else {
-    updateChat = () => {}
-  }
-
-  // Update picture once changed
-  useEffect(() => {
-    if (groupPicture !== chat.picture) {
-      updateChat()
-    }
-  }, [groupPicture])
-
-  const updateGroupName = ({ target }) => {
-    setGroupName(target.value)
+  const updateChatName = ({ target }) => {
+    setChatName(target.value)
   }
 
   const updateChatPicture = async () => {
     // You have to be an admin
-    if (ownerId !== myId) return
+    if (!ownedByMe) return
 
     const file = await pickPicture()
 
@@ -186,28 +199,28 @@ export default ({ location, match, history }: RouteComponentProps) => {
 
     const { url } = await uploadProfilePicture(file)
 
-    setGroupPicture(url)
+    setChatPicture(url)
   }
 
   return (
-    <Style className="GroupDetailsScreen Screen">
+    <Style className="GroupDetailsScreen Screen" ownedByMe={ownedByMe}>
       <Navbar>
         <GroupDetailsNavbar chatId={chatId} history={history} />
       </Navbar>
       <div className="GroupDetailsScreen-group-info">
         <img
           className="GroupDetailsScreen-group-picture"
-          src={groupPicture || '/assets/default-group-pic.jpg'}
+          src={chatPicture || '/assets/default-group-pic.jpg'}
           onClick={updateChatPicture}
         />
         <TextField
           label="Group name"
           placeholder="Enter group name"
           className="GroupDetailsScreen-group-name"
-          value={groupName}
-          onChange={updateGroupName}
+          value={chatName}
+          onChange={updateChatName}
           onBlur={updateChat}
-          disabled={ownerId !== myId}
+          disabled={!ownedByMe}
           autoFocus={true}
         />
       </div>
@@ -220,7 +233,7 @@ export default ({ location, match, history }: RouteComponentProps) => {
           </div>
         ))}
       </ul>
-      {!chatId && groupName && <CompleteGroupButton history={history} groupName={groupName} groupPicture={groupPicture} users={users} />}
+      {!chatId && chatName && <CompleteGroupButton history={history} groupName={chatName} groupPicture={chatPicture} users={users} />}
     </Style>
   )
 }
