@@ -17,7 +17,7 @@ import * as fragments from '../../graphql/fragments'
 import * as queries from '../../graphql/queries'
 import { ChatNavbarMutation, ChatNavbarQuery, Chats } from '../../graphql/types'
 
-const Style = styled.div `
+const Style = styled.div`
   padding: 0;
   display: flex;
   flex-direction: row;
@@ -60,7 +60,7 @@ const Style = styled.div `
   }
 `
 
-const query = gql `
+const query = gql`
   query ChatNavbarQuery($chatId: ID!) {
     chat(chatId: $chatId) {
       ...Chat
@@ -69,7 +69,7 @@ const query = gql `
   ${fragments.chat}
 `
 
-const mutation = gql `
+const mutation = gql`
   mutation ChatNavbarMutation($chatId: ID!) {
     removeChat(chatId: $chatId) {
       ...Chat
@@ -79,47 +79,46 @@ const mutation = gql `
 `
 
 interface ChatNavbarProps {
-  chatId: string;
-  history: History;
+  chatId: string
+  history: History
 }
 
 export default ({ chatId, history }: ChatNavbarProps) => {
-  const { data: { chat } } = useQuery<ChatNavbarQuery.Query, ChatNavbarQuery.Variables>(query, {
-    variables: { chatId }
-  })
-  const removeChat = useMutation<ChatNavbarMutation.Mutation, ChatNavbarMutation.Variables>(mutation, {
+  const {
+    data: { chat },
+  } = useQuery<ChatNavbarQuery.Query, ChatNavbarQuery.Variables>(query, {
     variables: { chatId },
-    update: (client, { data: { removeChat } }) => {
-      client.writeFragment({
-        id: defaultDataIdFromObject(removeChat),
-        fragment: fragments.chat,
-        data: null,
-      })
-
-      let chats
-      try {
-        chats = client.readQuery<Chats.Query>({
-          query: queries.chats
-        }).chats
-      }
-      catch (e) {
-
-      }
-
-      if (
-        chats &&
-        chats.some(chat => chat.id === removeChat.id)
-      ) {
-        const index = chats.findIndex(chat => chat.id === removeChat.id)
-        chats.splice(index, 1)
-
-        client.writeQuery({
-          query: queries.chats,
-          data: { chats }
-        })
-      }
-    }
   })
+  const removeChat = useMutation<ChatNavbarMutation.Mutation, ChatNavbarMutation.Variables>(
+    mutation,
+    {
+      variables: { chatId },
+      update: (client, { data: { removeChat } }) => {
+        client.writeFragment({
+          id: defaultDataIdFromObject(removeChat),
+          fragment: fragments.chat,
+          data: null,
+        })
+
+        let chats
+        try {
+          chats = client.readQuery<Chats.Query>({
+            query: queries.chats,
+          }).chats
+        } catch (e) {}
+
+        if (chats && chats.some(chat => chat.id === removeChat.id)) {
+          const index = chats.findIndex(chat => chat.id === removeChat.id)
+          chats.splice(index, 1)
+
+          client.writeQuery({
+            query: queries.chats,
+            data: { chats },
+          })
+        }
+      },
+    },
+  )
   const [popped, setPopped] = useState(false)
 
   const navToChats = () => {
@@ -141,7 +140,13 @@ export default ({ chatId, history }: ChatNavbarProps) => {
       <Button className="ChatNavbar-back-button" onClick={navToChats}>
         <ArrowBackIcon />
       </Button>
-      <img className="ChatNavbar-picture" src={chat.picture || (chat.isGroup ? '/assets/default-group-pic.jpg' : '/assets/default-profile-pic.jpg')} />
+      <img
+        className="ChatNavbar-picture"
+        src={
+          chat.picture ||
+          (chat.isGroup ? '/assets/default-group-pic.jpg' : '/assets/default-profile-pic.jpg')
+        }
+      />
       <div className="ChatNavbar-title">{chat.name}</div>
       <div className="ChatNavbar-rest">
         <Button className="ChatNavbar-options-btn" onClick={setPopped.bind(null, true)}>
@@ -163,9 +168,15 @@ export default ({ chatId, history }: ChatNavbarProps) => {
         <Style style={{ marginLeft: '-15px' }}>
           <List>
             {chat.isGroup && (
-              <ListItem className="ChatNavbar-options-item" button onClick={navToGroupDetails}><InfoIcon />Details</ListItem>
+              <ListItem className="ChatNavbar-options-item" button onClick={navToGroupDetails}>
+                <InfoIcon />
+                Details
+              </ListItem>
             )}
-            <ListItem className="ChatNavbar-options-item" button onClick={handleRemoveChat}><DeleteIcon />Delete</ListItem>
+            <ListItem className="ChatNavbar-options-item" button onClick={handleRemoveChat}>
+              <DeleteIcon />
+              Delete
+            </ListItem>
           </List>
         </Style>
       </Popover>

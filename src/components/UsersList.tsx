@@ -11,7 +11,7 @@ import { UsersListQuery, User } from '../graphql/types'
 
 const name = 'UsersList'
 
-const Style = styled.div `
+const Style = styled.div`
   .${name}-users-list {
     padding: 0;
   }
@@ -43,7 +43,7 @@ const Style = styled.div `
   }
 `
 
-const query = gql `
+const query = gql`
   query UsersListQuery {
     users {
       ...User
@@ -53,9 +53,9 @@ const query = gql `
 `
 
 interface UsersListProps {
-  selectable?: boolean;
-  onSelectionChange?: (users: User.Fragment[]) => void;
-  onUserPick?: (user: User.Fragment) => void;
+  selectable?: boolean
+  onSelectionChange?: (users: User.Fragment[]) => void
+  onUserPick?: (user: User.Fragment) => void
 }
 
 export default (props: UsersListProps) => {
@@ -67,9 +67,11 @@ export default (props: UsersListProps) => {
   }
 
   const [selectedUsers, setSelectedUsers] = useState([])
-  const { data: { users } } = useQuery<UsersListQuery.Query>(query)
+  const {
+    data: { users },
+  } = useQuery<UsersListQuery.Query>(query)
 
-  const onListItemClick = (user) => {
+  const onListItemClick = user => {
     if (!selectable) {
       return onUserPick(user)
     }
@@ -77,8 +79,7 @@ export default (props: UsersListProps) => {
     if (selectedUsers.includes(user)) {
       const index = selectedUsers.indexOf(user)
       selectedUsers.splice(index, 1)
-    }
-    else {
+    } else {
       selectedUsers.push(user)
     }
 
@@ -89,16 +90,23 @@ export default (props: UsersListProps) => {
   return (
     <Style className={name} selectable={selectable}>
       <List className={`${name}-users-list`}>
-        {users && users.map(user => (
-          <ListItem className={`${name}-user-item`} key={user.id} button onClick={onListItemClick.bind(null, user)}>
-            <img className={`${name}-profile-pic`} src={user.picture || '/assets/default-profile-pic.jpg'} />
-            <div className={`${name}-name`}>{user.name}</div>
+        {users &&
+          users.map(user => (
+            <ListItem
+              className={`${name}-user-item`}
+              key={user.id}
+              button
+              onClick={onListItemClick.bind(null, user)}
+            >
+              <img
+                className={`${name}-profile-pic`}
+                src={user.picture || '/assets/default-profile-pic.jpg'}
+              />
+              <div className={`${name}-name`}>{user.name}</div>
 
-            {selectedUsers.includes(user) && (
-              <CheckCircle className={`${name}-checkmark`} />
-            )}
-          </ListItem>
-        ))}
+              {selectedUsers.includes(user) && <CheckCircle className={`${name}-checkmark`} />}
+            </ListItem>
+          ))}
       </List>
     </Style>
   )

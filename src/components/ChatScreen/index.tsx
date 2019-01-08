@@ -7,7 +7,7 @@ import ChatNavbar from './ChatNavbar'
 import MessageBox from './MessageBox'
 import MessagesList from './MessagesList'
 
-const Style = styled.div `
+const Style = styled.div`
   .ChatScreen-body {
     position: relative;
     background: url(/assets/chat-background.jpg);

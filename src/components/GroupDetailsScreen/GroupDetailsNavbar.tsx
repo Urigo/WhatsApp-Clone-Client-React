@@ -6,7 +6,7 @@ import styled from 'styled-components'
 
 const name = 'GroupDetailsNavbar'
 
-const Style = styled.div `
+const Style = styled.div`
   padding: 0;
   display: flex;
   flex-direction: row;
@@ -22,16 +22,15 @@ const Style = styled.div `
 `
 
 interface GroupDetailsNavbarProps {
-  history: History;
-  chatId?: string;
+  history: History
+  chatId?: string
 }
 
 export default ({ history, chatId }: GroupDetailsNavbarProps) => {
   const navToNewGroup = () => {
     if (chatId) {
       history.push(`/chats/${chatId}`)
-    }
-    else {
+    } else {
       history.push('/new-chat/group')
     }
   }

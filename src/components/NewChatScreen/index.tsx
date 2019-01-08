@@ -12,7 +12,7 @@ import UsersList from '../UsersList'
 import NewChatNavbar from './NewChatNavbar'
 import NewGroupButton from './NewGroupButton'
 
-const Style = styled.div `
+const Style = styled.div`
   .UsersList {
     height: calc(100% - 56px);
   }
@@ -23,7 +23,7 @@ const Style = styled.div `
   }
 `
 
-const mutation = gql `
+const mutation = gql`
   mutation NewChatScreenMutation($recipientId: ID!) {
     addChat(recipientId: $recipientId) {
       ...Chat
@@ -33,21 +33,24 @@ const mutation = gql `
 `
 
 export default ({ history }: RouteComponentProps) => {
-  const addChat = useMutation<NewChatScreenMutation.Mutation, NewChatScreenMutation.Variables>(mutation, {
-    update: (client, { data: { addChat } }) => {
-      client.writeFragment({
-        id: defaultDataIdFromObject(addChat),
-        fragment: fragments.chat,
-        data: addChat,
-      })
-    }
-  })
+  const addChat = useMutation<NewChatScreenMutation.Mutation, NewChatScreenMutation.Variables>(
+    mutation,
+    {
+      update: (client, { data: { addChat } }) => {
+        client.writeFragment({
+          id: defaultDataIdFromObject(addChat),
+          fragment: fragments.chat,
+          data: addChat,
+        })
+      },
+    },
+  )
 
-  const onUserPick = (user) => {
+  const onUserPick = user => {
     addChat({
       variables: {
-        recipientId: user.id
-      }
+        recipientId: user.id,
+      },
     }).then(({ data: { addChat } }) => {
       history.push(`/chats/${addChat.id}`)
     })

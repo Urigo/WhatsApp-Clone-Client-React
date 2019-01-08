@@ -36,17 +36,11 @@ export const useSubscriptions = () => {
       let chats
       try {
         chats = client.readQuery<Chats.Query>({
-          query: queries.chats
+          query: queries.chats,
         }).chats
-      }
-      catch (e) {
+      } catch (e) {}
 
-      }
-
-      if (
-        chats &&
-        !chats.some(chat => chat.id === chatAdded.id)
-      ) {
+      if (chats && !chats.some(chat => chat.id === chatAdded.id)) {
         chats.push(chatAdded)
 
         client.writeQuery({
@@ -54,7 +48,7 @@ export const useSubscriptions = () => {
           data: { chats },
         })
       }
-    }
+    },
   })
 
   useSubscription<ChatUpdated.Subscription>(subscriptions.chatUpdated, {
@@ -64,7 +58,7 @@ export const useSubscriptions = () => {
         fragment: fragments.chat,
         data: chatUpdated,
       })
-    }
+    },
   })
 
   useSubscription<MessageAdded.Subscription>(subscriptions.messageAdded, {
@@ -76,15 +70,9 @@ export const useSubscriptions = () => {
           fragment: fragments.fullChat,
           fragmentName: 'FullChat',
         })
-      }
-      catch (e) {
+      } catch (e) {}
 
-      }
-
-      if (
-        fullChat &&
-        !fullChat.messages.some(message => message.id === messageAdded.id)
-      ) {
+      if (fullChat && !fullChat.messages.some(message => message.id === messageAdded.id)) {
         fullChat.messages.push(messageAdded)
 
         client.writeFragment({
@@ -102,10 +90,7 @@ export const useSubscriptions = () => {
           fragment: fragments.lightChat,
           fragmentName: 'LightChat',
         })
-      }
-      catch (e) {
-
-      }
+      } catch (e) {}
 
       if (lightChat) {
         lightChat.messages = [messageAdded]
@@ -117,7 +102,7 @@ export const useSubscriptions = () => {
           data: lightChat,
         })
       }
-    }
+    },
   })
 
   useSubscription<UserAdded.Subscription>(subscriptions.userAdded, {
@@ -131,17 +116,11 @@ export const useSubscriptions = () => {
       let users
       try {
         users = client.readQuery<Users.Query>({
-          query: queries.users
+          query: queries.users,
         }).users
-      }
-      catch (e) {
+      } catch (e) {}
 
-      }
-
-      if (
-        users &&
-        !users.some(user => user.id === userAdded.id)
-      ) {
+      if (users && !users.some(user => user.id === userAdded.id)) {
         users.push(userAdded)
 
         client.writeQuery({
@@ -149,7 +128,7 @@ export const useSubscriptions = () => {
           data: { users },
         })
       }
-    }
+    },
   })
 
   useSubscription<UserUpdated.Subscription>(subscriptions.userUpdated, {
@@ -159,6 +138,6 @@ export const useSubscriptions = () => {
         fragment: fragments.user,
         data: userUpdated,
       })
-    }
+    },
   })
 }

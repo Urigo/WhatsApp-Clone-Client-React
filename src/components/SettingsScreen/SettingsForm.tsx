@@ -14,7 +14,7 @@ import { pickPicture, uploadProfilePicture } from '../../services/picture-servic
 import Navbar from '../Navbar'
 import SettingsNavbar from './SettingsNavbar'
 
-const Style = styled.div `
+const Style = styled.div`
   .SettingsForm-picture {
     max-width: 300px;
     display: block;
@@ -51,7 +51,7 @@ const Style = styled.div `
   }
 `
 
-const mutation = gql `
+const mutation = gql`
   mutation SettingsFormMutation($name: String, $picture: String) {
     updateUser(name: $name, picture: $picture) {
       ...User
@@ -61,39 +61,47 @@ const mutation = gql `
 `
 
 export default ({ history }: RouteComponentProps) => {
-  const { data: { me } } = useMe()
+  const {
+    data: { me },
+  } = useMe()
   const [myName, setMyName] = useState(me.name)
   const [myPicture, setMyPicture] = useState(me.picture)
 
-  const updateUser = useMutation<SettingsFormMutation.Mutation, SettingsFormMutation.Variables>(mutation, {
-    variables: { name: myName, picture: myPicture },
-    optimisticResponse: {
-      __typename: 'Mutation',
-      updateUser: {
-        __typename: 'User',
-        id: me.id,
-        picture: myPicture,
-        name: myName,
-      }
-    },
-    update: (client, { data: { updateUser } }) => {
-      me.picture = myPicture
-      me.name = myPicture
+  const updateUser = useMutation<SettingsFormMutation.Mutation, SettingsFormMutation.Variables>(
+    mutation,
+    {
+      variables: { name: myName, picture: myPicture },
+      optimisticResponse: {
+        __typename: 'Mutation',
+        updateUser: {
+          __typename: 'User',
+          id: me.id,
+          picture: myPicture,
+          name: myName,
+        },
+      },
+      update: (client, { data: { updateUser } }) => {
+        me.picture = myPicture
+        me.name = myPicture
 
-      client.writeFragment({
-        id: defaultDataIdFromObject(me),
-        fragment: fragments.user,
-        data: me
-      })
-    }
-  })
+        client.writeFragment({
+          id: defaultDataIdFromObject(me),
+          fragment: fragments.user,
+          data: me,
+        })
+      },
+    },
+  )
 
   // Update picture once changed
-  useEffect(() => {
-    if (myPicture !== me.picture) {
-      updateUser()
-    }
-  }, [myPicture])
+  useEffect(
+    () => {
+      if (myPicture !== me.picture) {
+        updateUser()
+      }
+    },
+    [myPicture],
+  )
 
   const updateName = ({ target }) => {
     setMyName(target.value)

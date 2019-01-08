@@ -8,7 +8,7 @@ import styled from 'styled-components'
 import * as fragments from '../../graphql/fragments'
 import { MessagesListQuery } from '../../graphql/types'
 
-const Style = styled.div `
+const Style = styled.div`
   display: block;
   height: calc(100% - 60px);
   width: calc(100% - 30px);
@@ -20,13 +20,13 @@ const Style = styled.div `
     position: relative;
     max-width: 100%;
     border-radius: 7px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, .15);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
     margin-top: 10px;
     margin-bottom: 10px;
     clear: both;
 
     &::after {
-      content: "";
+      content: '';
       display: table;
       clear: both;
     }
@@ -34,7 +34,7 @@ const Style = styled.div `
 
   .MessagesList-message-mine {
     float: right;
-    background-color: #DCF8C6;
+    background-color: #dcf8c6;
 
     &::before {
       right: -11px;
@@ -44,7 +44,7 @@ const Style = styled.div `
 
   .MessagesList-message-others {
     float: left;
-    background-color: #FFF;
+    background-color: #fff;
 
     &::before {
       left: -11px;
@@ -52,8 +52,9 @@ const Style = styled.div `
     }
   }
 
-  .MessagesList-message-others::before, .MessagesList-message-mine::before {
-    content: "";
+  .MessagesList-message-others::before,
+  .MessagesList-message-mine::before {
+    content: '';
     position: absolute;
     bottom: 3px;
     width: 12px;
@@ -68,7 +69,7 @@ const Style = styled.div `
     word-wrap: break-word;
 
     &::after {
-      content: " \00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0";
+      content: ' \00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0';
       display: inline;
     }
   }
@@ -82,7 +83,7 @@ const Style = styled.div `
   }
 `
 
-const query = gql `
+const query = gql`
   query MessagesListQuery($chatId: ID!) {
     chat(chatId: $chatId) {
       ...FullChat
@@ -92,12 +93,16 @@ const query = gql `
 `
 
 interface MessagesListProps {
-  chatId: string;
+  chatId: string
 }
 
 export default ({ chatId }: MessagesListProps) => {
-  const { data: { chat: { messages } } } = useQuery<MessagesListQuery.Query, MessagesListQuery.Variables>(query, {
-    variables: { chatId }
+  const {
+    data: {
+      chat: { messages },
+    },
+  } = useQuery<MessagesListQuery.Query, MessagesListQuery.Variables>(query, {
+    variables: { chatId },
   })
   const selfRef = useRef(null)
 
@@ -113,12 +118,20 @@ export default ({ chatId }: MessagesListProps) => {
 
   return (
     <Style className={name} ref={selfRef}>
-      {messages && messages.map((message) => (
-        <div key={message.id} className={`MessagesList-message ${message.ownership ? 'MessagesList-message-mine' : 'MessagesList-message-others'}`}>
-          <div className="MessagesList-message-contents">{message.content}</div>
-          <span className="MessagesList-message-timestamp">{moment(message.createdAt).format('HH:mm')}</span>
-        </div>
-      ))}
+      {messages &&
+        messages.map(message => (
+          <div
+            key={message.id}
+            className={`MessagesList-message ${
+              message.ownership ? 'MessagesList-message-mine' : 'MessagesList-message-others'
+            }`}
+          >
+            <div className="MessagesList-message-contents">{message.content}</div>
+            <span className="MessagesList-message-timestamp">
+              {moment(message.createdAt).format('HH:mm')}
+            </span>
+          </div>
+        ))}
     </Style>
   )
 }

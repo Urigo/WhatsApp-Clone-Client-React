@@ -11,7 +11,7 @@ import * as fragments from '../../graphql/fragments'
 import { MessageBoxMutation, FullChat, LightChat } from '../../graphql/types'
 import { useMe } from '../../services/auth-service'
 
-const Style = styled.div `
+const Style = styled.div`
   display: flex;
   height: 50px;
   padding: 5px;
@@ -47,7 +47,7 @@ const Style = styled.div `
   }
 `
 
-const mutation = gql `
+const mutation = gql`
   mutation MessageBoxMutation($chatId: ID!, $content: String!) {
     addMessage(chatId: $chatId, content: $content) {
       ...Message
@@ -57,92 +57,88 @@ const mutation = gql `
 `
 
 interface MessageBoxProps {
-  chatId: string;
+  chatId: string
 }
 
 export default ({ chatId }: MessageBoxProps) => {
   const [message, setMessage] = useState('')
-  const { data: { me } } = useMe()
+  const {
+    data: { me },
+  } = useMe()
 
-  const addMessage = useMutation<MessageBoxMutation.Mutation, MessageBoxMutation.Variables>(mutation, {
-    variables: {
-      chatId,
-      content: message,
-    },
-    optimisticResponse: {
-      __typename: 'Mutation',
-      addMessage: {
-        id: uniqid(),
-        __typename: 'Message',
-        chat: {
-          id: chatId,
-          __typename: 'Chat',
-        },
-        sender: {
-          id: me.id,
-          __typename: 'User',
-          name: me.name,
-        },
+  const addMessage = useMutation<MessageBoxMutation.Mutation, MessageBoxMutation.Variables>(
+    mutation,
+    {
+      variables: {
+        chatId,
         content: message,
-        createdAt: new Date(),
-        type: 0,
-        recipients: [],
-        ownership: true,
+      },
+      optimisticResponse: {
+        __typename: 'Mutation',
+        addMessage: {
+          id: uniqid(),
+          __typename: 'Message',
+          chat: {
+            id: chatId,
+            __typename: 'Chat',
+          },
+          sender: {
+            id: me.id,
+            __typename: 'User',
+            name: me.name,
+          },
+          content: message,
+          createdAt: new Date(),
+          type: 0,
+          recipients: [],
+          ownership: true,
+        },
+      },
+      update: (client, { data: { addMessage } }) => {
+        let fullChat
+        try {
+          fullChat = client.readFragment<FullChat.Fragment>({
+            id: defaultDataIdFromObject(addMessage.chat),
+            fragment: fragments.fullChat,
+            fragmentName: 'FullChat',
+          })
+        } catch (e) {}
+
+        if (fullChat && !fullChat.messages.some(message => message.id === addMessage.id)) {
+          fullChat.messages.push(addMessage)
+
+          client.writeFragment({
+            id: defaultDataIdFromObject(addMessage.chat),
+            fragment: fragments.fullChat,
+            fragmentName: 'FullChat',
+            data: fullChat,
+          })
+        }
+
+        let lightChat
+        try {
+          lightChat = client.readFragment<LightChat.Fragment>({
+            id: defaultDataIdFromObject(addMessage.chat),
+            fragment: fragments.lightChat,
+            fragmentName: 'LightChat',
+          })
+        } catch (e) {}
+
+        if (lightChat) {
+          lightChat.messages = [addMessage]
+
+          client.writeFragment({
+            id: defaultDataIdFromObject(addMessage.chat),
+            fragment: fragments.lightChat,
+            fragmentName: 'LightChat',
+            data: lightChat,
+          })
+        }
       },
     },
-    update: (client, { data: { addMessage } }) => {
-      let fullChat
-      try {
-        fullChat = client.readFragment<FullChat.Fragment>({
-          id: defaultDataIdFromObject(addMessage.chat),
-          fragment: fragments.fullChat,
-          fragmentName: 'FullChat',
-        })
-      }
-      catch (e) {
+  )
 
-      }
-
-      if (
-        fullChat &&
-        !fullChat.messages.some(message => message.id === addMessage.id)
-      ) {
-        fullChat.messages.push(addMessage)
-
-        client.writeFragment({
-          id: defaultDataIdFromObject(addMessage.chat),
-          fragment: fragments.fullChat,
-          fragmentName: 'FullChat',
-          data: fullChat,
-        })
-      }
-
-      let lightChat
-      try {
-        lightChat = client.readFragment<LightChat.Fragment>({
-          id: defaultDataIdFromObject(addMessage.chat),
-          fragment: fragments.lightChat,
-          fragmentName: 'LightChat',
-        })
-      }
-      catch (e) {
-
-      }
-
-      if (lightChat) {
-        lightChat.messages = [addMessage]
-
-        client.writeFragment({
-          id: defaultDataIdFromObject(addMessage.chat),
-          fragment: fragments.lightChat,
-          fragmentName: 'LightChat',
-          data: lightChat,
-        })
-      }
-    },
-  })
-
-  const onKeyPress = (e) => {
+  const onKeyPress = e => {
     if (e.charCode === 13) {
       submitMessage()
     }
@@ -161,8 +157,20 @@ export default ({ chatId }: MessageBoxProps) => {
 
   return (
     <Style className="MessageBox">
-      <input className="MessageBox-input" type="text" placeholder="Type a message" value={message} onKeyPress={onKeyPress} onChange={onChange} />
-      <Button variant="contained" color="primary" className="MessageBox-button" onClick={submitMessage}>
+      <input
+        className="MessageBox-input"
+        type="text"
+        placeholder="Type a message"
+        value={message}
+        onKeyPress={onKeyPress}
+        onChange={onChange}
+      />
+      <Button
+        variant="contained"
+        color="primary"
+        className="MessageBox-button"
+        onClick={submitMessage}
+      >
         <SendIcon />
       </Button>
     </Style>

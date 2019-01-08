@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { signIn } from '../../services/auth-service'
 
 interface SignInFormProps {
-  history: History;
+  history: History
 }
 
 export default ({ history }: SignInFormProps) => {
@@ -29,12 +29,13 @@ export default ({ history }: SignInFormProps) => {
   }
 
   const handleSignIn = () => {
-    signIn({ username, password }).then(() => {
-      history.push('/chats')
-    })
-    .catch((error) => {
-      setError(error.message || error)
-    })
+    signIn({ username, password })
+      .then(() => {
+        history.push('/chats')
+      })
+      .catch(error => {
+        setError(error.message || error)
+      })
   }
 
   const handleSignUp = () => {
@@ -64,9 +65,19 @@ export default ({ history }: SignInFormProps) => {
             placeholder="Enter your password"
           />
         </div>
-        <Button type="button" color="secondary" variant="contained" disabled={!maySignIn()} onClick={handleSignIn}>Sign in</Button>
+        <Button
+          type="button"
+          color="secondary"
+          variant="contained"
+          disabled={!maySignIn()}
+          onClick={handleSignIn}
+        >
+          Sign in
+        </Button>
         <div className="AuthScreen-error">{error}</div>
-        <span className="AuthScreen-alternative">Don't have an account yet? <a onClick={handleSignUp}>Sign up!</a></span>
+        <span className="AuthScreen-alternative">
+          Don't have an account yet? <a onClick={handleSignUp}>Sign up!</a>
+        </span>
       </form>
     </div>
   )

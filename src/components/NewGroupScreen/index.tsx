@@ -7,7 +7,7 @@ import UsersList from '../UsersList'
 import CreateGroupButton from './CreateGroupButton'
 import NewGroupNavbar from './NewGroupNavbar'
 
-const Style = styled.div `
+const Style = styled.div`
   .UsersList {
     height: calc(100% - 56px);
     overflow-y: overlay;
@@ -26,9 +26,7 @@ export default ({ history }: RouteComponentProps) => {
         <UsersList selectable onSelectionChange={setSelectedUsers} />
       </Suspense>
 
-      {!!selectedUsers.length && (
-        <CreateGroupButton history={history} users={selectedUsers} />
-      )}
+      {!!selectedUsers.length && <CreateGroupButton history={history} users={selectedUsers} />}
     </Style>
   )
 }

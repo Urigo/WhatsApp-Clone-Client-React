@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { signUp } from '../../services/auth-service'
 
 interface SignUpFormProps {
-  history: History;
+  history: History
 }
 
 export default ({ history }: SignUpFormProps) => {
@@ -41,12 +41,13 @@ export default ({ history }: SignUpFormProps) => {
   }
 
   const handleSignUp = () => {
-    signUp({ username, password, name }).then(() => {
-      history.push('/sign-in')
-    })
-    .catch((error) => {
-      setError(error.message || error)
-    })
+    signUp({ username, password, name })
+      .then(() => {
+        history.push('/sign-in')
+      })
+      .catch(error => {
+        setError(error.message || error)
+      })
   }
 
   const handleSignIn = () => {
@@ -57,7 +58,13 @@ export default ({ history }: SignUpFormProps) => {
     <div className="SignUpForm Screen">
       <form>
         <legend>Sign up</legend>
-        <div style={{ float: 'left', width: 'calc(50% - 10px)', paddingRight: '10px' }}>
+        <div
+          style={{
+            float: 'left',
+            width: 'calc(50% - 10px)',
+            paddingRight: '10px',
+          }}
+        >
           <TextField
             className="AuthScreen-text-field"
             label="Name"
@@ -75,7 +82,13 @@ export default ({ history }: SignUpFormProps) => {
             margin="normal"
           />
         </div>
-        <div style={{ float: 'right', width: 'calc(50% - 10px)', paddingLeft: '10px' }}>
+        <div
+          style={{
+            float: 'right',
+            width: 'calc(50% - 10px)',
+            paddingLeft: '10px',
+          }}
+        >
           <TextField
             className="AuthScreen-text-field"
             label="Old password"
@@ -95,9 +108,19 @@ export default ({ history }: SignUpFormProps) => {
             margin="normal"
           />
         </div>
-        <Button type="button" color="secondary" variant="contained" disabled={!maySignUp()} onClick={handleSignUp}>Sign up</Button>
+        <Button
+          type="button"
+          color="secondary"
+          variant="contained"
+          disabled={!maySignUp()}
+          onClick={handleSignUp}
+        >
+          Sign up
+        </Button>
         <div className="AuthScreen-error">{error}</div>
-        <span className="AuthScreen-alternative">Already have an accout? <a onClick={handleSignIn}>Sign in!</a></span>
+        <span className="AuthScreen-alternative">
+          Already have an accout? <a onClick={handleSignIn}>Sign in!</a>
+        </span>
       </form>
     </div>
   )

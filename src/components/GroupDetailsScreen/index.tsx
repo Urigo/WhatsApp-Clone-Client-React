@@ -16,7 +16,7 @@ import Navbar from '../Navbar'
 import CompleteGroupButton from './CompleteGroupButton'
 import GroupDetailsNavbar from './GroupDetailsNavbar'
 
-const Style = styled.div `
+const Style = styled.div`
   .GroupDetailsScreen-group-name {
     width: calc(100% - 30px);
     margin: 15px;
@@ -71,7 +71,7 @@ const Style = styled.div `
   }
 `
 
-const query = gql `
+const query = gql`
   query GroupDetailsScreenQuery($chatId: ID!) {
     chat(chatId: $chatId) {
       ...Chat
@@ -80,7 +80,7 @@ const query = gql `
   ${fragments.chat}
 `
 
-const mutation = gql `
+const mutation = gql`
   mutation GroupDetailsScreenMutation($chatId: ID!, $name: String, $picture: String) {
     updateChat(chatId: $chatId, name: $name, picture: $picture) {
       ...Chat
@@ -91,7 +91,9 @@ const mutation = gql `
 
 export default ({ location, match, history }: RouteComponentProps) => {
   const chatId = match.params.chatId
-  const { data: { me } } = useMe()
+  const {
+    data: { me },
+  } = useMe()
 
   let ownedByMe: boolean
   let users: User.Fragment[]
@@ -102,8 +104,10 @@ export default ({ location, match, history }: RouteComponentProps) => {
 
   // The entire component functionality will be determined by the provided route param
   if (chatId) {
-    const { data: { chat } } = useQuery<GroupDetailsScreenQuery.Query, GroupDetailsScreenQuery.Variables>(query, {
-      variables: { chatId }
+    const {
+      data: { chat },
+    } = useQuery<GroupDetailsScreenQuery.Query, GroupDetailsScreenQuery.Variables>(query, {
+      variables: { chatId },
     })
     ownedByMe = chat.owner.id === me.id
     users = chat.allTimeMembers
@@ -113,8 +117,7 @@ export default ({ location, match, history }: RouteComponentProps) => {
     if (ownedByMe) {
       chatNameState = useState(chat.name)
       chatPictureState = useState(chat.picture)
-    }
-    else {
+    } else {
       chatNameState = [chat.name, Function]
       chatPictureState = [chat.picture, Function]
     }
@@ -122,7 +125,10 @@ export default ({ location, match, history }: RouteComponentProps) => {
     const [chatName] = chatNameState
     const [chatPicture] = chatPictureState
 
-    updateChat = useMutation<GroupDetailsScreenMutation.Mutation, GroupDetailsScreenMutation.Variables>(mutation, {
+    updateChat = useMutation<
+      GroupDetailsScreenMutation.Mutation,
+      GroupDetailsScreenMutation.Variables
+    >(mutation, {
       variables: {
         chatId,
         name: chatName,
@@ -138,7 +144,7 @@ export default ({ location, match, history }: RouteComponentProps) => {
           owner: null,
           allTimeMembers: null,
           isGroup: null,
-        }
+        },
       },
       update: (client, { data: { updateChat } }) => {
         chat.picture = chatPicture
@@ -149,17 +155,19 @@ export default ({ location, match, history }: RouteComponentProps) => {
           fragment: fragments.chat,
           data: chat,
         })
-      }
+      },
     })
 
     // Update picture once changed
-    useEffect(() => {
-      if (chatPicture !== chat.picture) {
-        updateChat()
-      }
-    }, [chatPicture])
-  }
-  else {
+    useEffect(
+      () => {
+        if (chatPicture !== chat.picture) {
+          updateChat()
+        }
+      },
+      [chatPicture],
+    )
+  } else {
     ownedByMe = true
     updateChat = Function
     chatNameState = useState('')
@@ -170,9 +178,7 @@ export default ({ location, match, history }: RouteComponentProps) => {
 
   // Users are missing from state
   if (!(users instanceof Array)) {
-    return (
-      <Redirect to="/chats" />
-    )
+    return <Redirect to="/chats" />
   }
 
   // Put me first
@@ -224,16 +230,28 @@ export default ({ location, match, history }: RouteComponentProps) => {
           autoFocus={true}
         />
       </div>
-      <div className="GroupDetailsScreen-participants-title">Participants: {participants.length}</div>
+      <div className="GroupDetailsScreen-participants-title">
+        Participants: {participants.length}
+      </div>
       <ul className="GroupDetailsScreen-participants-list">
         {participants.map(participant => (
           <div key={participant.id} className="GroupDetailsScreen-participant-item">
-            <img src={participant.picture || '/assets/default-profile-pic.jpg'} className="GroupDetailsScreen-participant-picture" />
+            <img
+              src={participant.picture || '/assets/default-profile-pic.jpg'}
+              className="GroupDetailsScreen-participant-picture"
+            />
             <span className="GroupDetailsScreen-participant-name">{participant.name}</span>
           </div>
         ))}
       </ul>
-      {!chatId && chatName && <CompleteGroupButton history={history} groupName={chatName} groupPicture={chatPicture} users={users} />}
+      {!chatId && chatName && (
+        <CompleteGroupButton
+          history={history}
+          groupName={chatName}
+          groupPicture={chatPicture}
+          users={users}
+        />
+      )}
     </Style>
   )
 }

@@ -6,8 +6,9 @@ import AnimatedSwitch from '../AnimatedSwitch'
 import SignInForm from './SignInForm'
 import SignUpForm from './SignUpForm'
 
-const Style = styled.div `
-  background: radial-gradient(rgb(34,65,67), rgb(17,48,50)), url(/assets/chat-background.jpg) no-repeat;
+const Style = styled.div`
+  background: radial-gradient(rgb(34, 65, 67), rgb(17, 48, 50)),
+    url(/assets/chat-background.jpg) no-repeat;
   background-size: cover;
   background-blend-mode: multiply;
   color: white;

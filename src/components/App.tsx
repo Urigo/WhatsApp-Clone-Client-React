@@ -11,9 +11,7 @@ import NewGroupScreen from '../components/NewGroupScreen'
 import SettingsScreen from '../components/SettingsScreen'
 import { withAuth } from '../services/auth-service'
 
-const RedirectToChats = () => (
-  <Redirect to="/chats" />
-)
+const RedirectToChats = () => <Redirect to="/chats" />
 
 export default () => (
   <BrowserRouter>

@@ -9,7 +9,7 @@ import styled from 'styled-components'
 import * as fragments from '../../graphql/fragments'
 import { User, CompleteGroupButtonMutation } from '../../graphql/types'
 
-const Style = styled.div `
+const Style = styled.div`
   position: fixed;
   right: 10px;
   bottom: 10px;
@@ -24,8 +24,12 @@ const Style = styled.div `
   }
 `
 
-const mutation = gql `
-  mutation CompleteGroupButtonMutation($recipientIds: [ID!]!, $groupName: String!, $groupPicture: String) {
+const mutation = gql`
+  mutation CompleteGroupButtonMutation(
+    $recipientIds: [ID!]!
+    $groupName: String!
+    $groupPicture: String
+  ) {
     addGroup(recipientIds: $recipientIds, groupName: $groupName, groupPicture: $groupPicture) {
       ...Chat
     }
@@ -34,14 +38,17 @@ const mutation = gql `
 `
 
 interface CompleteGroupButtonProps {
-  history: History;
-  users: User.Fragment[];
-  groupName: string;
-  groupPicture: string;
+  history: History
+  users: User.Fragment[]
+  groupName: string
+  groupPicture: string
 }
 
 export default ({ history, users, groupName, groupPicture }: CompleteGroupButtonProps) => {
-  const addGroup = useMutation<CompleteGroupButtonMutation.Mutation, CompleteGroupButtonMutation.Variables>(mutation, {
+  const addGroup = useMutation<
+    CompleteGroupButtonMutation.Mutation,
+    CompleteGroupButtonMutation.Variables
+  >(mutation, {
     variables: {
       recipientIds: users.map(user => user.id),
       groupName,
@@ -53,7 +60,7 @@ export default ({ history, users, groupName, groupPicture }: CompleteGroupButton
         fragment: fragments.chat,
         data: addGroup,
       })
-    }
+    },
   })
 
   const onClick = () => {

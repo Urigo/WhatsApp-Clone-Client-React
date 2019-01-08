@@ -4,7 +4,7 @@ import { History } from 'history'
 import * as React from 'react'
 import styled from 'styled-components'
 
-const Style = styled.div `
+const Style = styled.div`
   padding: 0;
   display: flex;
   flex-direction: row;
@@ -20,7 +20,7 @@ const Style = styled.div `
 `
 
 interface NewGroupNavbarProps {
-  history: History;
+  history: History
 }
 
 export default ({ history }: NewGroupNavbarProps) => {

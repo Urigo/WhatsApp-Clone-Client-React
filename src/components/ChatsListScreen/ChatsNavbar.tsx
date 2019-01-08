@@ -11,7 +11,7 @@ import { useState } from 'react'
 import styled from 'styled-components'
 import { signOut } from '../../services/auth-service'
 
-const Style = styled.div `
+const Style = styled.div`
   .ChatsNavbar-title {
     float: left;
   }
@@ -29,7 +29,7 @@ const Style = styled.div `
 `
 
 interface ChatsNavbarProps {
-  history: History;
+  history: History
 }
 
 export default ({ history }: ChatsNavbarProps) => {
@@ -67,8 +67,14 @@ export default ({ history }: ChatsNavbarProps) => {
       >
         <Style>
           <List>
-            <ListItem className="ChatsNavbar-options-item" button onClick={navToSettings}><SettingsIcon />Settings</ListItem>
-            <ListItem className="ChatsNavbar-options-item" button onClick={handleSignOut}><SignOutIcon />Sign Out</ListItem>
+            <ListItem className="ChatsNavbar-options-item" button onClick={navToSettings}>
+              <SettingsIcon />
+              Settings
+            </ListItem>
+            <ListItem className="ChatsNavbar-options-item" button onClick={handleSignOut}>
+              <SignOutIcon />
+              Sign Out
+            </ListItem>
           </List>
         </Style>
       </Popover>

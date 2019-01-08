@@ -6,7 +6,7 @@ import styled from 'styled-components'
 
 const name = 'NewChatNavbar'
 
-const Style = styled.div `
+const Style = styled.div`
   padding: 0;
   display: flex;
   flex-direction: row;
@@ -22,7 +22,7 @@ const Style = styled.div `
 `
 
 interface NewChatNavbarProps {
-  history: History;
+  history: History
 }
 
 export default ({ history }: NewChatNavbarProps) => {

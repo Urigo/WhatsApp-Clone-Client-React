@@ -5,7 +5,7 @@ import * as React from 'react'
 import styled from 'styled-components'
 import { User } from '../../graphql/types'
 
-const Style = styled.div `
+const Style = styled.div`
   position: fixed;
   right: 10px;
   bottom: 10px;
@@ -21,14 +21,14 @@ const Style = styled.div `
 `
 
 interface CreateGroupButtonProps {
-  history: History;
-  users: User.Fragment[];
+  history: History
+  users: User.Fragment[]
 }
 
 export default ({ history, users }: CreateGroupButtonProps) => {
   const onClick = () => {
     history.push('/new-chat/group/details', {
-      users
+      users,
     })
   }
 

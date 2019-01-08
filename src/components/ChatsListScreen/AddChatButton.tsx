@@ -4,7 +4,7 @@ import { History } from 'history'
 import * as React from 'react'
 import styled from 'styled-components'
 
-const Style = styled.div `
+const Style = styled.div`
   position: fixed;
   right: 10px;
   bottom: 10px;
@@ -20,7 +20,7 @@ const Style = styled.div `
 `
 
 interface AddChatButtonProps {
-  history: History;
+  history: History
 }
 
 export default ({ history }: AddChatButtonProps) => {

@@ -21,7 +21,7 @@ const wsLink = new WebSocketLink({
   options: {
     reconnect: true,
     connectionParams: () => ({
-      authToken: getAuthHeader()
+      authToken: getAuthHeader(),
     }),
   },
 })
@@ -33,7 +33,7 @@ const authLink = setContext((_, { headers }) => {
     headers: {
       ...headers,
       Authorization: auth,
-    }
+    },
   }
 })
 
@@ -49,11 +49,11 @@ const terminatingLink = split(
 const link = ApolloLink.from([terminatingLink])
 
 const fragmentMatcher = new IntrospectionFragmentMatcher({
-  introspectionQueryResultData
+  introspectionQueryResultData,
 })
 
 const cache = new InMemoryCache({
-  fragmentMatcher
+  fragmentMatcher,
 })
 
 export default new ApolloClient({

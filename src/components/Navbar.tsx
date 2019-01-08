@@ -4,7 +4,7 @@ import styled from 'styled-components'
 
 const name = 'Navbar'
 
-const Style = styled(Toolbar) `
+const Style = styled(Toolbar)`
   background-color: var(--primary-bg);
   color: var(--primary-text);
   font-size: 20px;
@@ -21,8 +21,6 @@ interface NavbarProps {
 
 export default ({ children }: NavbarProps) => (
   <Style className={`${name}`}>
-    <div className={`${name}-body`}>
-      {children}
-    </div>
+    <div className={`${name}-body`}>{children}</div>
   </Style>
 )
