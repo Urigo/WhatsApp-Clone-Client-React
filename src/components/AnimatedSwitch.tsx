@@ -1,12 +1,13 @@
 import styled from 'styled-components'
 import { AnimatedSwitch, spring } from 'react-router-transition'
 
-const glide = (val) => spring(val, {
-  stiffness: 174,
-  damping: 24,
-})
+const glide = val =>
+  spring(val, {
+    stiffness: 174,
+    damping: 24,
+  })
 
-const mapStyles = (styles) => ({
+const mapStyles = styles => ({
   transform: `translateX(${styles.offset}%)`,
 })
 
@@ -15,7 +16,7 @@ export default styled(AnimatedSwitch).attrs(() => ({
   atLeave: { offset: glide(-100) },
   atActive: { offset: glide(0) },
   mapStyles,
-})) `
+}))`
   position: relative;
   overflow: hidden;
   width: 100%;

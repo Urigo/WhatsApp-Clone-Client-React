@@ -6,23 +6,23 @@ import styled from 'styled-components'
 
 const name = 'NewChatNavbar'
 
-const Style = styled.div `
+const Style = styled.div`
   padding: 0;
   display: flex;
   flex-direction: row;
   margin-left: -20px;
 
-  .${name}-title {
+  .NewChatNavbar-title {
     line-height: 56px;
   }
 
-  .${name}-back-button {
+  .NewChatNavbar-back-button {
     color: var(--primary-text);
   }
 `
 
 interface NewChatNavbarProps {
-  history: History;
+  history: History
 }
 
 export default ({ history }: NewChatNavbarProps) => {
@@ -32,10 +32,10 @@ export default ({ history }: NewChatNavbarProps) => {
 
   return (
     <Style className={name}>
-      <Button className={`${name}-back-button`} onClick={navToChats}>
+      <Button className="NewChatNavbar-back-button" onClick={navToChats}>
         <ArrowBackIcon />
       </Button>
-      <div className={`${name}-title`}>New Chat</div>
+      <div className="NewChatNavbar-title">New Chat</div>
     </Style>
   )
 }

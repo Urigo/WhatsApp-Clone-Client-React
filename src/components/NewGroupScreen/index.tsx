@@ -7,9 +7,7 @@ import UsersList from '../UsersList'
 import CreateGroupButton from './CreateGroupButton'
 import NewGroupNavbar from './NewGroupNavbar'
 
-const name = 'NewGroupScreen'
-
-const Style = styled.div `
+const Style = styled.div`
   .UsersList {
     height: calc(100% - 56px);
     overflow-y: overlay;
@@ -20,7 +18,7 @@ export default ({ history }: RouteComponentProps) => {
   const [selectedUsers, setSelectedUsers] = useState([])
 
   return (
-    <Style className={`${name} Screen`}>
+    <Style className="NewGroupScreen Screen">
       <Navbar>
         <NewGroupNavbar history={history} />
       </Navbar>
@@ -28,9 +26,7 @@ export default ({ history }: RouteComponentProps) => {
         <UsersList selectable onSelectionChange={setSelectedUsers} />
       </Suspense>
 
-      {!!selectedUsers.length && (
-        <CreateGroupButton history={history} users={selectedUsers} />
-      )}
+      {!!selectedUsers.length && <CreateGroupButton history={history} users={selectedUsers} />}
     </Style>
   )
 }

@@ -6,42 +6,41 @@ import styled from 'styled-components'
 
 const name = 'GroupDetailsNavbar'
 
-const Style = styled.div `
+const Style = styled.div`
   padding: 0;
   display: flex;
   flex-direction: row;
   margin-left: -20px;
 
-  .${name}-title {
+  .GroupDetailsNavbar-title {
     line-height: 56px;
   }
 
-  .${name}-back-button {
+  .GroupDetailsNavbar-back-button {
     color: var(--primary-text);
   }
 `
 
 interface GroupDetailsNavbarProps {
-  history: History;
-  chatId?: string;
+  history: History
+  chatId?: string
 }
 
 export default ({ history, chatId }: GroupDetailsNavbarProps) => {
   const navToNewGroup = () => {
     if (chatId) {
       history.push(`/chats/${chatId}`)
-    }
-    else {
+    } else {
       history.push('/new-chat/group')
     }
   }
 
   return (
     <Style className={name}>
-      <Button className={`${name}-back-button`} onClick={navToNewGroup}>
+      <Button className="GroupDetailsNavbar-back-button" onClick={navToNewGroup}>
         <ArrowBackIcon />
       </Button>
-      <div className={`${name}-title`}>Group Details</div>
+      <div className="GroupDetailsNavbar-title">Group Details</div>
     </Style>
   )
 }

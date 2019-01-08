@@ -2,16 +2,13 @@ import * as React from 'react'
 import { Suspense } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
-import { useGetChat } from '../../graphql-hooks'
 import Navbar from '../Navbar'
 import ChatNavbar from './ChatNavbar'
 import MessageBox from './MessageBox'
 import MessagesList from './MessagesList'
 
-const name = 'ChatScreen'
-
-const Style = styled.div `
-  .${name}-body {
+const Style = styled.div`
+  .ChatScreen-body {
     position: relative;
     background: url(/assets/chat-background.jpg);
     width: 100%;
@@ -37,25 +34,21 @@ const Style = styled.div `
 `
 
 export default ({ match, history }: RouteComponentProps) => {
-  const useBoundGetChat = () => {
-    return useGetChat({
-      variables: { chatId: match.params.chatId }
-    })
-  }
+  const chatId = match.params.chatId
 
   return (
-    <Style className={`${name} Screen`}>
+    <Style className="ChatScreen Screen">
       <Navbar>
         <Suspense fallback={null}>
-          <ChatNavbar useGetChat={useBoundGetChat} history={history} />
+          <ChatNavbar chatId={chatId} history={history} />
         </Suspense>
       </Navbar>
-      <div className={`${name}-body`}>
+      <div className="ChatScreen-body">
         <Suspense fallback={null}>
-          <MessagesList useGetChat={useBoundGetChat} />
+          <MessagesList chatId={chatId} />
         </Suspense>
         <Suspense fallback={null}>
-          <MessageBox chatId={match.params.chatId} />
+          <MessageBox chatId={chatId} />
         </Suspense>
       </div>
     </Style>

@@ -4,23 +4,21 @@ import { History } from 'history'
 import * as React from 'react'
 import styled from 'styled-components'
 
-const name = 'SettingsNavbar'
-
-const Style = styled.div `
+const Style = styled.div`
   padding: 0;
   display: flex;
   flex-direction: row;
   margin-left: -20px;
 
-  .${name}-title {
+  .SettingsNavbar-title {
     line-height: 56px;
   }
 
-  .${name}-back-button {
+  .SettingsNavbar-back-button {
     color: var(--primary-text);
   }
 
-  .${name}-picture {
+  .SettingsNavbar-picture {
     height: 40px;
     width: 40px;
     margin-top: 3px;
@@ -32,7 +30,7 @@ const Style = styled.div `
 `
 
 interface SettingsNavbarProps {
-  history: History;
+  history: History
 }
 
 export default ({ history }: SettingsNavbarProps) => {
@@ -42,10 +40,10 @@ export default ({ history }: SettingsNavbarProps) => {
 
   return (
     <Style className={name}>
-      <Button className={`${name}-back-button`} onClick={navToChats}>
+      <Button className="SettingsNavbar-back-button" onClick={navToChats}>
         <ArrowBackIcon />
       </Button>
-      <div className={`${name}-title`}>Settings</div>
+      <div className="SettingsNavbar-title">Settings</div>
     </Style>
   )
 }

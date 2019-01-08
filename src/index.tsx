@@ -1,4 +1,4 @@
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import * as React from 'react'
 import { Suspense } from 'react'
 import { ApolloProvider } from 'react-apollo-hooks'
@@ -19,16 +19,14 @@ const theme = createMuiTheme({
 })
 
 ReactDOM.render(
-  (
-    <MuiThemeProvider theme={theme}>
-      <ApolloProvider client={apolloClient}>
-        <Suspense fallback={null}>
-          <App />
-        </Suspense>
-      </ApolloProvider>
-    </MuiThemeProvider>
-  ),
-  document.getElementById('root') as HTMLElement
+  <MuiThemeProvider theme={theme}>
+    <ApolloProvider client={apolloClient}>
+      <Suspense fallback={null}>
+        <App />
+      </Suspense>
+    </ApolloProvider>
+  </MuiThemeProvider>,
+  document.getElementById('root') as HTMLElement,
 )
 
 registerServiceWorker()

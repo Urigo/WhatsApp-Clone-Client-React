@@ -1,45 +1,67 @@
+import { defaultDataIdFromObject } from 'apollo-cache-inmemory'
+import gql from 'graphql-tag'
 import * as React from 'react'
 import { Suspense } from 'react'
+import { useMutation } from 'react-apollo-hooks'
 import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
+import * as fragments from '../../graphql/fragments'
+import { NewChatScreenMutation } from '../../graphql/types'
 import Navbar from '../Navbar'
 import UsersList from '../UsersList'
-import { useAddChat } from '../../graphql-hooks'
 import NewChatNavbar from './NewChatNavbar'
 import NewGroupButton from './NewGroupButton'
 
-const name = 'NewChatScreen'
-
-const Style = styled.div `
+const Style = styled.div`
   .UsersList {
     height: calc(100% - 56px);
   }
 
-  .${name}-users-list {
+  .NewChatScreen-users-list {
     height: calc(100% - 56px);
     overflow-y: overlay;
   }
 `
 
-export default ({ history }: RouteComponentProps) => {
-  const addChat = useAddChat()
+const mutation = gql`
+  mutation NewChatScreenMutation($recipientId: ID!) {
+    addChat(recipientId: $recipientId) {
+      ...Chat
+    }
+  }
+  ${fragments.chat}
+`
 
-  const onUserPick = (user) => {
+export default ({ history }: RouteComponentProps) => {
+  const addChat = useMutation<NewChatScreenMutation.Mutation, NewChatScreenMutation.Variables>(
+    mutation,
+    {
+      update: (client, { data: { addChat } }) => {
+        client.writeFragment({
+          id: defaultDataIdFromObject(addChat),
+          fragment: fragments.chat,
+          data: addChat,
+        })
+      },
+    },
+  )
+
+  const onUserPick = user => {
     addChat({
       variables: {
-        recipientId: user.id
-      }
+        recipientId: user.id,
+      },
     }).then(({ data: { addChat } }) => {
       history.push(`/chats/${addChat.id}`)
     })
   }
 
   return (
-    <Style className={`${name} Screen`}>
+    <Style className="NewChatScreen Screen">
       <Navbar>
         <NewChatNavbar history={history} />
       </Navbar>
-      <div className={`${name}-users-list`}>
+      <div className="NewChatScreen-users-list">
         <NewGroupButton history={history} />
         <Suspense fallback={null}>
           <UsersList onUserPick={onUserPick} />

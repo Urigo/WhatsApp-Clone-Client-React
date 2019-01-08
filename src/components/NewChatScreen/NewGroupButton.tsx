@@ -4,9 +4,7 @@ import { History } from 'history'
 import * as React from 'react'
 import styled from 'styled-components'
 
-const name = 'NewGroupButton'
-
-const Style = styled.div `
+const Style = styled.div`
   display: flex;
   width: 100%;
 
@@ -22,7 +20,7 @@ const Style = styled.div `
     }
   }
 
-  .${name}-icon {
+  .NewGroupButton-icon {
     height: 50px;
     width: 50px;
     object-fit: cover;
@@ -31,14 +29,14 @@ const Style = styled.div `
     background-color: var(--secondary-bg);
   }
 
-  .${name}-title {
+  .NewGroupButton-title {
     padding-left: 15px;
     font-weight: bold;
   }
 `
 
 interface NewGroupButtonProps {
-  history: History;
+  history: History
 }
 
 export default ({ history }: NewGroupButtonProps) => {
@@ -49,10 +47,10 @@ export default ({ history }: NewGroupButtonProps) => {
   return (
     <Style>
       <Button onClick={navToGroup}>
-        <div className={`${name}-icon`}>
+        <div className="NewGroupButton-icon">
           <GroupAddIcon />
         </div>
-        <div className={`${name}-title`}>New Group</div>
+        <div className="NewGroupButton-title">New Group</div>
       </Button>
     </Style>
   )

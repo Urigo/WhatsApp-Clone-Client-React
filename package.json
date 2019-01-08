@@ -61,7 +61,7 @@
     "whatwg-fetch": "2.0.3"
   },
   "scripts": {
-    "start": "node scripts/start.js",
+    "start": "yarn generate && node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom",
     "generate": "gql-gen",
@@ -75,6 +75,7 @@
     "@types/react-dom": "^16.0.11",
     "graphql": "^14.0.2",
     "graphql-code-generator": "^0.15.0-alpha.c0cd7ed2",
+    "graphql-codegen-introspection": "^0.15.2",
     "graphql-codegen-typescript-client": "^0.15.0-alpha.fe653a0b",
     "graphql-codegen-typescript-common": "^0.15.0-alpha.fe653a0b",
     "graphql-tag-pluck": "^0.3.3",

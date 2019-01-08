@@ -1,43 +1,45 @@
 import TextField from '@material-ui/core/TextField'
+import { defaultDataIdFromObject } from 'apollo-cache-inmemory'
+import gql from 'graphql-tag'
 import * as React from 'react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { MutationHookOptions } from 'react-apollo-hooks'
+import { useQuery, useMutation } from 'react-apollo-hooks'
 import { Redirect } from 'react-router-dom'
 import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
-import { useGetChat, useGetMe, useChangeChatInfo } from '../../graphql-hooks'
-import { pickPicture, uploadProfilePicture } from '../../services/picture-service'
-import { GetUsers, ChangeChatInfo } from '../../types'
+import * as fragments from '../../graphql/fragments'
+import { GroupDetailsScreenQuery, GroupDetailsScreenMutation, User } from '../../graphql/types'
+import { useMe } from '../../services/auth.service'
+import { pickPicture, uploadProfilePicture } from '../../services/picture.service'
 import Navbar from '../Navbar'
 import CompleteGroupButton from './CompleteGroupButton'
 import GroupDetailsNavbar from './GroupDetailsNavbar'
 
-const name = 'GroupDetailsScreen'
-
-const Style = styled.div `
-  .${name}-group-name {
+const Style = styled.div`
+  .GroupDetailsScreen-group-name {
     width: calc(100% - 30px);
     margin: 15px;
   }
 
-  .${name}-participants-title {
+  .GroupDetailsScreen-participants-title {
     margin-top: 10px;
     margin-left: 15px;
   }
 
-  .${name}-participants-list {
+  .GroupDetailsScreen-participants-list {
     display: flex;
     overflow: overlay;
     padding: 0;
   }
 
-  .${name}-participant-item {
+  .GroupDetailsScreen-participant-item {
     padding: 10px;
     flex-flow: row wrap;
     text-align: center;
   }
 
-  .${name}-participant-picture {
+  .GroupDetailsScreen-participant-picture {
     flex: 0 1 50px;
     height: 50px;
     width: 50px;
@@ -48,65 +50,135 @@ const Style = styled.div `
     margin-right: auto;
   }
 
-  .${name}-group-info {
+  .GroupDetailsScreen-group-info {
     display: flex;
     flex-direction: row;
     align-items: center;
   }
 
-  .${name}-participant-name {
+  .GroupDetailsScreen-participant-name {
     line-height: 10px;
     font-size: 14px;
   }
 
-  .${name}-group-picture {
+  .GroupDetailsScreen-group-picture {
     width: 50px;
     flex-basis: 50px;
     border-radius: 50%;
     margin-left: 15px;
     object-fit: cover;
-    cursor: pointer;
+    ${props => props.ownedByMe && 'cursor: pointer;'}
   }
 `
 
+const query = gql`
+  query GroupDetailsScreenQuery($chatId: ID!) {
+    chat(chatId: $chatId) {
+      ...Chat
+    }
+  }
+  ${fragments.chat}
+`
+
+const mutation = gql`
+  mutation GroupDetailsScreenMutation($chatId: ID!, $name: String, $picture: String) {
+    updateChat(chatId: $chatId, name: $name, picture: $picture) {
+      ...Chat
+    }
+  }
+  ${fragments.chat}
+`
+
 export default ({ location, match, history }: RouteComponentProps) => {
-  const chatId = match.params.chatId || ''
+  const chatId = match.params.chatId
+  const {
+    data: { me },
+  } = useMe()
 
-  let myId: string
-  let chatName: string
-  let chatPicture: string
-  let ownerId: string
-  let users: GetUsers.Users[]
-  let participants: GetUsers.Users[]
-  let changeChatInfo: (localOptions?: MutationHookOptions<ChangeChatInfo.Mutation, ChangeChatInfo.Variables>) => any;
+  let ownedByMe: boolean
+  let users: User.Fragment[]
+  let participants: User.Fragment[]
+  let updateChat: () => any
+  let chatNameState
+  let chatPictureState
 
-  const { data: { me } } = useGetMe()
-
+  // The entire component functionality will be determined by the provided route param
   if (chatId) {
-    const chat = useGetChat({ variables: { chatId } }).data.chat
-    changeChatInfo = useChangeChatInfo()
-    myId = me.id
-    chatName = chat.name
-    chatPicture = chat.picture
-    ownerId = chat.owner.id
+    const {
+      data: { chat },
+    } = useQuery<GroupDetailsScreenQuery.Query, GroupDetailsScreenQuery.Variables>(query, {
+      variables: { chatId },
+    })
+    ownedByMe = chat.owner.id === me.id
     users = chat.allTimeMembers
     participants = users.slice()
-  }
-  else {
-    changeChatInfo = () => {}
-    myId = ''
-    chatName = ''
-    chatPicture = ''
-    ownerId = ''
+
+    // Read-only if not owned by me
+    if (ownedByMe) {
+      chatNameState = useState(chat.name)
+      chatPictureState = useState(chat.picture)
+    } else {
+      chatNameState = [chat.name, Function]
+      chatPictureState = [chat.picture, Function]
+    }
+
+    const [chatName] = chatNameState
+    const [chatPicture] = chatPictureState
+
+    updateChat = useMutation<
+      GroupDetailsScreenMutation.Mutation,
+      GroupDetailsScreenMutation.Variables
+    >(mutation, {
+      variables: {
+        chatId,
+        name: chatName,
+        picture: chatPicture,
+      },
+      optimisticResponse: {
+        __typename: 'Mutation',
+        updateChat: {
+          __typename: 'Chat',
+          id: chat.id,
+          picture: chatPicture,
+          name: chatName,
+          owner: null,
+          allTimeMembers: null,
+          isGroup: null,
+        },
+      },
+      update: (client, { data: { updateChat } }) => {
+        chat.picture = chatPicture
+        chat.name = chatName
+
+        client.writeFragment({
+          id: defaultDataIdFromObject(chat),
+          fragment: fragments.chat,
+          data: chat,
+        })
+      },
+    })
+
+    // Update picture once changed
+    useEffect(
+      () => {
+        if (chatPicture !== chat.picture) {
+          updateChat()
+        }
+      },
+      [chatPicture],
+    )
+  } else {
+    ownedByMe = true
+    updateChat = Function
+    chatNameState = useState('')
+    chatPictureState = useState('')
     users = location.state.users
     participants = [me].concat(users)
   }
 
   // Users are missing from state
   if (!(users instanceof Array)) {
-    return (
-      <Redirect to="/chats" />
-    )
+    return <Redirect to="/chats" />
   }
 
   // Put me first
@@ -116,71 +188,70 @@ export default ({ location, match, history }: RouteComponentProps) => {
     participants.unshift(me)
   }
 
-  const [groupName, setGroupName] = useState(chatName)
-  const [groupPicture, setGroupPicture] = useState(chatPicture)
+  const [chatName, setChatName] = chatNameState
+  const [chatPicture, setChatPicture] = chatPictureState
 
-  const onGroupNameChange = ({ target }) => {
-    setGroupName(target.value)
-  }
-
-  const updateChatName = () => {
-    changeChatInfo({
-      variables: {
-        chatId,
-        name: groupName,
-      }
-    })
+  const updateChatName = ({ target }) => {
+    setChatName(target.value)
   }
 
   const updateChatPicture = async () => {
+    // You have to be an admin
+    if (!ownedByMe) return
+
     const file = await pickPicture()
 
     if (!file) return
 
     const { url } = await uploadProfilePicture(file)
 
-    setGroupPicture(url)
-
-    changeChatInfo({
-      variables: {
-        chatId,
-        picture: url,
-      }
-    })
+    setChatPicture(url)
   }
 
   return (
-    <Style className={`${name} Screen`}>
+    <Style className="GroupDetailsScreen Screen" ownedByMe={ownedByMe}>
       <Navbar>
         <GroupDetailsNavbar chatId={chatId} history={history} />
       </Navbar>
-      <div className={`${name}-group-info`}>
+      <div className="GroupDetailsScreen-group-info">
         <img
-          className={`${name}-group-picture`}
-          src={groupPicture || '/assets/default-group-pic.jpg'}
+          className="GroupDetailsScreen-group-picture"
+          src={chatPicture || '/assets/default-group-pic.jpg'}
           onClick={updateChatPicture}
         />
         <TextField
           label="Group name"
           placeholder="Enter group name"
-          className={`${name}-group-name`}
-          value={groupName}
-          onChange={onGroupNameChange}
-          onBlur={updateChatName}
-          disabled={ownerId !== myId}
+          className="GroupDetailsScreen-group-name"
+          value={chatName}
+          onChange={updateChatName}
+          onBlur={updateChat}
+          disabled={!ownedByMe}
           autoFocus={true}
         />
       </div>
-      <div className={`${name}-participants-title`}>Participants: {participants.length}</div>
-      <ul className={`${name}-participants-list`}>
+      <div className="GroupDetailsScreen-participants-title">
+        Participants: {participants.length}
+      </div>
+      <ul className="GroupDetailsScreen-participants-list">
         {participants.map(participant => (
-          <div key={participant.id} className={`${name}-participant-item`}>
-            <img src={participant.picture || '/assets/default-profile-pic.jpg'} className={`${name}-participant-picture`} />
-            <span className={`${name}-participant-name`}>{participant.name}</span>
+          <div key={participant.id} className="GroupDetailsScreen-participant-item">
+            <img
+              src={participant.picture || '/assets/default-profile-pic.jpg'}
+              className="GroupDetailsScreen-participant-picture"
+            />
+            <span className="GroupDetailsScreen-participant-name">{participant.name}</span>
           </div>
         ))}
       </ul>
-      {!chatId && groupName && <CompleteGroupButton history={history} groupName={groupName} users={users} />}
+      {!chatId && chatName && (
+        <CompleteGroupButton
+          history={history}
+          groupName={chatName}
+          groupPicture={chatPicture}
+          users={users}
+        />
+      )}
     </Style>
   )
 }

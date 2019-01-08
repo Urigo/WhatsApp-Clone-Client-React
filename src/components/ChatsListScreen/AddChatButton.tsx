@@ -4,9 +4,7 @@ import { History } from 'history'
 import * as React from 'react'
 import styled from 'styled-components'
 
-const name = 'AddChatButton'
-
-const Style = styled.div `
+const Style = styled.div`
   position: fixed;
   right: 10px;
   bottom: 10px;
@@ -22,7 +20,7 @@ const Style = styled.div `
 `
 
 interface AddChatButtonProps {
-  history: History;
+  history: History
 }
 
 export default ({ history }: AddChatButtonProps) => {
@@ -31,7 +29,7 @@ export default ({ history }: AddChatButtonProps) => {
   }
 
   return (
-    <Style className={name}>
+    <Style className="AddChatButton">
       <Button variant="contained" color="secondary" onClick={onClick}>
         <ChatIcon />
       </Button>

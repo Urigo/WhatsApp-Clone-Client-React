@@ -1,10 +1,15 @@
 schema: ../WhatsApp-Clone-server/src/schema.ts
-documents: ./src/graphql-documents/**/*.ts
+documents:
+  - ./src/**/*.tsx
+  - ./src/**/*.ts
 overwrite: true
 require:
   - ts-node/register/transpile-only
 generates:
-  ./src/types/graphql.ts:
+  ./src/graphql/types.ts:
     plugins:
       - typescript-common
       - typescript-client
+  ./src/graphql/introspection.json:
+    plugins:
+      - introspection

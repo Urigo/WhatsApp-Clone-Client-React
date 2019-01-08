@@ -1,14 +1,15 @@
 import Button from '@material-ui/core/Button'
 import ArrowRightIcon from '@material-ui/icons/ArrowRightAlt'
+import { defaultDataIdFromObject } from 'apollo-cache-inmemory'
+import gql from 'graphql-tag'
 import { History } from 'history'
 import * as React from 'react'
+import { useMutation } from 'react-apollo-hooks'
 import styled from 'styled-components'
-import { useAddGroup } from '../../graphql-hooks'
-import { GetUsers } from '../../types'
+import * as fragments from '../../graphql/fragments'
+import { User, CompleteGroupButtonMutation } from '../../graphql/types'
 
-const name = 'CompleteGroupButton'
-
-const Style = styled.div `
+const Style = styled.div`
   position: fixed;
   right: 10px;
   bottom: 10px;
@@ -23,18 +24,43 @@ const Style = styled.div `
   }
 `
 
+const mutation = gql`
+  mutation CompleteGroupButtonMutation(
+    $recipientIds: [ID!]!
+    $groupName: String!
+    $groupPicture: String
+  ) {
+    addGroup(recipientIds: $recipientIds, groupName: $groupName, groupPicture: $groupPicture) {
+      ...Chat
+    }
+  }
+  ${fragments.chat}
+`
+
 interface CompleteGroupButtonProps {
-  history: History;
-  users: GetUsers.Users[];
-  groupName: string;
+  history: History
+  users: User.Fragment[]
+  groupName: string
+  groupPicture: string
 }
 
-export default ({ history, users, groupName }: CompleteGroupButtonProps) => {
-  const addGroup = useAddGroup({
+export default ({ history, users, groupName, groupPicture }: CompleteGroupButtonProps) => {
+  const addGroup = useMutation<
+    CompleteGroupButtonMutation.Mutation,
+    CompleteGroupButtonMutation.Variables
+  >(mutation, {
     variables: {
       recipientIds: users.map(user => user.id),
       groupName,
-    }
+      groupPicture,
+    },
+    update: (client, { data: { addGroup } }) => {
+      client.writeFragment({
+        id: defaultDataIdFromObject(addGroup),
+        fragment: fragments.chat,
+        data: addGroup,
+      })
+    },
   })
 
   const onClick = () => {
@@ -44,7 +70,7 @@ export default ({ history, users, groupName }: CompleteGroupButtonProps) => {
   }
 
   return (
-    <Style className={name}>
+    <Style className="CompleteGroupButton">
       <Button variant="contained" color="secondary" onClick={onClick}>
         <ArrowRightIcon />
       </Button>

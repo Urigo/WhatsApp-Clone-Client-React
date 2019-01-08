@@ -3,11 +3,9 @@ import AddIcon from '@material-ui/icons/Add'
 import { History } from 'history'
 import * as React from 'react'
 import styled from 'styled-components'
-import { GetUsers } from '../../types'
+import { User } from '../../graphql/types'
 
-const name = 'CreateGroupButton'
-
-const Style = styled.div `
+const Style = styled.div`
   position: fixed;
   right: 10px;
   bottom: 10px;
@@ -23,19 +21,19 @@ const Style = styled.div `
 `
 
 interface CreateGroupButtonProps {
-  history: History;
-  users: GetUsers.Users[];
+  history: History
+  users: User.Fragment[]
 }
 
 export default ({ history, users }: CreateGroupButtonProps) => {
   const onClick = () => {
     history.push('/new-chat/group/details', {
-      users
+      users,
     })
   }
 
   return (
-    <Style className={name}>
+    <Style className="CreateGroupButton">
       <Button variant="contained" color="secondary" onClick={onClick}>
         <AddIcon />
       </Button>

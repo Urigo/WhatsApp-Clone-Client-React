@@ -9,29 +9,27 @@ import { History } from 'history'
 import * as React from 'react'
 import { useState } from 'react'
 import styled from 'styled-components'
-import { signOut } from '../../services/auth-service'
+import { signOut } from '../../services/auth.service'
 
-const name = 'ChatsNavbar'
-
-const Style = styled.div `
-  .${name}-title {
+const Style = styled.div`
+  .ChatsNavbar-title {
     float: left;
   }
 
-  .${name}-options-btn {
+  .ChatsNavbar-options-btn {
     float: right;
     font-size: 1.2em;
     margin-right: -15px;
     color: var(--primary-text);
   }
 
-  .${name}-options-item svg {
+  .ChatsNavbar-options-item svg {
     margin-right: 10px;
   }
 `
 
 interface ChatsNavbarProps {
-  history: History;
+  history: History
 }
 
 export default ({ history }: ChatsNavbarProps) => {
@@ -50,9 +48,9 @@ export default ({ history }: ChatsNavbarProps) => {
   }
 
   return (
-    <Style className={name}>
-      <span className={`${name}-title`}>WhatsApp Clone</span>
-      <Button className={`${name}-options-btn`} onClick={setPopped.bind(null, true)}>
+    <Style className="ChatsNavbar">
+      <span className="ChatsNavbar-title">WhatsApp Clone</span>
+      <Button className="ChatsNavbar-options-btn" onClick={setPopped.bind(null, true)}>
         <MoreIcon />
       </Button>
       <Popover
@@ -69,8 +67,14 @@ export default ({ history }: ChatsNavbarProps) => {
       >
         <Style>
           <List>
-            <ListItem className={`${name}-options-item`} button onClick={navToSettings}><SettingsIcon />Settings</ListItem>
-            <ListItem className={`${name}-options-item`} button onClick={handleSignOut}><SignOutIcon />Sign Out</ListItem>
+            <ListItem className="ChatsNavbar-options-item" button onClick={navToSettings}>
+              <SettingsIcon />
+              Settings
+            </ListItem>
+            <ListItem className="ChatsNavbar-options-item" button onClick={handleSignOut}>
+              <SignOutIcon />
+              Sign Out
+            </ListItem>
           </List>
         </Style>
       </Popover>

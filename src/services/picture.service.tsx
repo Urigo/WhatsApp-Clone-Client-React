@@ -12,7 +12,7 @@ export const pickPicture = () => {
   })
 }
 
-export const uploadProfilePicture = (file) => {
+export const uploadProfilePicture = file => {
   const formData = new FormData()
   formData.append('file', file)
   formData.append('upload_preset', 'profile-pic')
@@ -20,8 +20,7 @@ export const uploadProfilePicture = (file) => {
   return fetch(`${process.env.REACT_APP_SERVER_URL}/upload-profile-pic`, {
     method: 'POST',
     body: formData,
-  })
-  .then((res) => {
+  }).then(res => {
     return res.json()
   })
 }

@@ -1,18 +1,21 @@
 import TextField from '@material-ui/core/TextField'
 import EditIcon from '@material-ui/icons/Edit'
+import { defaultDataIdFromObject } from 'apollo-cache-inmemory'
+import gql from 'graphql-tag'
 import * as React from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useQuery, useMutation } from 'react-apollo-hooks'
 import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
-import { useGetMe, useChangeUserInfo } from '../../graphql-hooks'
-import { pickPicture, uploadProfilePicture } from '../../services/picture-service'
+import * as fragments from '../../graphql/fragments'
+import { SettingsFormMutation } from '../../graphql/types'
+import { useMe } from '../../services/auth.service'
+import { pickPicture, uploadProfilePicture } from '../../services/picture.service'
 import Navbar from '../Navbar'
 import SettingsNavbar from './SettingsNavbar'
 
-const name = 'SettingsForm'
-
-const Style = styled.div `
-  .${name}-picture {
+const Style = styled.div`
+  .SettingsForm-picture {
     max-width: 300px;
     display: block;
     margin: auto;
@@ -36,7 +39,7 @@ const Style = styled.div `
     }
   }
 
-  .${name}-name-input {
+  .SettingsForm-name-input {
     display: block;
     margin: auto;
     width: calc(100% - 50px);
@@ -48,20 +51,60 @@ const Style = styled.div `
   }
 `
 
+const mutation = gql`
+  mutation SettingsFormMutation($name: String, $picture: String) {
+    updateUser(name: $name, picture: $picture) {
+      ...User
+    }
+  }
+  ${fragments.user}
+`
+
 export default ({ history }: RouteComponentProps) => {
-  const { data: { me } } = useGetMe()
-  const changeUserInfo = useChangeUserInfo()
+  const {
+    data: { me },
+  } = useMe()
   const [myName, setMyName] = useState(me.name)
   const [myPicture, setMyPicture] = useState(me.picture)
 
-  const updateNameInput = ({ target }) => {
-    setMyName(target.value)
-  }
+  const updateUser = useMutation<SettingsFormMutation.Mutation, SettingsFormMutation.Variables>(
+    mutation,
+    {
+      variables: { name: myName, picture: myPicture },
+      optimisticResponse: {
+        __typename: 'Mutation',
+        updateUser: {
+          __typename: 'User',
+          id: me.id,
+          picture: myPicture,
+          name: myName,
+        },
+      },
+      update: (client, { data: { updateUser } }) => {
+        me.picture = myPicture
+        me.name = myPicture
 
-  const updateName = () => {
-    changeUserInfo({
-      variables: { name: myName }
-    })
+        client.writeFragment({
+          id: defaultDataIdFromObject(me),
+          fragment: fragments.user,
+          data: me,
+        })
+      },
+    },
+  )
+
+  // Update picture once changed
+  useEffect(
+    () => {
+      if (myPicture !== me.picture) {
+        updateUser()
+      }
+    },
+    [myPicture],
+  )
+
+  const updateName = ({ target }) => {
+    setMyName(target.value)
   }
 
   const updatePicture = async () => {
@@ -72,24 +115,20 @@ export default ({ history }: RouteComponentProps) => {
     const { url } = await uploadProfilePicture(file)
 
     setMyPicture(url)
-
-    changeUserInfo({
-      variables: { picture: url }
-    })
   }
 
   return (
     <Style className={name}>
-      <div className={`${name}-picture`}>
+      <div className="SettingsForm-picture">
         <img src={myPicture || '/assets/default-profile-pic.jpg'} />
         <EditIcon onClick={updatePicture} />
       </div>
       <TextField
-        className={`${name}-name-input`}
+        className="SettingsForm-name-input"
         label="Name"
         value={myName}
-        onChange={updateNameInput}
-        onBlur={updateName}
+        onChange={updateName}
+        onBlur={updateUser}
         margin="normal"
         placeholder="Enter your name"
       />

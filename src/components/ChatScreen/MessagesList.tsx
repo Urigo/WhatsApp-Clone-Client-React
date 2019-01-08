@@ -1,39 +1,40 @@
+import gql from 'graphql-tag'
 import * as moment from 'moment'
 import * as React from 'react'
 import { useRef, useEffect } from 'react'
+import { useQuery, useMutation } from 'react-apollo-hooks'
 import * as ReactDOM from 'react-dom'
 import styled from 'styled-components'
-import { GetChat } from '../../types'
+import * as fragments from '../../graphql/fragments'
+import { MessagesListQuery } from '../../graphql/types'
 
-const name = 'MessagesList'
-
-const Style = styled.div `
+const Style = styled.div`
   display: block;
-  height: 100%;
+  height: calc(100% - 60px);
   width: calc(100% - 30px);
   overflow-y: overlay;
   padding: 0 15px;
 
-  .${name}-message {
+  .MessagesList-message {
     display: inline-block;
     position: relative;
     max-width: 100%;
     border-radius: 7px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, .15);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
     margin-top: 10px;
     margin-bottom: 10px;
     clear: both;
 
     &::after {
-      content: "";
+      content: '';
       display: table;
       clear: both;
     }
   }
 
-  .${name}-message-mine {
+  .MessagesList-message-mine {
     float: right;
-    background-color: #DCF8C6;
+    background-color: #dcf8c6;
 
     &::before {
       right: -11px;
@@ -41,9 +42,9 @@ const Style = styled.div `
     }
   }
 
-  .${name}-message-others {
+  .MessagesList-message-others {
     float: left;
-    background-color: #FFF;
+    background-color: #fff;
 
     &::before {
       left: -11px;
@@ -51,8 +52,9 @@ const Style = styled.div `
     }
   }
 
-  .${name}-message-others::before, .${name}-message-mine::before {
-    content: "";
+  .MessagesList-message-others::before,
+  .MessagesList-message-mine::before {
+    content: '';
     position: absolute;
     bottom: 3px;
     width: 12px;
@@ -62,17 +64,17 @@ const Style = styled.div `
     background-size: contain;
   }
 
-  .${name}-message-contents {
+  .MessagesList-message-contents {
     padding: 5px 7px;
     word-wrap: break-word;
 
     &::after {
-      content: " \00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0";
+      content: ' \00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0';
       display: inline;
     }
   }
 
-  .${name}-message-timestamp {
+  .MessagesList-message-timestamp {
     position: absolute;
     bottom: 2px;
     right: 7px;
@@ -81,12 +83,27 @@ const Style = styled.div `
   }
 `
 
+const query = gql`
+  query MessagesListQuery($chatId: ID!) {
+    chat(chatId: $chatId) {
+      ...FullChat
+    }
+  }
+  ${fragments.fullChat}
+`
+
 interface MessagesListProps {
-  useGetChat: () => { data: GetChat.Query };
+  chatId: string
 }
 
-export default ({ useGetChat }: MessagesListProps) => {
-  const { data: { chat: { messages } } } = useGetChat()
+export default ({ chatId }: MessagesListProps) => {
+  const {
+    data: {
+      chat: { messages },
+    },
+  } = useQuery<MessagesListQuery.Query, MessagesListQuery.Variables>(query, {
+    variables: { chatId },
+  })
   const selfRef = useRef(null)
 
   const resetScrollTop = () => {
@@ -101,12 +118,20 @@ export default ({ useGetChat }: MessagesListProps) => {
 
   return (
     <Style className={name} ref={selfRef}>
-      {messages && messages.map((message) => (
-        <div key={message.id} className={`${name}-message ${message.ownership ? `${name}-message-mine` : `${name}-message-others`}`}>
-          <div className={`${name}-message-contents`}>{message.content}</div>
-          <span className={`${name}-message-timestamp`}>{moment(message.createdAt).format('HH:mm')}</span>
-        </div>
-      ))}
+      {messages &&
+        messages.map(message => (
+          <div
+            key={message.id}
+            className={`MessagesList-message ${
+              message.ownership ? 'MessagesList-message-mine' : 'MessagesList-message-others'
+            }`}
+          >
+            <div className="MessagesList-message-contents">{message.content}</div>
+            <span className="MessagesList-message-timestamp">
+              {moment(message.createdAt).format('HH:mm')}
+            </span>
+          </div>
+        ))}
     </Style>
   )
 }

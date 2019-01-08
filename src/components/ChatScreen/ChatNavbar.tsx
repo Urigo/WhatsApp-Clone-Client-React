@@ -6,30 +6,32 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack'
 import DeleteIcon from '@material-ui/icons/Delete'
 import InfoIcon from '@material-ui/icons/Info'
 import MoreIcon from '@material-ui/icons/MoreVert'
+import { defaultDataIdFromObject } from 'apollo-cache-inmemory'
+import gql from 'graphql-tag'
 import { History } from 'history'
 import * as React from 'react'
 import { useState } from 'react'
+import { useQuery, useMutation } from 'react-apollo-hooks'
 import styled from 'styled-components'
-import { useRemoveChat } from '../../graphql-hooks'
-import { GetChat } from '../../types'
+import * as fragments from '../../graphql/fragments'
+import * as queries from '../../graphql/queries'
+import { ChatNavbarMutation, ChatNavbarQuery, Chats } from '../../graphql/types'
 
-const name = 'ChatNavbar'
-
-const Style = styled.div `
+const Style = styled.div`
   padding: 0;
   display: flex;
   flex-direction: row;
   margin-left: -20px;
 
-  .${name}-title {
+  .ChatNavbar-title {
     line-height: 56px;
   }
 
-  .${name}-back-button {
+  .ChatNavbar-back-button {
     color: var(--primary-text);
   }
 
-  .${name}-picture {
+  .ChatNavbar-picture {
     height: 40px;
     width: 40px;
     margin-top: 3px;
@@ -39,12 +41,12 @@ const Style = styled.div `
     border-radius: 50%;
   }
 
-  .${name}-rest {
+  .ChatNavbar-rest {
     flex: 1;
     justify-content: flex-end;
   }
 
-  .${name}-options-btn {
+  .ChatNavbar-options-btn {
     float: right;
     height: 100%;
     font-size: 1.2em;
@@ -52,22 +54,71 @@ const Style = styled.div `
     color: var(--primary-text);
   }
 
-  .${name}-options-item svg {
+  .ChatNavbar-options-item svg {
     margin-right: 10px;
     padding-left: 15px;
   }
 `
 
+const query = gql`
+  query ChatNavbarQuery($chatId: ID!) {
+    chat(chatId: $chatId) {
+      ...Chat
+    }
+  }
+  ${fragments.chat}
+`
+
+const mutation = gql`
+  mutation ChatNavbarMutation($chatId: ID!) {
+    removeChat(chatId: $chatId) {
+      ...Chat
+    }
+  }
+  ${fragments.chat}
+`
+
 interface ChatNavbarProps {
-  useGetChat: () => { data: GetChat.Query };
-  history: History;
+  chatId: string
+  history: History
 }
 
-export default ({ useGetChat, history }: ChatNavbarProps) => {
-  const { data: { chat } } = useGetChat()
-  const removeChat = useRemoveChat({
-    variables: { chatId: chat.id }
+export default ({ chatId, history }: ChatNavbarProps) => {
+  const {
+    data: { chat },
+  } = useQuery<ChatNavbarQuery.Query, ChatNavbarQuery.Variables>(query, {
+    variables: { chatId },
   })
+  const removeChat = useMutation<ChatNavbarMutation.Mutation, ChatNavbarMutation.Variables>(
+    mutation,
+    {
+      variables: { chatId },
+      update: (client, { data: { removeChat } }) => {
+        client.writeFragment({
+          id: defaultDataIdFromObject(removeChat),
+          fragment: fragments.chat,
+          data: null,
+        })
+
+        let chats
+        try {
+          chats = client.readQuery<Chats.Query>({
+            query: queries.chats,
+          }).chats
+        } catch (e) {}
+
+        if (chats && chats.some(chat => chat.id === removeChat.id)) {
+          const index = chats.findIndex(chat => chat.id === removeChat.id)
+          chats.splice(index, 1)
+
+          client.writeQuery({
+            query: queries.chats,
+            data: { chats },
+          })
+        }
+      },
+    },
+  )
   const [popped, setPopped] = useState(false)
 
   const navToChats = () => {
@@ -76,23 +127,29 @@ export default ({ useGetChat, history }: ChatNavbarProps) => {
 
   const navToGroupDetails = () => {
     setPopped(false)
-    history.push(`/chats/${chat.id}/details`, { chat })
+    history.push(`/chats/${chatId}/details`, { chat })
   }
 
-  const handleDeleteChat = () => {
+  const handleRemoveChat = () => {
     setPopped(false)
     removeChat().then(navToChats)
   }
 
   return (
     <Style className={name}>
-      <Button className={`${name}-back-button`} onClick={navToChats}>
+      <Button className="ChatNavbar-back-button" onClick={navToChats}>
         <ArrowBackIcon />
       </Button>
-      <img className={`${name}-picture`} src={chat.picture || (chat.isGroup ? '/assets/default-group-pic.jpg' : '/assets/default-profile-pic.jpg')} />
-      <div className={`${name}-title`}>{chat.name}</div>
-      <div className={`${name}-rest`}>
-        <Button className={`${name}-options-btn`} onClick={setPopped.bind(null, true)}>
+      <img
+        className="ChatNavbar-picture"
+        src={
+          chat.picture ||
+          (chat.isGroup ? '/assets/default-group-pic.jpg' : '/assets/default-profile-pic.jpg')
+        }
+      />
+      <div className="ChatNavbar-title">{chat.name}</div>
+      <div className="ChatNavbar-rest">
+        <Button className="ChatNavbar-options-btn" onClick={setPopped.bind(null, true)}>
           <MoreIcon />
         </Button>
       </div>
@@ -111,9 +168,15 @@ export default ({ useGetChat, history }: ChatNavbarProps) => {
         <Style style={{ marginLeft: '-15px' }}>
           <List>
             {chat.isGroup && (
-              <ListItem className={`${name}-options-item`} button onClick={navToGroupDetails}><InfoIcon />Details</ListItem>
+              <ListItem className="ChatNavbar-options-item" button onClick={navToGroupDetails}>
+                <InfoIcon />
+                Details
+              </ListItem>
             )}
-            <ListItem className={`${name}-options-item`} button onClick={handleDeleteChat}><DeleteIcon />Delete</ListItem>
+            <ListItem className="ChatNavbar-options-item" button onClick={handleRemoveChat}>
+              <DeleteIcon />
+              Delete
+            </ListItem>
           </List>
         </Style>
       </Popover>
