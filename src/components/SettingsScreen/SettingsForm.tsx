@@ -1,15 +1,16 @@
 import TextField from '@material-ui/core/TextField'
 import EditIcon from '@material-ui/icons/Edit'
+import { defaultDataIdFromObject } from 'apollo-cache-inmemory'
 import gql from 'graphql-tag'
 import * as React from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery, useMutation } from 'react-apollo-hooks'
 import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
 import * as fragments from '../../graphql/fragments'
+import { SettingsFormMutation } from '../../graphql/types'
 import { useMe } from '../../services/auth-service'
 import { pickPicture, uploadProfilePicture } from '../../services/picture-service'
-import { SettingsFormMutation } from '../../graphql/types'
 import Navbar from '../Navbar'
 import SettingsNavbar from './SettingsNavbar'
 
@@ -61,18 +62,40 @@ const mutation = gql `
 
 export default ({ history }: RouteComponentProps) => {
   const { data: { me } } = useMe()
-  const updateUser = useMutation<SettingsFormMutation.Mutation, SettingsFormMutation.Variables>(mutation)
   const [myName, setMyName] = useState(me.name)
   const [myPicture, setMyPicture] = useState(me.picture)
 
-  const updateNameInput = ({ target }) => {
-    setMyName(target.value)
-  }
+  const updateUser = useMutation<SettingsFormMutation.Mutation, SettingsFormMutation.Variables>(mutation, {
+    variables: { name: myName, picture: myPicture },
+    optimisticResponse: {
+      __typename: 'Mutation',
+      updateUser: {
+        __typename: 'User',
+        id: me.id,
+        picture: myPicture,
+        name: myName,
+      }
+    },
+    update: (client, { data: { updateUser } }) => {
+      Object.assign(me, updateUser)
 
-  const updateName = () => {
-    updateUser({
-      variables: { name: myName }
-    })
+      client.writeFragment({
+        id: defaultDataIdFromObject(me),
+        fragment: fragments.user,
+        data: me
+      })
+    }
+  })
+
+  // Update picture once changed
+  useEffect(() => {
+    if (myPicture !== me.picture) {
+      updateUser()
+    }
+  }, [myPicture])
+
+  const updateName = ({ target }) => {
+    setMyName(target.value)
   }
 
   const updatePicture = async () => {
@@ -83,10 +106,6 @@ export default ({ history }: RouteComponentProps) => {
     const { url } = await uploadProfilePicture(file)
 
     setMyPicture(url)
-
-    updateUser({
-      variables: { picture: url }
-    })
   }
 
   return (
@@ -99,8 +118,8 @@ export default ({ history }: RouteComponentProps) => {
         className="SettingsForm-name-input"
         label="Name"
         value={myName}
-        onChange={updateNameInput}
-        onBlur={updateName}
+        onChange={updateName}
+        onBlur={updateUser}
         margin="normal"
         placeholder="Enter your name"
       />

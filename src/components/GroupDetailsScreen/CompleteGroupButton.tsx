@@ -25,8 +25,8 @@ const Style = styled.div `
 `
 
 const mutation = gql `
-  mutation CompleteGroupButtonMutation($recipientIds: [ID!]!, $groupName: String!) {
-    addGroup(recipientIds: $recipientIds, groupName: $groupName) {
+  mutation CompleteGroupButtonMutation($recipientIds: [ID!]!, $groupName: String!, $groupPicture: String) {
+    addGroup(recipientIds: $recipientIds, groupName: $groupName, groupPicture: $groupPicture) {
       ...Chat
     }
   }
@@ -37,13 +37,15 @@ interface CompleteGroupButtonProps {
   history: History;
   users: User.Fragment[];
   groupName: string;
+  groupPicture: string;
 }
 
-export default ({ history, users, groupName }: CompleteGroupButtonProps) => {
+export default ({ history, users, groupName, groupPicture }: CompleteGroupButtonProps) => {
   const addGroup = useMutation<CompleteGroupButtonMutation.Mutation, CompleteGroupButtonMutation.Variables>(mutation, {
     variables: {
       recipientIds: users.map(user => user.id),
       groupName,
+      groupPicture,
     },
     update: (client, { data: { addGroup } }) => {
       client.writeFragment({

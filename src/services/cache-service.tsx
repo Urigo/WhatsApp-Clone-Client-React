@@ -132,7 +132,7 @@ export const useSubscriptions = () => {
       try {
         users = client.readQuery<Users.Query>({
           query: queries.users
-        })
+        }).users
       }
       catch (e) {
 

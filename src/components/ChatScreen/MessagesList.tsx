@@ -10,7 +10,7 @@ import { MessagesListQuery } from '../../graphql/types'
 
 const Style = styled.div `
   display: block;
-  height: 100%;
+  height: calc(100% - 60px);
   width: calc(100% - 30px);
   overflow-y: overlay;
   padding: 0 15px;

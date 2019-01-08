@@ -6,6 +6,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack'
 import DeleteIcon from '@material-ui/icons/Delete'
 import InfoIcon from '@material-ui/icons/Info'
 import MoreIcon from '@material-ui/icons/MoreVert'
+import { defaultDataIdFromObject } from 'apollo-cache-inmemory'
 import gql from 'graphql-tag'
 import { History } from 'history'
 import * as React from 'react'
@@ -70,8 +71,11 @@ const query = gql `
 
 const mutation = gql `
   mutation ChatNavbarMutation($chatId: ID!) {
-    removeChat(chatId: $chatId)
+    removeChat(chatId: $chatId) {
+      ...Chat
+    }
   }
+  ${fragments.chat}
 `
 
 interface ChatNavbarProps {
@@ -87,7 +91,7 @@ export default ({ chatId, history }: ChatNavbarProps) => {
     variables: { chatId },
     update: (client, { data: { removeChat } }) => {
       client.writeFragment({
-        id: removeChat,
+        id: defaultDataIdFromObject(removeChat),
         fragment: fragments.chat,
         data: null,
       })
@@ -96,7 +100,7 @@ export default ({ chatId, history }: ChatNavbarProps) => {
       try {
         chats = client.readQuery<Chats.Query>({
           query: queries.chats
-        })
+        }).chats
       }
       catch (e) {
 
@@ -104,9 +108,9 @@ export default ({ chatId, history }: ChatNavbarProps) => {
 
       if (
         chats &&
-        chats.some(chat => chat.id === removeChat)
+        chats.some(chat => chat.id === removeChat.id)
       ) {
-        const index = chats.findIndex(chat => chat.id === removeChat)
+        const index = chats.findIndex(chat => chat.id === removeChat.id)
         chats.splice(index, 1)
 
         client.writeQuery({
