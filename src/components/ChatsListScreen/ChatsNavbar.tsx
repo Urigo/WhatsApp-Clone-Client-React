@@ -9,7 +9,7 @@ import { History } from 'history'
 import * as React from 'react'
 import { useState } from 'react'
 import styled from 'styled-components'
-import { signOut } from '../../services/auth-service'
+import { signOut } from '../../services/auth.service'
 
 const Style = styled.div`
   .ChatsNavbar-title {

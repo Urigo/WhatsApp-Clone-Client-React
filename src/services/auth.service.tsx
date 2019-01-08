@@ -5,7 +5,7 @@ import { Redirect } from 'react-router-dom'
 import store from '../apollo-client'
 import * as queries from '../graphql/queries'
 import { Me } from '../graphql/types'
-import { useSubscriptions } from './cache-service'
+import { useSubscriptions } from './cache.service'
 
 export const useMe = () => {
   return useQuery<Me.Query>(queries.me)
