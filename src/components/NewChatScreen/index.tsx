@@ -1,3 +1,4 @@
+import { defaultDataIdFromObject } from 'apollo-cache-inmemory'
 import gql from 'graphql-tag'
 import * as React from 'react'
 import { Suspense } from 'react'
@@ -35,7 +36,7 @@ export default ({ history }: RouteComponentProps) => {
   const addChat = useMutation<NewChatScreenMutation.Mutation, NewChatScreenMutation.Variables>(mutation, {
     update: (client, { data: { addChat } }) => {
       client.writeFragment({
-        id: addChat.id,
+        id: defaultDataIdFromObject(addChat),
         fragment: fragments.chat,
         data: addChat,
       })

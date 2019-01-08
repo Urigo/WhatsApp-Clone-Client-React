@@ -1,5 +1,6 @@
 import Button from '@material-ui/core/Button'
 import SendIcon from '@material-ui/icons/Send'
+import { defaultDataIdFromObject } from 'apollo-cache-inmemory'
 import gql from 'graphql-tag'
 import * as React from 'react'
 import { useState } from 'react'
@@ -7,8 +8,8 @@ import { useQuery, useMutation } from 'react-apollo-hooks'
 import styled from 'styled-components'
 import { time as uniqid } from 'uniqid'
 import * as fragments from '../../graphql/fragments'
-import { useMe } from '../../services/auth-service'
 import { MessageBoxMutation, FullChat, LightChat } from '../../graphql/types'
+import { useMe } from '../../services/auth-service'
 
 const Style = styled.div `
   display: flex;
@@ -93,7 +94,7 @@ export default ({ chatId }: MessageBoxProps) => {
       let fullChat
       try {
         fullChat = client.readFragment<FullChat.Fragment>({
-          id: addMessage.chat.id,
+          id: defaultDataIdFromObject(addMessage.chat),
           fragment: fragments.fullChat,
           fragmentName: 'FullChat',
         })
@@ -109,7 +110,7 @@ export default ({ chatId }: MessageBoxProps) => {
         fullChat.messages.push(addMessage)
 
         client.writeFragment({
-          id: fullChat.id,
+          id: defaultDataIdFromObject(addMessage.chat),
           fragment: fragments.fullChat,
           fragmentName: 'FullChat',
           data: fullChat,
@@ -119,7 +120,7 @@ export default ({ chatId }: MessageBoxProps) => {
       let lightChat
       try {
         lightChat = client.readFragment<LightChat.Fragment>({
-          id: addMessage.chat.id,
+          id: defaultDataIdFromObject(addMessage.chat),
           fragment: fragments.lightChat,
           fragmentName: 'LightChat',
         })
@@ -132,7 +133,7 @@ export default ({ chatId }: MessageBoxProps) => {
         lightChat.messages = [addMessage]
 
         client.writeFragment({
-          id: lightChat.id,
+          id: defaultDataIdFromObject(addMessage.chat),
           fragment: fragments.lightChat,
           fragmentName: 'LightChat',
           data: lightChat,

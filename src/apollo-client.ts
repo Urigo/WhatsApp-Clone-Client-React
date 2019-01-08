@@ -1,4 +1,4 @@
-import { InMemoryCache, IntrospectionFragmentMatcher, defaultDataIdFromObject } from 'apollo-cache-inmemory'
+import { InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory'
 import { ApolloClient } from 'apollo-client'
 import { ApolloLink, split } from 'apollo-link'
 import { setContext } from 'apollo-link-context'
@@ -53,15 +53,7 @@ const fragmentMatcher = new IntrospectionFragmentMatcher({
 })
 
 const cache = new InMemoryCache({
-  dataIdFromObject: (object: any) => {
-    switch (object.__typename) {
-      case 'Message':
-        return `${object.chat.id}:${object.id}`
-      default:
-        return defaultDataIdFromObject(object)
-    }
-  },
-  fragmentMatcher,
+  fragmentMatcher
 })
 
 export default new ApolloClient({

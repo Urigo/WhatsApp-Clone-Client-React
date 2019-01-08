@@ -1,5 +1,6 @@
 import Button from '@material-ui/core/Button'
 import ArrowRightIcon from '@material-ui/icons/ArrowRightAlt'
+import { defaultDataIdFromObject } from 'apollo-cache-inmemory'
 import gql from 'graphql-tag'
 import { History } from 'history'
 import * as React from 'react'
@@ -46,7 +47,7 @@ export default ({ history, users, groupName }: CompleteGroupButtonProps) => {
     },
     update: (client, { data: { addGroup } }) => {
       client.writeFragment({
-        id: addGroup.id,
+        id: defaultDataIdFromObject(addGroup),
         fragment: fragments.chat,
         data: addGroup,
       })

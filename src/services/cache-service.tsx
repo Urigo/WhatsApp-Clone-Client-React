@@ -1,3 +1,4 @@
+import { defaultDataIdFromObject } from 'apollo-cache-inmemory'
 import * as fragments from '../graphql/fragments'
 import * as queries from '../graphql/queries'
 import * as subscriptions from '../graphql/subscriptions'
@@ -20,13 +21,13 @@ export const useSubscriptions = () => {
   useSubscription<ChatAdded.Subscription>(subscriptions.chatAdded, {
     onSubscriptionData: ({ client, subscriptionData: { chatAdded } }) => {
       client.writeFragment({
-        id: chatAdded.id,
+        id: defaultDataIdFromObject(chatAdded),
         fragment: fragments.chat,
         data: chatAdded,
       })
 
       client.writeFragment({
-        id: chatAdded.id,
+        id: defaultDataIdFromObject(chatAdded),
         fragment: fragments.lightChat,
         fragmentName: 'LightChat',
         data: chatAdded,
@@ -59,7 +60,7 @@ export const useSubscriptions = () => {
   useSubscription<ChatUpdated.Subscription>(subscriptions.chatUpdated, {
     onSubscriptionData: ({ client, subscriptionData: { chatUpdated } }) => {
       client.writeFragment({
-        id: chatUpdated.id,
+        id: defaultDataIdFromObject(chatUpdated),
         fragment: fragments.chat,
         data: chatUpdated,
       })
@@ -71,7 +72,7 @@ export const useSubscriptions = () => {
       let fullChat
       try {
         fullChat = client.readFragment<FullChat.Fragment>({
-          id: messageAdded.chat.id,
+          id: defaultDataIdFromObject(messageAdded.chat),
           fragment: fragments.fullChat,
           fragmentName: 'FullChat',
         })
@@ -87,7 +88,7 @@ export const useSubscriptions = () => {
         fullChat.messages.push(messageAdded)
 
         client.writeFragment({
-          id: fullChat.id,
+          id: defaultDataIdFromObject(fullChat),
           fragment: fragments.fullChat,
           fragmentName: 'FullChat',
           data: fullChat,
@@ -97,7 +98,7 @@ export const useSubscriptions = () => {
       let lightChat
       try {
         lightChat = client.readFragment<LightChat.Fragment>({
-          id: messageAdded.chat.id,
+          id: defaultDataIdFromObject(messageAdded.chat),
           fragment: fragments.lightChat,
           fragmentName: 'LightChat',
         })
@@ -110,7 +111,7 @@ export const useSubscriptions = () => {
         lightChat.messages = [messageAdded]
 
         client.writeFragment({
-          id: lightChat.id,
+          id: defaultDataIdFromObject(lightChat),
           fragment: fragments.lightChat,
           fragmentName: 'LightChat',
           data: lightChat,
@@ -122,7 +123,7 @@ export const useSubscriptions = () => {
   useSubscription<UserAdded.Subscription>(subscriptions.userAdded, {
     onSubscriptionData: ({ client, subscriptionData: { userAdded } }) => {
       client.writeFragment({
-        id: userAdded.id,
+        id: defaultDataIdFromObject(userAdded),
         fragment: fragments.user,
         data: userAdded,
       })
@@ -154,7 +155,7 @@ export const useSubscriptions = () => {
   useSubscription<UserUpdated.Subscription>(subscriptions.userUpdated, {
     onSubscriptionData: ({ client, subscriptionData: { userUpdated } }) => {
       client.writeFragment({
-        id: userUpdated.id,
+        id: defaultDataIdFromObject(userUpdated),
         fragment: fragments.user,
         data: userUpdated,
       })

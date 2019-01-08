@@ -1,4 +1,5 @@
 import TextField from '@material-ui/core/TextField'
+import { defaultDataIdFromObject } from 'apollo-cache-inmemory'
 import gql from 'graphql-tag'
 import * as React from 'react'
 import { useState } from 'react'
@@ -108,7 +109,7 @@ export default ({ location, match, history }: RouteComponentProps) => {
     updateChat = useMutation<GroupDetailsScreenMutation.Mutation, GroupDetailsScreenMutation.Variables>(mutation, {
       update: (client, { data: { updateChat } }) => {
         client.writeFragment({
-          id: updateChat.id,
+          id: defaultDataIdFromObject(updateChat),
           fragment: fragments.chat,
           data: updateChat,
         })
