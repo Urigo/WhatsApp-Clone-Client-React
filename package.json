@@ -12,7 +12,7 @@
     "apollo-link-http": "1.5.7",
     "apollo-link-ws": "1.0.9",
     "apollo-utilities": "1.0.26",
-    "autoprefixer": "7.1.6",
+    "autoprefixer": "7.2.6",
     "babel-jest": "20.0.3",
     "babel-loader": "7.1.2",
     "babel-preset-react-app": "3.1.2",
