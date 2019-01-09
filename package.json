@@ -82,7 +82,7 @@
     "nodemon": "^1.18.9",
     "prompt": "^1.0.0",
     "ts-node": "^7.0.1",
-    "typescript": "3.2.1"
+    "typescript": "3.2.2"
   },
   "jest": {
     "collectCoverageFrom": [
