@@ -30,7 +30,7 @@
     "moment": "2.22.2",
     "object-assign": "4.1.1",
     "postcss-flexbugs-fixes": "3.2.0",
-    "postcss-loader": "2.0.8",
+    "postcss-loader": "2.1.6",
     "promise": "8.0.1",
     "raf": "3.4.0",
     "react": "16.7.0-alpha.2",
