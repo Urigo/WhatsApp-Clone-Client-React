@@ -14,7 +14,7 @@ Run yarn
 
 Run codegen to generate TypeScript types
 
-    $ yarn codegen
+    $ yarn generate
 
 Note that the types are generated from the server! So if you clone the server project in a different path be sure to update the `codegen.yml` file.
 
