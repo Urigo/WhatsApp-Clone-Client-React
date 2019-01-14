@@ -91,9 +91,7 @@ const mutation = gql`
 
 export default ({ location, match, history }: RouteComponentProps) => {
   const chatId = match.params.chatId
-  const {
-    data: { me },
-  } = useMe()
+  const me = useMe()
 
   let ownedByMe: boolean
   let users: User.Fragment[]

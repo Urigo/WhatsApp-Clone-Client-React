@@ -62,9 +62,7 @@ interface MessageBoxProps {
 
 export default ({ chatId }: MessageBoxProps) => {
   const [message, setMessage] = useState('')
-  const {
-    data: { me },
-  } = useMe()
+  const me = useMe()
 
   const addMessage = useMutation<MessageBoxMutation.Mutation, MessageBoxMutation.Variables>(
     mutation,

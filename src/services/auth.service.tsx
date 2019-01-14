@@ -1,14 +1,17 @@
 import gql from 'graphql-tag'
 import * as React from 'react'
+import { useContext } from 'react'
 import { useQuery } from 'react-apollo-hooks'
 import { Redirect } from 'react-router-dom'
 import store from '../apollo-client'
 import * as queries from '../graphql/queries'
-import { Me } from '../graphql/types'
+import { Me, User } from '../graphql/types'
 import { useSubscriptions } from './cache.service'
 
+const MyContext = React.createContext<User.Fragment>(null)
+
 export const useMe = () => {
-  return useQuery<Me.Query>(queries.me)
+  return useContext(MyContext)
 }
 
 export const withAuth = (Component: React.ComponentType) => {
@@ -16,14 +19,18 @@ export const withAuth = (Component: React.ComponentType) => {
     if (!getAuthHeader()) return <Redirect to="/sign-in" />
 
     // Validating against server
-    const isSignedIn = useMe()
+    const myResult = useQuery<Me.Query>(queries.me)
 
     // Override TypeScript definition issue with the current version
-    if (isSignedIn['error']) return <Redirect to="/sign-in" />
+    if (myResult['error']) return <Redirect to="/sign-in" />
 
     useSubscriptions()
 
-    return <Component {...props} />
+    return (
+      <MyContext.Provider value={myResult.data.me}>
+        <Component {...props} />
+      </MyContext.Provider>
+    )
   }
 }
 

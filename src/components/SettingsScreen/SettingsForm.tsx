@@ -61,9 +61,7 @@ const mutation = gql`
 `
 
 export default ({ history }: RouteComponentProps) => {
-  const {
-    data: { me },
-  } = useMe()
+  const me = useMe()
   const [myName, setMyName] = useState(me.name)
   const [myPicture, setMyPicture] = useState(me.picture)
 
