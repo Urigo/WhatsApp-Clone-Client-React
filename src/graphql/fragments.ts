@@ -20,7 +20,6 @@ export const message = gql`
     }
     content
     createdAt
-    type
     recipients {
       user {
         id
