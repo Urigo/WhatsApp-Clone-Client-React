@@ -10,6 +10,3 @@ generates:
     plugins:
       - typescript-common
       - typescript-client
-  ./src/graphql/introspection.json:
-    plugins:
-      - introspection
