@@ -4,9 +4,18 @@ import { useContext } from 'react'
 import { useQuery } from 'react-apollo-hooks'
 import { Redirect } from 'react-router-dom'
 import store from '../apollo-client'
-import * as queries from '../graphql/queries'
+import * as fragments from '../graphql/fragments'
 import { Me, User } from '../graphql/types'
 import { useSubscriptions } from './cache.service'
+
+const meQuery = gql `
+  query Me {
+    me {
+      ...User
+    }
+  }
+  ${fragments.user}
+`
 
 const MyContext = React.createContext<User.Fragment>(null)
 
@@ -19,7 +28,7 @@ export const withAuth = (Component: React.ComponentType) => {
     if (!getAuthHeader()) return <Redirect to="/sign-in" />
 
     // Validating against server
-    const myResult = useQuery<Me.Query>(queries.me)
+    const myResult = useQuery<Me.Query>(meQuery)
 
     // Override TypeScript definition issue with the current version
     if (myResult['error']) return <Redirect to="/sign-in" />

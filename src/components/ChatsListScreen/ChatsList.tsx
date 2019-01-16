@@ -66,10 +66,10 @@ const Style = styled.div`
 const query = gql`
   query ChatsListQuery {
     chats {
-      ...LightChat
+      ...ChatsList
     }
   }
-  ${fragments.lightChat}
+  ${fragments.chatsList}
 `
 
 interface ChatsListProps {
@@ -80,7 +80,6 @@ export default ({ history }: ChatsListProps) => {
   const {
     data: { chats },
   } = useQuery<ChatsListQuery.Query>(query)
-  const chatsIds = chats.map(chat => chat.id)
 
   const navToChat = chatId => {
     history.push(`chats/${chatId}`)
@@ -94,7 +93,7 @@ export default ({ history }: ChatsListProps) => {
     <Style className="ChatsList">
       <List className="ChatsList-chats-list">
         {chats &&
-          chats.map(chat => {
+          chats.items.map(chat => {
             const recentMessage = pluckRecentMessage(chat)
 
             return (

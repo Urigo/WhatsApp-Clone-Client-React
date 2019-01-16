@@ -6,7 +6,6 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack'
 import DeleteIcon from '@material-ui/icons/Delete'
 import InfoIcon from '@material-ui/icons/Info'
 import MoreIcon from '@material-ui/icons/MoreVert'
-import { defaultDataIdFromObject } from 'apollo-cache-inmemory'
 import gql from 'graphql-tag'
 import { History } from 'history'
 import * as React from 'react'
@@ -14,8 +13,8 @@ import { useState } from 'react'
 import { useQuery, useMutation } from 'react-apollo-hooks'
 import styled from 'styled-components'
 import * as fragments from '../../graphql/fragments'
-import * as queries from '../../graphql/queries'
-import { ChatNavbarMutation, ChatNavbarQuery, Chats } from '../../graphql/types'
+import { ChatNavbarMutation, ChatNavbarQuery, ChatsList } from '../../graphql/types'
+import { dataIdFromObject } from '../../services/cache.service'
 
 const Style = styled.div`
   padding: 0;
@@ -95,25 +94,33 @@ export default ({ chatId, history }: ChatNavbarProps) => {
       variables: { chatId },
       update: (client, { data: { removeChat } }) => {
         client.writeFragment({
-          id: defaultDataIdFromObject(removeChat),
+          id: dataIdFromObject(removeChat),
           fragment: fragments.chat,
           data: null,
         })
 
-        let chats
+        let chatsList
         try {
-          chats = client.readQuery<Chats.Query>({
-            query: queries.chats,
-          }).chats
+          chatsList = client.readFragment<ChatsList.Fragment>({
+            id: 'ChatsList',
+            fragment: fragments.chatsList,
+            fragmentName: 'ChatsList',
+          })
         } catch (e) {}
 
-        if (chats && chats.some(chat => chat.id === removeChat.id)) {
-          const index = chats.findIndex(chat => chat.id === removeChat.id)
-          chats.splice(index, 1)
+        if (
+          chatsList &&
+          chatsList.items.some(chat => chat.id === removeChat.id)
+        ) {
+          const index = chatsList.items.findIndex(chat => chat.id === removeChat.id)
+          chatsList.items.splice(index, 1)
+          chatsList.length = chatsList.items.length
 
-          client.writeQuery({
-            query: queries.chats,
-            data: { chats },
+          client.writeFragment({
+            id: 'ChatsList',
+            fragment: fragments.chatsList,
+            fragmentName: 'ChatsList',
+            data: chatsList,
           })
         }
       },
