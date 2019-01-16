@@ -4,7 +4,7 @@ documents:
   - ./src/**/*.ts
 overwrite: true
 require:
-  - ts-node/register/transpile-only
+  - ts-node/../../codegen-interpreter.ts
 generates:
   ./src/graphql/types.ts:
     plugins:
