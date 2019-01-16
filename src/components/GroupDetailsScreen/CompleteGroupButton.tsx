@@ -58,6 +58,7 @@ export default ({ history, users, groupName, groupPicture }: CompleteGroupButton
       client.writeFragment({
         id: dataIdFromObject(addGroup),
         fragment: fragments.chat,
+        fragmentName: 'Chat',
         data: addGroup,
       })
     },

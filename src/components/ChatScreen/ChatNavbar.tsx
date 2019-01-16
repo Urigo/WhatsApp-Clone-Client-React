@@ -96,6 +96,7 @@ export default ({ chatId, history }: ChatNavbarProps) => {
         client.writeFragment({
           id: dataIdFromObject(removeChat),
           fragment: fragments.chat,
+          fragmentName: 'Chat',
           data: null,
         })
 

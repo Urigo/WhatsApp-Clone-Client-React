@@ -5,7 +5,6 @@ import { useSubscription } from '../polyfills/react-apollo-hooks'
 import {
   Chat,
   ChatsList,
-  LightChat,
   FullChat,
   User,
   UsersList,
@@ -30,13 +29,7 @@ export const useSubscriptions = () => {
       client.writeFragment({
         id: dataIdFromObject(chatAdded),
         fragment: fragments.chat,
-        data: chatAdded,
-      })
-
-      client.writeFragment({
-        id: dataIdFromObject(chatAdded),
-        fragment: fragments.lightChat,
-        fragmentName: 'LightChat',
+        fragmentName: 'Chat',
         data: chatAdded,
       })
 
@@ -71,6 +64,7 @@ export const useSubscriptions = () => {
       client.writeFragment({
         id: dataIdFromObject(chatUpdated),
         fragment: fragments.chat,
+        fragmentName: 'Chat',
         data: chatUpdated,
       })
     },
@@ -98,23 +92,23 @@ export const useSubscriptions = () => {
         })
       }
 
-      let lightChat
+      let chat
       try {
-        lightChat = client.readFragment<LightChat.Fragment>({
+        chat = client.readFragment<Chat.Fragment>({
           id: dataIdFromObject(messageAdded.chat),
-          fragment: fragments.lightChat,
-          fragmentName: 'LightChat',
+          fragment: fragments.chat,
+          fragmentName: 'Chat',
         })
       } catch (e) {}
 
-      if (lightChat) {
-        lightChat.messages = [messageAdded]
+      if (chat) {
+        chat.lastMessage = messageAdded
 
         client.writeFragment({
-          id: dataIdFromObject(lightChat),
-          fragment: fragments.lightChat,
-          fragmentName: 'LightChat',
-          data: lightChat,
+          id: dataIdFromObject(chat),
+          fragment: fragments.chat,
+          fragmentName: 'Chat',
+          data: chat,
         })
       }
     },

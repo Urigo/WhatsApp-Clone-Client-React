@@ -1,12 +1,12 @@
 import gql from 'graphql-tag'
-import lightChat from './lightChat.fragment'
+import chat from './chat.fragment'
 
 export default gql `
   fragment ChatsList on ChatsList {
     items {
-      ...LightChat
+      ...Chat
     }
     length
   }
-  ${lightChat}
+  ${chat}
 `

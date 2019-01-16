@@ -4,8 +4,8 @@ import * as fragments from '../fragments'
 export default gql `
   subscription ChatUpdated {
     chatUpdated {
-      ...LightChat
+      ...Chat
     }
   }
-  ${fragments.lightChat}
+  ${fragments.chat}
 `

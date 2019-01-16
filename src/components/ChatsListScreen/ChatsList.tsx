@@ -85,47 +85,39 @@ export default ({ history }: ChatsListProps) => {
     history.push(`chats/${chatId}`)
   }
 
-  const pluckRecentMessage = chat => {
-    return chat.messages[chat.messages.length - 1]
-  }
-
   return (
     <Style className="ChatsList">
       <List className="ChatsList-chats-list">
         {chats &&
-          chats.items.map(chat => {
-            const recentMessage = pluckRecentMessage(chat)
-
-            return (
-              <ListItem
-                key={chat.id}
-                className="ChatsList-chat-item"
-                button
-                onClick={navToChat.bind(null, chat.id)}
-              >
-                <img
-                  className="ChatsList-profile-pic"
-                  src={
-                    chat.picture ||
-                    (chat.isGroup
-                      ? '/assets/default-group-pic.jpg'
-                      : '/assets/default-profile-pic.jpg')
-                  }
-                />
-                <div className="ChatsList-info">
-                  <div className="ChatsList-name">{chat.name}</div>
-                  {recentMessage && (
-                    <React.Fragment>
-                      <div className="ChatsList-last-message">{recentMessage.content}</div>
-                      <div className="ChatsList-timestamp">
-                        {moment(recentMessage.createdAt).format('HH:mm')}
-                      </div>
-                    </React.Fragment>
-                  )}
-                </div>
-              </ListItem>
-            )
-          })}
+          chats.items.map(chat => (
+            <ListItem
+              key={chat.id}
+              className="ChatsList-chat-item"
+              button
+              onClick={navToChat.bind(null, chat.id)}
+            >
+              <img
+                className="ChatsList-profile-pic"
+                src={
+                  chat.picture ||
+                  (chat.isGroup
+                    ? '/assets/default-group-pic.jpg'
+                    : '/assets/default-profile-pic.jpg')
+                }
+              />
+              <div className="ChatsList-info">
+                <div className="ChatsList-name">{chat.name}</div>
+                {chat.lastMessage && (
+                  <React.Fragment>
+                    <div className="ChatsList-last-message">{chat.lastMessage.content}</div>
+                    <div className="ChatsList-timestamp">
+                      {moment(chat.lastMessage.createdAt).format('HH:mm')}
+                    </div>
+                  </React.Fragment>
+                )}
+              </div>
+            </ListItem>
+          ))}
       </List>
     </Style>
   )

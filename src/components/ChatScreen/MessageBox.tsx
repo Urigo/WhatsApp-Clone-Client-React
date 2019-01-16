@@ -7,7 +7,7 @@ import { useQuery, useMutation } from 'react-apollo-hooks'
 import styled from 'styled-components'
 import { time as uniqid } from 'uniqid'
 import * as fragments from '../../graphql/fragments'
-import { MessageBoxMutation, FullChat, LightChat } from '../../graphql/types'
+import { MessageBoxMutation, FullChat, Chat } from '../../graphql/types'
 import { useMe } from '../../services/auth.service'
 import { dataIdFromObject } from '../../services/cache.service'
 
@@ -113,23 +113,23 @@ export default ({ chatId }: MessageBoxProps) => {
           })
         }
 
-        let lightChat
+        let chat
         try {
-          lightChat = client.readFragment<LightChat.Fragment>({
+          chat = client.readFragment<Chat.Fragment>({
             id: dataIdFromObject(addMessage.chat),
-            fragment: fragments.lightChat,
-            fragmentName: 'LightChat',
+            fragment: fragments.chat,
+            fragmentName: 'Chat',
           })
         } catch (e) {}
 
-        if (lightChat) {
-          lightChat.messages = [addMessage]
+        if (chat) {
+          chat.lastMessage = addMessage
 
           client.writeFragment({
             id: dataIdFromObject(addMessage.chat),
-            fragment: fragments.lightChat,
-            fragmentName: 'LightChat',
-            data: lightChat,
+            fragment: fragments.chat,
+            fragmentName: 'Chat',
+            data: chat,
           })
         }
       },

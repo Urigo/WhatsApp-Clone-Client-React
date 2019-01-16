@@ -40,6 +40,7 @@ export default ({ history }: RouteComponentProps) => {
         client.writeFragment({
           id: dataIdFromObject(addChat),
           fragment: fragments.chat,
+          fragmentName: 'Chat',
           data: addChat,
         })
       },
