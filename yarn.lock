@@ -9130,13 +9130,12 @@ rc@^1.0.1, rc@^1.1.6, rc@^1.2.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-apollo-hooks@0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/react-apollo-hooks/-/react-apollo-hooks-0.2.1.tgz#27e820f780c041ede7cc16224133750ecf24a392"
-  integrity sha512-YNKi7qQWWiNNFApBOJTFLLH0AJoPHg/DseBmDB4HgCBetbh/XgwZ2DTCtRWgJcpvPbVpkt8q9ZG9Mvh2pUo13w==
+react-apollo-hooks@0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/react-apollo-hooks/-/react-apollo-hooks-0.3.0.tgz#3a0f0e73f2ef0905ad3589b9fb227693282edd3d"
+  integrity sha512-VImPJJyYbAxiilvgFvlLRFR82cbUTB3Jl1zCpgJIfv0T5Z03X+WUt/842FO5Tsu4mL0r1Vel2NNGO8d73Sda7A==
   dependencies:
     lodash "^4.17.11"
-    react-fast-compare "^2.0.2"
 
 react-app-polyfill@^0.2.0:
   version "0.2.0"
@@ -9203,7 +9202,7 @@ react-event-listener@^0.6.2:
     prop-types "^15.6.0"
     warning "^4.0.1"
 
-react-fast-compare@2.0.4, react-fast-compare@^2.0.2:
+react-fast-compare@2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-2.0.4.tgz#e84b4d455b0fec113e0402c329352715196f81f9"
   integrity sha512-suNP+J1VU1MWFKcyt7RtjiSWUjvidmQSlqu+eHslq+342xCbGTYmC0mEhPCOHxlW0CywylOC1u2DFAT+bv4dBw==
