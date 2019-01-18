@@ -31,7 +31,7 @@ export const withAuth = (Component: React.ComponentType) => {
     const myResult = useQuery<Me.Query>(meQuery)
 
     // Override TypeScript definition issue with the current version
-    if (myResult['error']) return <Redirect to="/sign-in" />
+    if (myResult.error) return <Redirect to="/sign-in" />
 
     useSubscriptions()
 
