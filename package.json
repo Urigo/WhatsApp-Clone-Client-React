@@ -32,7 +32,7 @@
     "graphql": "14.1.1",
     "graphql-code-generator": "0.15.2",
     "graphql-codegen-typescript-client": "0.15.2",
-    "graphql-codegen-typescript-common": "0.15.2",
+    "graphql-codegen-typescript-common": "0.16.0",
     "nodemon": "1.18.9",
     "ts-node": "7.0.1"
   },
