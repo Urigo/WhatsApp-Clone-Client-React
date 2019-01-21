@@ -7,7 +7,6 @@ import { WebSocketLink } from 'apollo-link-ws'
 import { getMainDefinition } from 'apollo-utilities'
 import { OperationDefinitionNode } from 'graphql'
 import { getAuthHeader } from './services/auth.service'
-import { dataIdFromObject } from './services/cache.service'
 
 const httpUri = process.env.REACT_APP_SERVER_URL + '/graphql'
 const wsUri = httpUri.replace(/^https?/, 'ws')
@@ -47,7 +46,8 @@ const terminatingLink = split(
 )
 
 const link = ApolloLink.from([terminatingLink])
-const cache = new InMemoryCache({ dataIdFromObject })
+
+const cache = new InMemoryCache()
 
 export default new ApolloClient({
   link,

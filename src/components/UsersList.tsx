@@ -46,10 +46,10 @@ const Style = styled.div`
 const query = gql`
   query UsersListQuery {
     users {
-      ...UsersList
+      ...User
     }
   }
-  ${fragments.usersList}
+  ${fragments.user}
 `
 
 interface UsersListProps {
@@ -91,7 +91,7 @@ export default (props: UsersListProps) => {
     <Style className={name} selectable={selectable}>
       <List className={`${name}-users-list`}>
         {users &&
-          users.items.map(user => (
+          users.map(user => (
             <ListItem
               className={`${name}-user-item`}
               key={user.id}

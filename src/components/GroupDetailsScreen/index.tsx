@@ -1,4 +1,5 @@
 import TextField from '@material-ui/core/TextField'
+import { defaultDataIdFromObject } from 'apollo-cache-inmemory'
 import gql from 'graphql-tag'
 import * as React from 'react'
 import { useState, useEffect } from 'react'
@@ -14,7 +15,6 @@ import { pickPicture, uploadProfilePicture } from '../../services/picture.servic
 import Navbar from '../Navbar'
 import CompleteGroupButton from './CompleteGroupButton'
 import GroupDetailsNavbar from './GroupDetailsNavbar'
-import { dataIdFromObject } from '../../services/cache.service'
 
 const Style = styled.div`
   .GroupDetailsScreen-group-name {
@@ -116,8 +116,8 @@ export default ({ location, match, history }: RouteComponentProps) => {
       chatNameState = useState(chat.name)
       chatPictureState = useState(chat.picture)
     } else {
-      chatNameState = [chat.name, () => {}]
-      chatPictureState = [chat.picture, () => {}]
+      chatNameState = [chat.name, Function]
+      chatPictureState = [chat.picture, Function]
     }
 
     const [chatName] = chatNameState
@@ -149,7 +149,7 @@ export default ({ location, match, history }: RouteComponentProps) => {
         chat.name = chatName
 
         client.writeFragment({
-          id: dataIdFromObject(chat),
+          id: defaultDataIdFromObject(chat),
           fragment: fragments.chat,
           fragmentName: 'Chat',
           data: chat,
@@ -168,7 +168,7 @@ export default ({ location, match, history }: RouteComponentProps) => {
     )
   } else {
     ownedByMe = true
-    updateChat = () => {}
+    updateChat = Function
     chatNameState = useState('')
     chatPictureState = useState('')
     users = location.state.users

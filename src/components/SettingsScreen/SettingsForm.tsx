@@ -1,5 +1,6 @@
 import TextField from '@material-ui/core/TextField'
 import EditIcon from '@material-ui/icons/Edit'
+import { defaultDataIdFromObject } from 'apollo-cache-inmemory'
 import gql from 'graphql-tag'
 import * as React from 'react'
 import { useEffect, useState } from 'react'
@@ -9,7 +10,6 @@ import styled from 'styled-components'
 import * as fragments from '../../graphql/fragments'
 import { SettingsFormMutation } from '../../graphql/types'
 import { useMe } from '../../services/auth.service'
-import { dataIdFromObject } from '../../services/cache.service'
 import { pickPicture, uploadProfilePicture } from '../../services/picture.service'
 import Navbar from '../Navbar'
 import SettingsNavbar from './SettingsNavbar'
@@ -83,7 +83,7 @@ export default ({ history }: RouteComponentProps) => {
         me.name = myPicture
 
         client.writeFragment({
-          id: dataIdFromObject(me),
+          id: defaultDataIdFromObject(me),
           fragment: fragments.user,
           data: me,
         })

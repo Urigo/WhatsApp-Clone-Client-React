@@ -1,13 +1,14 @@
 import { defaultDataIdFromObject } from 'apollo-cache-inmemory'
 import * as fragments from '../graphql/fragments'
+import * as queries from '../graphql/queries'
 import * as subscriptions from '../graphql/subscriptions'
 import { useSubscription } from '../polyfills/react-apollo-hooks'
 import {
+  Chats,
+  Users,
   Chat,
-  ChatsList,
   FullChat,
   User,
-  UsersList,
   MessageAdded,
   ChatAdded,
   ChatUpdated,
@@ -15,45 +16,29 @@ import {
   UserUpdated,
 } from '../graphql/types'
 
-export const dataIdFromObject = (object: any) => {
-  if (/List$/.test(object.__typename)) {
-    return object.__typename
-  }
-
-  return defaultDataIdFromObject(object)
-}
-
 export const useSubscriptions = () => {
   useSubscription<ChatAdded.Subscription>(subscriptions.chatAdded, {
     onSubscriptionData: ({ client, subscriptionData: { chatAdded } }) => {
       client.writeFragment({
-        id: dataIdFromObject(chatAdded),
+        id: defaultDataIdFromObject(chatAdded),
         fragment: fragments.chat,
         fragmentName: 'Chat',
         data: chatAdded,
       })
 
-      let chatsList
+      let chats
       try {
-        chatsList = client.readFragment<ChatsList.Fragment>({
-          id: 'ChatsList',
-          fragment: fragments.chatsList,
-          fragmentName: 'ChatsList',
-        })
+        chats = client.readQuery<Chats.Query>({
+          query: queries.chats,
+        }).chats
       } catch (e) {}
 
-      if (
-        chatsList &&
-        !chatsList.items.some(chat => chat.id === chatAdded.id)
-      ) {
-        chatsList.items.push(chatAdded)
-        chatsList.length = chatsList.items.length
+      if (chats && !chats.some(chat => chat.id === chatAdded.id)) {
+        chats.push(chatAdded)
 
-        client.writeFragment({
-          id: 'ChatsList',
-          fragment: fragments.chatsList,
-          fragmentName: 'ChatsList',
-          data: chatsList,
+        client.writeQuery({
+          query: queries.chats,
+          data: { chats },
         })
       }
     },
@@ -62,7 +47,7 @@ export const useSubscriptions = () => {
   useSubscription<ChatUpdated.Subscription>(subscriptions.chatUpdated, {
     onSubscriptionData: ({ client, subscriptionData: { chatUpdated } }) => {
       client.writeFragment({
-        id: dataIdFromObject(chatUpdated),
+        id: defaultDataIdFromObject(chatUpdated),
         fragment: fragments.chat,
         fragmentName: 'Chat',
         data: chatUpdated,
@@ -75,7 +60,7 @@ export const useSubscriptions = () => {
       let fullChat
       try {
         fullChat = client.readFragment<FullChat.Fragment>({
-          id: dataIdFromObject(messageAdded.chat),
+          id: defaultDataIdFromObject(messageAdded.chat),
           fragment: fragments.fullChat,
           fragmentName: 'FullChat',
         })
@@ -85,7 +70,7 @@ export const useSubscriptions = () => {
         fullChat.messages.push(messageAdded)
 
         client.writeFragment({
-          id: dataIdFromObject(fullChat),
+          id: defaultDataIdFromObject(fullChat),
           fragment: fragments.fullChat,
           fragmentName: 'FullChat',
           data: fullChat,
@@ -95,7 +80,7 @@ export const useSubscriptions = () => {
       let chat
       try {
         chat = client.readFragment<Chat.Fragment>({
-          id: dataIdFromObject(messageAdded.chat),
+          id: defaultDataIdFromObject(messageAdded.chat),
           fragment: fragments.chat,
           fragmentName: 'Chat',
         })
@@ -105,7 +90,7 @@ export const useSubscriptions = () => {
         chat.lastMessage = messageAdded
 
         client.writeFragment({
-          id: dataIdFromObject(chat),
+          id: defaultDataIdFromObject(chat),
           fragment: fragments.chat,
           fragmentName: 'Chat',
           data: chat,
@@ -117,33 +102,24 @@ export const useSubscriptions = () => {
   useSubscription<UserAdded.Subscription>(subscriptions.userAdded, {
     onSubscriptionData: ({ client, subscriptionData: { userAdded } }) => {
       client.writeFragment({
-        id: dataIdFromObject(userAdded),
+        id: defaultDataIdFromObject(userAdded),
         fragment: fragments.user,
         data: userAdded,
       })
 
-      let usersList
+      let users
       try {
-        usersList = client.readFragment<UsersList.Fragment>({
-          id: 'UsersList',
-          fragment: fragments.usersList,
-          fragmentName: 'UsersList',
-        })
-      }
-      catch (e) {}
+        users = client.readQuery<Users.Query>({
+          query: queries.users,
+        }).users
+      } catch (e) {}
 
-      if (
-        usersList &&
-        !usersList.some(user => user.id === userAdded.id)
-      ) {
-        usersList.items.push(userAdded)
-        usersList.length = usersList.items.length
+      if (users && !users.some(user => user.id === userAdded.id)) {
+        users.push(userAdded)
 
-        client.writeFragment({
-          id: 'UsersList',
-          fragment: fragments.usersList,
-          fragmentName: 'UsersList',
-          data: usersList,
+        client.writeQuery({
+          query: queries.users,
+          data: { users },
         })
       }
     },
@@ -152,7 +128,7 @@ export const useSubscriptions = () => {
   useSubscription<UserUpdated.Subscription>(subscriptions.userUpdated, {
     onSubscriptionData: ({ client, subscriptionData: { userUpdated } }) => {
       client.writeFragment({
-        id: dataIdFromObject(userUpdated),
+        id: defaultDataIdFromObject(userUpdated),
         fragment: fragments.user,
         data: userUpdated,
       })

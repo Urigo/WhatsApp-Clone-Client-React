@@ -1,5 +1,6 @@
 import Button from '@material-ui/core/Button'
 import ArrowRightIcon from '@material-ui/icons/ArrowRightAlt'
+import { defaultDataIdFromObject } from 'apollo-cache-inmemory'
 import gql from 'graphql-tag'
 import { History } from 'history'
 import * as React from 'react'
@@ -7,7 +8,6 @@ import { useMutation } from 'react-apollo-hooks'
 import styled from 'styled-components'
 import * as fragments from '../../graphql/fragments'
 import { User, CompleteGroupButtonMutation } from '../../graphql/types'
-import { dataIdFromObject } from '../../services/cache.service'
 
 const Style = styled.div`
   position: fixed;
@@ -56,7 +56,7 @@ export default ({ history, users, groupName, groupPicture }: CompleteGroupButton
     },
     update: (client, { data: { addGroup } }) => {
       client.writeFragment({
-        id: dataIdFromObject(addGroup),
+        id: defaultDataIdFromObject(addGroup),
         fragment: fragments.chat,
         fragmentName: 'Chat',
         data: addGroup,

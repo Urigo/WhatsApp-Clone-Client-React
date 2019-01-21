@@ -66,10 +66,10 @@ const Style = styled.div`
 const query = gql`
   query ChatsListQuery {
     chats {
-      ...ChatsList
+      ...Chat
     }
   }
-  ${fragments.chatsList}
+  ${fragments.chat}
 `
 
 interface ChatsListProps {
@@ -80,6 +80,7 @@ export default ({ history }: ChatsListProps) => {
   const {
     data: { chats },
   } = useQuery<ChatsListQuery.Query>(query)
+  const chatsIds = chats.map(chat => chat.id)
 
   const navToChat = chatId => {
     history.push(`chats/${chatId}`)
@@ -88,36 +89,35 @@ export default ({ history }: ChatsListProps) => {
   return (
     <Style className="ChatsList">
       <List className="ChatsList-chats-list">
-        {chats &&
-          chats.items.map(chat => (
-            <ListItem
-              key={chat.id}
-              className="ChatsList-chat-item"
-              button
-              onClick={navToChat.bind(null, chat.id)}
-            >
-              <img
-                className="ChatsList-profile-pic"
-                src={
-                  chat.picture ||
-                  (chat.isGroup
-                    ? '/assets/default-group-pic.jpg'
-                    : '/assets/default-profile-pic.jpg')
-                }
-              />
-              <div className="ChatsList-info">
-                <div className="ChatsList-name">{chat.name}</div>
-                {chat.lastMessage && (
-                  <React.Fragment>
-                    <div className="ChatsList-last-message">{chat.lastMessage.content}</div>
-                    <div className="ChatsList-timestamp">
-                      {moment(chat.lastMessage.createdAt).format('HH:mm')}
-                    </div>
-                  </React.Fragment>
-                )}
-              </div>
-            </ListItem>
-          ))}
+        {chats && chats.map(chat => (
+          <ListItem
+            key={chat.id}
+            className="ChatsList-chat-item"
+            button
+            onClick={navToChat.bind(null, chat.id)}
+          >
+            <img
+              className="ChatsList-profile-pic"
+              src={
+                chat.picture ||
+                (chat.isGroup
+                  ? '/assets/default-group-pic.jpg'
+                  : '/assets/default-profile-pic.jpg')
+              }
+            />
+            <div className="ChatsList-info">
+              <div className="ChatsList-name">{chat.name}</div>
+              {chat.lastMessage && (
+                <React.Fragment>
+                  <div className="ChatsList-last-message">{chat.lastMessage.content}</div>
+                  <div className="ChatsList-timestamp">
+                    {moment(chat.lastMessage.createdAt).format('HH:mm')}
+                  </div>
+                </React.Fragment>
+              )}
+            </div>
+          </ListItem>
+        ))}
       </List>
     </Style>
   )
