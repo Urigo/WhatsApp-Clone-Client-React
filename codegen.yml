@@ -1,0 +1,12 @@
+schema: ../WhatsApp-Clone-Server/schema/typeDefs.ts
+documents:
+  - ./src/**/*.tsx
+  - ./src/**/*.ts
+overwrite: true
+require:
+  - ts-node/../../codegen-interpreter.ts
+generates:
+  ./src/graphql/types.ts:
+    plugins:
+      - typescript-common
+      - typescript-client
