@@ -18,13 +18,21 @@
   },
   "devDependencies": {
     "@types/graphql": "14.0.5",
-    "@types/node": "10.12.18"
+    "@types/node": "10.12.18",
+    "concurrently": "4.1.0",
+    "graphql-code-generator": "0.16.0",
+    "graphql-codegen-typescript-client": "0.16.0",
+    "graphql-codegen-typescript-common": "0.16.0",
+    "nodemon": "1.18.9",
+    "ts-node": "7.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "concurrently \"yarn generate:watch\" \"react-scripts start\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "generate": "gql-gen",
+    "generate:watch": "nodemon --exec yarn generate -e graphql"
   },
   "eslintConfig": {
     "extends": "react-app"
