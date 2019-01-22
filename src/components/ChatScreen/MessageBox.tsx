@@ -8,7 +8,7 @@ import { useQuery, useMutation } from 'react-apollo-hooks'
 import styled from 'styled-components'
 import { time as uniqid } from 'uniqid'
 import * as fragments from '../../graphql/fragments'
-import { MessageBoxMutation, FullChat, Chat } from '../../graphql/types'
+import { MessageBoxMutation, FullChat, Message } from '../../graphql/types'
 import { useMe } from '../../services/auth.service'
 
 const Style = styled.div`
@@ -93,6 +93,12 @@ export default ({ chatId }: MessageBoxProps) => {
         },
       },
       update: (client, { data: { addMessage } }) => {
+        client.writeFragment({
+          id: defaultDataIdFromObject(addMessage),
+          fragment: fragments.message,
+          data: addMessage,
+        })
+
         let fullChat
         try {
           fullChat = client.readFragment<FullChat.Fragment>({
@@ -110,26 +116,6 @@ export default ({ chatId }: MessageBoxProps) => {
             fragment: fragments.fullChat,
             fragmentName: 'FullChat',
             data: fullChat,
-          })
-        }
-
-        let chat
-        try {
-          chat = client.readFragment<Chat.Fragment>({
-            id: defaultDataIdFromObject(addMessage.chat),
-            fragment: fragments.chat,
-            fragmentName: 'Chat',
-          })
-        } catch (e) {}
-
-        if (chat) {
-          chat.lastMessage = addMessage
-
-          client.writeFragment({
-            id: defaultDataIdFromObject(addMessage.chat),
-            fragment: fragments.chat,
-            fragmentName: 'Chat',
-            data: chat,
           })
         }
       },

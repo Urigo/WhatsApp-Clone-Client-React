@@ -6,7 +6,7 @@ import { useSubscription } from '../polyfills/react-apollo-hooks'
 import {
   Chats,
   Users,
-  Chat,
+  Message,
   FullChat,
   User,
   MessageAdded,
@@ -57,6 +57,12 @@ export const useSubscriptions = () => {
 
   useSubscription<MessageAdded.Subscription>(subscriptions.messageAdded, {
     onSubscriptionData: ({ client, subscriptionData: { messageAdded } }) => {
+      client.writeFragment<Message.Fragment>({
+        id: defaultDataIdFromObject(messageAdded),
+        fragment: fragments.message,
+        data: messageAdded,
+      })
+
       let fullChat
       try {
         fullChat = client.readFragment<FullChat.Fragment>({
@@ -77,23 +83,21 @@ export const useSubscriptions = () => {
         })
       }
 
-      let chat
+      let chats
       try {
-        chat = client.readFragment<Chat.Fragment>({
-          id: defaultDataIdFromObject(messageAdded.chat),
-          fragment: fragments.chat,
-          fragmentName: 'Chat',
-        })
+        chats = client.readQuery<Chats.Query>({
+          query: queries.chats,
+        }).chats
       } catch (e) {}
 
-      if (chat) {
-        chat.lastMessage = messageAdded
+      if (chats) {
+        const index = chats.findIndex(chat => chat.id === messageAdded.chat.id)
+        chats.splice(chats, index, 1)
+        chats.unshift(messageAdded.chat)
 
-        client.writeFragment({
-          id: defaultDataIdFromObject(chat),
-          fragment: fragments.chat,
-          fragmentName: 'Chat',
-          data: chat,
+        client.writeQuery({
+          query: queries.chats,
+          data: { chats },
         })
       }
     },
