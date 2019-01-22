@@ -71,11 +71,8 @@ const query = gql`
 
 const mutation = gql`
   mutation ChatNavbarMutation($chatId: ID!) {
-    removeChat(chatId: $chatId) {
-      ...Chat
-    }
+    removeChat(chatId: $chatId)
   }
-  ${fragments.chat}
 `
 
 interface ChatNavbarProps {
@@ -95,7 +92,10 @@ export default ({ chatId, history }: ChatNavbarProps) => {
       variables: { chatId },
       update: (client, { data: { removeChat } }) => {
         client.writeFragment({
-          id: defaultDataIdFromObject(removeChat),
+          id: defaultDataIdFromObject({
+            __typename: 'Chat',
+            id: removeChat,
+          }),
           fragment: fragments.chat,
           fragmentName: 'Chat',
           data: null,
@@ -108,8 +108,8 @@ export default ({ chatId, history }: ChatNavbarProps) => {
           }).chats
         } catch (e) {}
 
-        if (chats && chats.some(chat => chat.id === removeChat.id)) {
-          const index = chats.findIndex(chat => chat.id === removeChat.id)
+        if (chats && chats.some(chat => chat.id === removeChat)) {
+          const index = chats.findIndex(chat => chat.id === removeChat)
           chats.splice(index, 1)
 
           client.writeQuery({

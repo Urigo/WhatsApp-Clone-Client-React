@@ -7,6 +7,8 @@ import styled from 'styled-components'
 const Style = styled.div`
   display: flex;
   width: 100%;
+  padding-left: 9px;
+  padding-right: 9px;
 
   button {
     text-transform: none;
