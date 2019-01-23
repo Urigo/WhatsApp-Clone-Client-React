@@ -110,6 +110,7 @@ export default ({ chatId }: MessageBoxProps) => {
 
         if (fullChat && !fullChat.messages.some(message => message.id === addMessage.id)) {
           fullChat.messages.push(addMessage)
+          fullChat.lastMessage = addMessage
 
           client.writeFragment({
             id: defaultDataIdFromObject(addMessage.chat),

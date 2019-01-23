@@ -12,15 +12,25 @@ import styled from 'styled-components'
 import { signOut } from '../../services/auth.service'
 
 const Style = styled.div`
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+
   .ChatsNavbar-title {
-    float: left;
+    line-height: 56px;
   }
 
   .ChatsNavbar-options-btn {
     float: right;
+    height: 100%;
     font-size: 1.2em;
     margin-right: -15px;
     color: var(--primary-text);
+  }
+
+  .ChatsNavbar-rest {
+    flex: 1;
+    justify-content: flex-end;
   }
 
   .ChatsNavbar-options-item svg {
@@ -50,9 +60,11 @@ export default ({ history }: ChatsNavbarProps) => {
   return (
     <Style className="ChatsNavbar">
       <span className="ChatsNavbar-title">WhatsApp Clone</span>
-      <Button className="ChatsNavbar-options-btn" onClick={setPopped.bind(null, true)}>
-        <MoreIcon />
-      </Button>
+      <div className="ChatsNavbar-rest">
+        <Button className="ChatsNavbar-options-btn" onClick={setPopped.bind(null, true)}>
+          <MoreIcon />
+        </Button>
+      </div>
       <Popover
         open={popped}
         onClose={setPopped.bind(null, false)}

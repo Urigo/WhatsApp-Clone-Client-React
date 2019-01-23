@@ -12,34 +12,36 @@ import { UsersListQuery, User } from '../graphql/types'
 const name = 'UsersList'
 
 const Style = styled.div`
-  .${name}-users-list {
+  .UsersList-users-list {
     padding: 0;
   }
 
-  .${name}-user-item {
+  .UsersList-user-item {
     position: relative;
     padding: 7.5px 15px;
     display: flex;
     ${props => props.selectable && 'cursor: pointer;'}
   }
 
-  .${name}-profile-pic {
+  .UsersList-profile-pic {
     height: 50px;
     width: 50px;
     object-fit: cover;
     border-radius: 50%;
   }
 
-  .${name}-name {
+  .UsersList-name {
     padding-left: 15px;
     font-weight: bold;
   }
 
-  .${name}-checkmark {
+  .UsersList-checkmark {
     position: absolute;
     left: 50px;
     top: 35px;
-    color: var(--primary-bg);
+    color: var(--secondary-bg);
+    background-color: white;
+    border-radius: 50%;
   }
 `
 
@@ -89,22 +91,22 @@ export default (props: UsersListProps) => {
 
   return (
     <Style className={name} selectable={selectable}>
-      <List className={`${name}-users-list`}>
+      <List className="UsersList-users-list">
         {users &&
           users.map(user => (
             <ListItem
-              className={`${name}-user-item`}
+              className="UsersList-user-item"
               key={user.id}
               button
               onClick={onListItemClick.bind(null, user)}
             >
               <img
-                className={`${name}-profile-pic`}
+                className="UsersList-profile-pic"
                 src={user.picture || '/assets/default-profile-pic.jpg'}
               />
-              <div className={`${name}-name`}>{user.name}</div>
+              <div className="UsersList-name">{user.name}</div>
 
-              {selectedUsers.includes(user) && <CheckCircle className={`${name}-checkmark`} />}
+              {selectedUsers.includes(user) && <CheckCircle className="UsersList-checkmark" />}
             </ListItem>
           ))}
       </List>

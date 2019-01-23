@@ -74,6 +74,7 @@ export const useSubscriptions = () => {
 
       if (fullChat && !fullChat.messages.some(message => message.id === messageAdded.id)) {
         fullChat.messages.push(messageAdded)
+        fullChat.lastMessage = messageAdded
 
         client.writeFragment({
           id: defaultDataIdFromObject(fullChat),
@@ -92,8 +93,9 @@ export const useSubscriptions = () => {
 
       if (chats) {
         const index = chats.findIndex(chat => chat.id === messageAdded.chat.id)
-        chats.splice(chats, index, 1)
-        chats.unshift(messageAdded.chat)
+        const chat = chats[index]
+        chats.splice(index, 1)
+        chats.unshift(chat)
 
         client.writeQuery({
           query: queries.chats,
