@@ -11,6 +11,10 @@ import NewGroupScreen from '../components/NewGroupScreen'
 import SettingsScreen from '../components/SettingsScreen'
 import { withAuth } from '../services/auth.service'
 
+const RedirectToChats = () => (
+  <Redirect to="/chats" />
+)
+
 export default () => (
   <BrowserRouter>
     <AnimatedSwitch>
@@ -22,7 +26,7 @@ export default () => (
       <Route exact path="/new-chat/group" component={withAuth(NewGroupScreen)} />
       <Route exact path="/new-chat/group/details" component={withAuth(GroupDetailsScreen)} />
       <Route exact path="/chats/:chatId/details" component={withAuth(GroupDetailsScreen)} />
-      <Redirect to="/chats" />
+      <Route component={RedirectToChats} />
     </AnimatedSwitch>
   </BrowserRouter>
 )
