@@ -10,6 +10,7 @@ import styled from 'styled-components'
 import * as fragments from '../../graphql/fragments'
 import { SettingsFormMutation } from '../../graphql/types'
 import { useMe } from '../../services/auth.service'
+import { pickPicture, uploadProfilePicture } from '../../services/picture.service'
 import Navbar from '../Navbar'
 import SettingsNavbar from './SettingsNavbar'
 
@@ -104,7 +105,13 @@ export default ({ history }: RouteComponentProps) => {
   }
 
   const updatePicture = async () => {
-    // TODO: Implement
+    const file = await pickPicture()
+
+    if (!file) return
+
+    const { url } = await uploadProfilePicture(file)
+
+    setMyPicture(url)
   }
 
   return (
