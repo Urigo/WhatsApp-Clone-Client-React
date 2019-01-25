@@ -1,14 +1,20 @@
-import React, { Component } from 'react';
+import * as React from 'react'
+import { BrowserRouter, Route, Redirect } from 'react-router-dom'
+import AnimatedSwitch from './components/AnimatedSwitch'
+import AuthScreen from './components/AuthScreen'
 import ChatsListScreen from './components/ChatsListScreen'
+import { withAuth } from './services/auth.service'
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <ChatsListScreen />
-      </div>
-    );
-  }
-}
+const RedirectToChats = () => (
+  <Redirect to="/chats" />
+)
 
-export default App;
+export default () => (
+  <BrowserRouter>
+    <AnimatedSwitch>
+      <Route exact path="/sign-(in|up)" component={AuthScreen} />
+      <Route exact path="/chats" component={withAuth(ChatsListScreen)} />
+      <Route component={RedirectToChats} />
+    </AnimatedSwitch>
+  </BrowserRouter>
+)
