@@ -9114,10 +9114,10 @@ rc@^1.0.1, rc@^1.1.6, rc@^1.2.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-apollo-hooks@0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/react-apollo-hooks/-/react-apollo-hooks-0.3.0.tgz#3a0f0e73f2ef0905ad3589b9fb227693282edd3d"
-  integrity sha512-VImPJJyYbAxiilvgFvlLRFR82cbUTB3Jl1zCpgJIfv0T5Z03X+WUt/842FO5Tsu4mL0r1Vel2NNGO8d73Sda7A==
+react-apollo-hooks@0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/react-apollo-hooks/-/react-apollo-hooks-0.3.1.tgz#6049d5883b809d28ba24277e584a099d49697c7b"
+  integrity sha512-HF519dUBOmpS1DTtbPnd6EO/2nHUV7OtJYyoHlX3wdKWwV06CnwJp88Kmp1aUD0Gkg623znQjGsXwHAb8AtYTA==
   dependencies:
     lodash "^4.17.11"
 
