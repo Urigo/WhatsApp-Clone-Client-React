@@ -1,5 +1,6 @@
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import React from 'react';
+import { Suspense } from 'react'
 import ReactDOM from 'react-dom';
 import { ApolloProvider } from 'react-apollo-hooks';
 import './index.css';
@@ -20,7 +21,9 @@ const theme = createMuiTheme({
 ReactDOM.render(
   <MuiThemeProvider theme={theme}>
     <ApolloProvider client={apolloClient}>
-      <App />
+      <Suspense fallback={null}>
+        <App />
+      </Suspense>
     </ApolloProvider>
   </MuiThemeProvider>
 , document.getElementById('root'));
