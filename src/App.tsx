@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { BrowserRouter, Route, Redirect } from 'react-router-dom'
+import ChatRoomScreen from './components/ChatRoomScreen'
 import AnimatedSwitch from './components/AnimatedSwitch'
 import AuthScreen from './components/AuthScreen'
 import ChatsListScreen from './components/ChatsListScreen'
@@ -16,6 +17,7 @@ export default () => (
       <Route exact path="/sign-(in|up)" component={AuthScreen} />
       <Route exact path="/chats" component={withAuth(ChatsListScreen)} />
       <Route exact path="/settings" component={withAuth(SettingsScreen)} />
+      <Route exact path="/chats/:chatId" component={withAuth(ChatRoomScreen)} />
       <Route component={RedirectToChats} />
     </AnimatedSwitch>
   </BrowserRouter>
