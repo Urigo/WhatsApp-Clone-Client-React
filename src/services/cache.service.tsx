@@ -2,10 +2,48 @@ import { defaultDataIdFromObject } from 'apollo-cache-inmemory'
 import * as fragments from '../graphql/fragments'
 import * as subscriptions from '../graphql/subscriptions'
 import * as queries from '../graphql/queries'
-import { ChatUpdated, MessageAdded, Message, Chats, FullChat } from '../graphql/types'
+import {
+  ChatUpdated,
+  MessageAdded,
+  Message,
+  Chats,
+  FullChat,
+  User,
+  Users,
+  UserAdded,
+  UserUpdated,
+  ChatAdded,
+} from '../graphql/types'
 import { useSubscription } from '../polyfills/react-apollo-hooks'
 
 export const useSubscriptions = () => {
+  useSubscription<ChatAdded.Subscription>(subscriptions.chatAdded, {
+    onSubscriptionData: ({ client, subscriptionData: { chatAdded } }) => {
+      client.writeFragment({
+        id: defaultDataIdFromObject(chatAdded),
+        fragment: fragments.chat,
+        fragmentName: 'Chat',
+        data: chatAdded,
+      })
+
+      let chats
+      try {
+        chats = client.readQuery<Chats.Query>({
+          query: queries.chats,
+        }).chats
+      } catch (e) {}
+
+      if (chats && !chats.some(chat => chat.id === chatAdded.id)) {
+        chats.unshift(chatAdded)
+
+        client.writeQuery({
+          query: queries.chats,
+          data: { chats },
+        })
+      }
+    },
+  })
+
   useSubscription<ChatUpdated.Subscription>(subscriptions.chatUpdated, {
     onSubscriptionData: ({ client, subscriptionData: { chatUpdated } }) => {
       client.writeFragment({
@@ -64,6 +102,42 @@ export const useSubscriptions = () => {
           data: { chats },
         })
       }
+    },
+  })
+
+  useSubscription<UserAdded.Subscription>(subscriptions.userAdded, {
+    onSubscriptionData: ({ client, subscriptionData: { userAdded } }) => {
+      client.writeFragment({
+        id: defaultDataIdFromObject(userAdded),
+        fragment: fragments.user,
+        data: userAdded,
+      })
+
+      let users
+      try {
+        users = client.readQuery<Users.Query>({
+          query: queries.users,
+        }).users
+      } catch (e) {}
+
+      if (users && !users.some(user => user.id === userAdded.id)) {
+        users.push(userAdded)
+
+        client.writeQuery({
+          query: queries.users,
+          data: { users },
+        })
+      }
+    },
+  })
+
+  useSubscription<UserUpdated.Subscription>(subscriptions.userUpdated, {
+    onSubscriptionData: ({ client, subscriptionData: { userUpdated } }) => {
+      client.writeFragment({
+        id: defaultDataIdFromObject(userUpdated),
+        fragment: fragments.user,
+        data: userUpdated,
+      })
     },
   })
 }
