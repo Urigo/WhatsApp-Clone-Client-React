@@ -11,7 +11,7 @@ export default ({ history }: RouteComponentProps) => (
       <ChatsNavbar history={history} />
     </Navbar>
     <Suspense fallback={null}>
-      <ChatsList />
+      <ChatsList history={history} />
     </Suspense>
   </div>
 )
