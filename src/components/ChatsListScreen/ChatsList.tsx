@@ -1,6 +1,7 @@
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import gql from 'graphql-tag'
+import { History } from 'history'
 import * as moment from 'moment'
 import * as React from 'react'
 import { useQuery } from 'react-apollo-hooks'
@@ -71,10 +72,18 @@ const query = gql`
   ${fragments.chat}
 `
 
-export default () => {
+interface ChatsListProps {
+  history: History
+}
+
+export default ({ history }: ChatsListProps) => {
   const {
     data: { chats },
   } = useQuery<ChatsListQuery.Query>(query)
+
+  const navToChat = chatId => {
+    history.push(`chats/${chatId}`)
+  }
 
   return (
     <Style className="ChatsList">
@@ -84,6 +93,7 @@ export default () => {
             key={chat.id}
             className="ChatsList-chat-item"
             button
+            onClick={navToChat.bind(null, chat.id)}
           >
             <img
               className="ChatsList-profile-pic"
