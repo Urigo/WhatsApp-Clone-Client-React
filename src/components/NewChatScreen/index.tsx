@@ -14,6 +14,7 @@ import { useMe } from '../../services/auth.service'
 import Navbar from '../Navbar'
 import UsersList from '../UsersList'
 import NewChatNavbar from './NewChatNavbar'
+import NewGroupButton from './NewGroupButton'
 
 const Style = styled.div`
   .UsersList {
@@ -97,6 +98,7 @@ export default ({ history }: RouteComponentProps) => {
         <NewChatNavbar history={history} />
       </Navbar>
       <div className="NewChatScreen-users-list">
+        <NewGroupButton history={history} />
         <Suspense fallback={null}>
           <UsersList onUserPick={onUserPick} />
         </Suspense>
