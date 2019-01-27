@@ -5,6 +5,7 @@ import NewChatScreen from './components/NewChatScreen'
 import AnimatedSwitch from './components/AnimatedSwitch'
 import AuthScreen from './components/AuthScreen'
 import ChatsListScreen from './components/ChatsListScreen'
+import GroupDetailsScreen from './components/GroupDetailsScreen'
 import SettingsScreen from './components/SettingsScreen'
 import NewGroupScreen from './components/NewGroupScreen'
 import { withAuth } from './services/auth.service'
@@ -22,6 +23,7 @@ export default () => (
       <Route exact path="/chats/:chatId" component={withAuth(ChatRoomScreen)} />
       <Route exact path="/new-chat" component={withAuth(NewChatScreen)} />
       <Route exact path="/new-chat/group" component={withAuth(NewGroupScreen)} />
+      <Route exact path="/new-chat/group/details" component={withAuth(GroupDetailsScreen)} />
       <Route component={RedirectToChats} />
     </AnimatedSwitch>
   </BrowserRouter>
