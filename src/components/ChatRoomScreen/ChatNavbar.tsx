@@ -4,6 +4,7 @@ import ListItem from '@material-ui/core/ListItem'
 import Popover from '@material-ui/core/Popover'
 import ArrowBackIcon from '@material-ui/icons/ArrowBack'
 import DeleteIcon from '@material-ui/icons/Delete'
+import InfoIcon from '@material-ui/icons/Info'
 import MoreIcon from '@material-ui/icons/MoreVert'
 import { defaultDataIdFromObject } from 'apollo-cache-inmemory'
 import gql from 'graphql-tag'
@@ -125,6 +126,11 @@ export default ({ chatId, history }: ChatNavbarProps) => {
     history.push('/chats')
   }
 
+  const navToGroupDetails = () => {
+    setPopped(false)
+    history.push(`/chats/${chatId}/details`, { chat })
+  }
+
   const handleRemoveChat = () => {
     setPopped(false)
     removeChat().then(navToChats)
@@ -137,7 +143,10 @@ export default ({ chatId, history }: ChatNavbarProps) => {
       </Button>
       <img
         className="ChatNavbar-picture"
-        src={chat.picture || '/assets/default-profile-pic.jpg'}
+        src={
+          chat.picture ||
+          (chat.isGroup ? '/assets/default-group-pic.jpg' : '/assets/default-profile-pic.jpg')
+        }
       />
       <div className="ChatNavbar-title">{chat.name}</div>
       <div className="ChatNavbar-rest">
@@ -159,6 +168,12 @@ export default ({ chatId, history }: ChatNavbarProps) => {
       >
         <Style style={{ marginLeft: '-15px' }}>
           <List>
+            {chat.isGroup && (
+              <ListItem className="ChatNavbar-options-item" button onClick={navToGroupDetails}>
+                <InfoIcon />
+                Details
+              </ListItem>
+            )}
             <ListItem className="ChatNavbar-options-item" button onClick={handleRemoveChat}>
               <DeleteIcon />
               Delete
