@@ -97,7 +97,12 @@ export default ({ history }: ChatsListProps) => {
           >
             <img
               className="ChatsList-profile-pic"
-              src={chat.picture || '/assets/default-profile-pic.jpg'}
+              src={
+                chat.picture ||
+                (chat.isGroup
+                  ? '/assets/default-group-pic.jpg'
+                  : '/assets/default-profile-pic.jpg')
+              }
             />
             <div className="ChatsList-info">
               <div className="ChatsList-name">{chat.name}</div>

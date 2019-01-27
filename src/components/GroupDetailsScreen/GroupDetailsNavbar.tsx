@@ -21,11 +21,16 @@ const Style = styled.div`
 
 interface GroupDetailsNavbarProps {
   history: History
+  chatId?: string
 }
 
-export default ({ history }: GroupDetailsNavbarProps) => {
+export default ({ history, chatId }: GroupDetailsNavbarProps) => {
   const navToNewGroup = () => {
-    history.push('/new-chat/group')
+    if (chatId) {
+      history.push(`/chats/${chatId}`)
+    } else {
+      history.push('/new-chat/group')
+    }
   }
 
   return (
