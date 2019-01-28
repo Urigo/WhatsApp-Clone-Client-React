@@ -26,11 +26,11 @@ const Style = styled.div`
 
 const mutation = gql`
   mutation CompleteGroupButtonMutation(
-    $recipientIds: [ID!]!
+    $userIds: [ID!]!
     $groupName: String!
     $groupPicture: String
   ) {
-    addGroup(recipientIds: $recipientIds, groupName: $groupName, groupPicture: $groupPicture) {
+    addGroup(userIds: $userIds, groupName: $groupName, groupPicture: $groupPicture) {
       ...Chat
     }
   }
@@ -50,7 +50,7 @@ export default ({ history, users, groupName, groupPicture }: CompleteGroupButton
     CompleteGroupButtonMutation.Variables
   >(mutation, {
     variables: {
-      recipientIds: users.map(user => user.id),
+      userIds: users.map(user => user.id),
       groupName,
       groupPicture,
     },

@@ -24,8 +24,8 @@ const Style = styled.div`
 `
 
 const mutation = gql`
-  mutation NewChatScreenMutation($recipientId: ID!) {
-    addChat(recipientId: $recipientId) {
+  mutation NewChatScreenMutation($userId: ID!) {
+    addChat(userId: $userId) {
       ...Chat
     }
   }
@@ -50,7 +50,7 @@ export default ({ history }: RouteComponentProps) => {
   const onUserPick = user => {
     addChat({
       variables: {
-        recipientId: user.id,
+        userId: user.id,
       },
     }).then(({ data: { addChat } }) => {
       history.push(`/chats/${addChat.id}`)
