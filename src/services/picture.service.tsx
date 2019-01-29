@@ -1,3 +1,5 @@
+import { getAuthHeader } from "./auth.service";
+
 export const pickPicture = () => {
   return new Promise((resolve, reject) => {
     const input = document.createElement('input')
@@ -20,6 +22,9 @@ export const uploadProfilePicture = file => {
   return fetch(`${process.env.REACT_APP_SERVER_URL}/upload-profile-pic`, {
     method: 'POST',
     body: formData,
+    headers: {
+      Authorization: getAuthHeader(),
+    }
   }).then(res => {
     return res.json()
   })
