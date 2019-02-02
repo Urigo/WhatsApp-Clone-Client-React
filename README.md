@@ -6,7 +6,7 @@
 
 Make sure to clone the server first
 
-    $ git clone git@github.com:Urigo/WhatsApp-Clone-server.git
+    $ git clone https://github.com/Urigo/WhatsApp-Clone-Client-React.git
 
 Run yarn
 
