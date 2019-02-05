@@ -3,7 +3,7 @@ import TextField from '@material-ui/core/TextField'
 import { History } from 'history'
 import * as React from 'react'
 import { useState } from 'react'
-import { signIn } from '../../services/auth.service'
+import { accountsPassword } from '../../apollo-client';
 
 interface SignInFormProps {
   history: History
@@ -29,7 +29,12 @@ export default ({ history }: SignInFormProps) => {
   }
 
   const handleSignIn = () => {
-    signIn({ username, password })
+    accountsPassword.login({
+        password,
+        user: {
+          username,
+        },
+      })
       .then(() => {
         history.push('/chats')
       })

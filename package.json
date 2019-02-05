@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@accounts/client": "0.9.3",
+    "@accounts/client-password": "0.9.3",
+    "@accounts/graphql-client": "0.9.3",
     "@material-ui/core": "3.9.1",
     "@material-ui/icons": "3.0.2",
     "apollo-cache-inmemory": "1.4.2",
@@ -11,6 +14,7 @@
     "apollo-link-context": "1.0.12",
     "apollo-link-http": "1.5.9",
     "apollo-link-ws": "1.0.12",
+    "apollo-upload-client": "^10.0.0",
     "apollo-utilities": "1.1.2",
     "moment": "2.24.0",
     "react": "16.8.0-alpha.1",

@@ -1,4 +1,6 @@
-import { getAuthHeader } from "./auth.service";
+import { UploadProfilePicture } from "../graphql/types";
+import { apolloClient } from "../apollo-client";
+import gql from "graphql-tag";
 
 export const pickPicture = () => {
   return new Promise((resolve, reject) => {
@@ -14,18 +16,19 @@ export const pickPicture = () => {
   })
 }
 
-export const uploadProfilePicture = file => {
-  const formData = new FormData()
-  formData.append('file', file)
-  formData.append('upload_preset', 'profile-pic')
-
-  return fetch(`${process.env.REACT_APP_SERVER_URL}/upload-profile-pic`, {
-    method: 'POST',
-    body: formData,
-    headers: {
-      Authorization: getAuthHeader(),
+export const uploadProfilePicture = async file => {
+  debugger;
+  const result = await apolloClient.mutate<UploadProfilePicture.Mutation, UploadProfilePicture.Variables>({
+    mutation: gql`
+      mutation UploadProfilePicture($file: Upload!) {
+        uploadPicture(file: $file) {
+          url
+        }
+      }
+    `,
+    variables: {
+      file
     }
-  }).then(res => {
-    return res.json()
-  })
+  });
+  return result.data.uploadPicture;
 }

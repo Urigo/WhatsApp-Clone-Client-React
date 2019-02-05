@@ -9,7 +9,7 @@ import { History } from 'history'
 import * as React from 'react'
 import { useState } from 'react'
 import styled from 'styled-components'
-import { signOut } from '../../services/auth.service'
+import { accountsClient } from '../../apollo-client';
 
 const Style = styled.div`
   padding: 0;
@@ -52,7 +52,7 @@ export default ({ history }: ChatsNavbarProps) => {
 
   const handleSignOut = () => {
     setPopped(false)
-    signOut()
+    accountsClient.logout()
 
     history.push('/sign-in')
   }

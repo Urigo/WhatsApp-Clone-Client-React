@@ -3,7 +3,7 @@ import TextField from '@material-ui/core/TextField'
 import { History } from 'history'
 import * as React from 'react'
 import { useState } from 'react'
-import { signUp } from '../../services/auth.service'
+import { accountsPassword } from '../../apollo-client';
 
 interface SignUpFormProps {
   history: History
@@ -41,7 +41,7 @@ export default ({ history }: SignUpFormProps) => {
   }
 
   const handleSignUp = () => {
-    signUp({ username, password, name })
+    accountsPassword.createUser({ username, password, name })
       .then(() => {
         history.push('/sign-in')
       })

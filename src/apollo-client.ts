@@ -2,36 +2,35 @@ import { InMemoryCache } from 'apollo-cache-inmemory'
 import { ApolloClient } from 'apollo-client'
 import { ApolloLink, split } from 'apollo-link'
 import { setContext } from 'apollo-link-context'
-import { HttpLink } from 'apollo-link-http'
 import { WebSocketLink } from 'apollo-link-ws'
 import { getMainDefinition } from 'apollo-utilities'
 import { OperationDefinitionNode } from 'graphql'
-import { getAuthHeader } from './services/auth.service'
+import { getAuthHeader, AUTH_HEADER } from './services/auth.service'
+import { AccountsClient } from '@accounts/client';
+import { AccountsClientPassword } from '@accounts/client-password';
+import GraphQLClient from '@accounts/graphql-client';
+import { createUploadLink } from 'apollo-upload-client';
 
 const httpUri = process.env.REACT_APP_SERVER_URL + '/graphql'
 const wsUri = httpUri.replace(/^https?/, 'ws')
 
-const httpLink = new HttpLink({
-  uri: httpUri,
-})
+const httpLink = createUploadLink({ uri: httpUri });
 
 const wsLink = new WebSocketLink({
   uri: wsUri,
   options: {
     reconnect: true,
     connectionParams: () => ({
-      authToken: getAuthHeader(),
+      [AUTH_HEADER]: getAuthHeader(),
     }),
   },
 })
 
 const authLink = setContext((_, { headers }) => {
-  const auth = getAuthHeader()
-
   return {
     headers: {
       ...headers,
-      Authorization: auth,
+      [AUTH_HEADER]: getAuthHeader(),
     },
   }
 })
@@ -49,7 +48,11 @@ const link = ApolloLink.from([terminatingLink])
 
 const cache = new InMemoryCache()
 
-export default new ApolloClient({
+export const apolloClient = new ApolloClient({
   link,
   cache,
 })
+
+export const accountsGraphQL = new GraphQLClient({ graphQLClient: apolloClient });
+export const accountsClient = new AccountsClient({}, accountsGraphQL);
+export const accountsPassword = new AccountsClientPassword(accountsClient, { hashPassword: password => password});
