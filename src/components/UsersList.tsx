@@ -85,7 +85,7 @@ export default (props: UsersListProps) => {
       selectedUsers.push(user)
     }
 
-    setSelectedUsers(selectedUsers)
+    setSelectedUsers([...selectedUsers])
     onSelectionChange(selectedUsers)
   }
 
