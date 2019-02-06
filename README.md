@@ -18,7 +18,7 @@ Run codegen to generate TypeScript types
 
 Note that the types are generated from the server! So if you clone the server project in a different path be sure to update the `codegen.yml` file.
 
-Start the server, see run [instructions](https://github.com/Urigo/WhatsApp-Clone-server/blob/master/README.md).
+Start the server, see run [instructions](https://github.com/Urigo/WhatsApp-Clone-server).
 
 Run start
 
