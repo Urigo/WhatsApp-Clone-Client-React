@@ -34,7 +34,7 @@ export const useSubscriptions = () => {
       } catch (e) {}
 
       if (chats && !chats.some(chat => chat.id === chatAdded.id)) {
-        chats.push(chatAdded)
+        chats.unshift(chatAdded)
 
         client.writeQuery({
           query: queries.chats,
