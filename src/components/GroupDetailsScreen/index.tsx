@@ -116,8 +116,8 @@ export default ({ location, match, history }: RouteComponentProps) => {
       chatNameState = useState(chat.name)
       chatPictureState = useState(chat.picture)
     } else {
-      chatNameState = [chat.name, Function]
-      chatPictureState = [chat.picture, Function]
+      chatNameState = [chat.name, () => {}]
+      chatPictureState = [chat.picture, () => {}]
     }
 
     const [chatName] = chatNameState
@@ -168,7 +168,7 @@ export default ({ location, match, history }: RouteComponentProps) => {
     )
   } else {
     ownedByMe = true
-    updateChat = Function
+    updateChat = () => {}
     chatNameState = useState('')
     chatPictureState = useState('')
     users = location.state.users
