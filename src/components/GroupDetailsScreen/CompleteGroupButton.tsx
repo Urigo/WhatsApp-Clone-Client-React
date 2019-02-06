@@ -7,6 +7,8 @@ import * as React from 'react'
 import { useMutation } from 'react-apollo-hooks'
 import styled from 'styled-components'
 import * as fragments from '../../graphql/fragments'
+import * as queries from '../../graphql/queries'
+import { Chats } from '../../graphql/types'
 import { User, CompleteGroupButtonMutation } from '../../graphql/types'
 
 const Style = styled.div`
@@ -61,6 +63,22 @@ export default ({ history, users, groupName, groupPicture }: CompleteGroupButton
         fragmentName: 'Chat',
         data: addGroup,
       })
+
+      let chats
+      try {
+        chats = client.readQuery<Chats.Query>({
+          query: queries.chats,
+        }).chats
+      } catch (e) {}
+
+      if (chats && !chats.some(chat => chat.id === addGroup.id)) {
+        chats.unshift(addGroup)
+
+        client.writeQuery({
+          query: queries.chats,
+          data: { chats },
+        })
+      }
     },
   })
 

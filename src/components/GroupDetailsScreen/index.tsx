@@ -135,13 +135,10 @@ export default ({ location, match, history }: RouteComponentProps) => {
       optimisticResponse: {
         __typename: 'Mutation',
         updateChat: {
+          ...chat,
           __typename: 'Chat',
-          id: chat.id,
           picture: chatPicture,
           name: chatName,
-          owner: null,
-          allTimeMembers: null,
-          isGroup: null,
         },
       },
       update: (client, { data: { updateChat } }) => {
