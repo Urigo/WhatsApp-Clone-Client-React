@@ -3,13 +3,12 @@ import { useContext } from 'react'
 import { useQuery } from 'react-apollo-hooks'
 import { Redirect } from 'react-router-dom'
 import * as queries from '../graphql/queries'
-import { GetUser, User } from '../graphql/types'
+import { GetUser, UserFields } from '../graphql/types'
 import { useSubscriptions } from './cache.service'
 
-export const AUTH_HEADER = 'accounts-access-token';
 export const AUTH_STORE_KEY = 'accounts:accessToken';
 
-const MyContext = React.createContext<User.Fragment>(null)
+const MyContext = React.createContext<UserFields.Fragment>(null)
 
 export const useMe = () => {
   return useContext(MyContext)

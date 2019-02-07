@@ -9,7 +9,7 @@ import { Redirect } from 'react-router-dom'
 import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
 import * as fragments from '../../graphql/fragments'
-import { GroupDetailsScreenQuery, GroupDetailsScreenMutation, User } from '../../graphql/types'
+import { GroupDetailsScreenQuery, GroupDetailsScreenMutation, UserFields } from '../../graphql/types'
 import { useMe } from '../../services/auth.service'
 import { pickPicture, uploadProfilePicture } from '../../services/picture.service'
 import Navbar from '../Navbar'
@@ -94,8 +94,8 @@ export default ({ location, match, history }: RouteComponentProps) => {
   const me = useMe()
 
   let ownedByMe: boolean
-  let users: User.Fragment[]
-  let participants: User.Fragment[]
+  let users: UserFields.Fragment[]
+  let participants: UserFields.Fragment[]
   let updateChat: () => any
   let chatNameState
   let chatPictureState

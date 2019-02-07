@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 export default gql `
-  fragment User on User {
+  fragment userFields on User {
     id
     name
     picture

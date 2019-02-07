@@ -4,8 +4,8 @@ import * as fragments from '../fragments'
 export default gql `
   subscription UserUpdated {
     userUpdated {
-      ...User
+      ...userFields
     }
   }
-  ${fragments.user}
+  ${fragments.userFields}
 `

@@ -4,8 +4,8 @@ import * as fragments from '../fragments'
 export default gql `
   query Users {
     users {
-      ...User
+      ...userFields
     }
   }
-  ${fragments.user}
+  ${fragments.userFields}
 `

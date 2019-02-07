@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { useQuery } from 'react-apollo-hooks'
 import styled from 'styled-components'
 import * as fragments from '../graphql/fragments'
-import { UsersListQuery, User } from '../graphql/types'
+import { UsersListQuery, UserFields } from '../graphql/types'
 
 const name = 'UsersList'
 
@@ -48,16 +48,16 @@ const Style = styled.div`
 const query = gql`
   query UsersListQuery {
     users {
-      ...User
+      ...userFields
     }
   }
-  ${fragments.user}
+  ${fragments.userFields}
 `
 
 interface UsersListProps {
   selectable?: boolean
-  onSelectionChange?: (users: User.Fragment[]) => void
-  onUserPick?: (user: User.Fragment) => void
+  onSelectionChange?: (users: UserFields.Fragment[]) => void
+  onUserPick?: (user: UserFields.Fragment) => void
 }
 
 export default (props: UsersListProps) => {

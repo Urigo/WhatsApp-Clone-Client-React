@@ -7,7 +7,7 @@ import * as React from 'react'
 import { useMutation } from 'react-apollo-hooks'
 import styled from 'styled-components'
 import * as fragments from '../../graphql/fragments'
-import { User, CompleteGroupButtonMutation } from '../../graphql/types'
+import { UserFields, CompleteGroupButtonMutation } from '../../graphql/types'
 
 const Style = styled.div`
   position: fixed;
@@ -39,7 +39,7 @@ const mutation = gql`
 
 interface CompleteGroupButtonProps {
   history: History
-  users: User.Fragment[]
+  users: UserFields.Fragment[]
   groupName: string
   groupPicture: string
 }

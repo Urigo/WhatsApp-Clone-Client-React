@@ -54,10 +54,10 @@ const Style = styled.div`
 const mutation = gql`
   mutation SettingsFormMutation($name: String, $picture: String) {
     updateUser(name: $name, picture: $picture) {
-      ...User
+      ...userFields
     }
   }
-  ${fragments.user}
+  ${fragments.userFields}
 `
 
 export default ({ history }: RouteComponentProps) => {
@@ -84,7 +84,7 @@ export default ({ history }: RouteComponentProps) => {
 
         client.writeFragment({
           id: defaultDataIdFromObject(me),
-          fragment: fragments.user,
+          fragment: fragments.userFields,
           data: me,
         })
       },

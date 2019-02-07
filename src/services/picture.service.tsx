@@ -17,7 +17,6 @@ export const pickPicture = () => {
 }
 
 export const uploadProfilePicture = async file => {
-  debugger;
   const result = await apolloClient.mutate<UploadProfilePicture.Mutation, UploadProfilePicture.Variables>({
     mutation: gql`
       mutation UploadProfilePicture($file: Upload!) {

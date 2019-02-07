@@ -8,7 +8,6 @@ import {
   Users,
   Message,
   FullChat,
-  User,
   MessageAdded,
   ChatAdded,
   ChatUpdated,
@@ -109,7 +108,7 @@ export const useSubscriptions = () => {
     onSubscriptionData: ({ client, subscriptionData: { userAdded } }) => {
       client.writeFragment({
         id: defaultDataIdFromObject(userAdded),
-        fragment: fragments.user,
+        fragment: fragments.userFields,
         data: userAdded,
       })
 
@@ -135,7 +134,7 @@ export const useSubscriptions = () => {
     onSubscriptionData: ({ client, subscriptionData: { userUpdated } }) => {
       client.writeFragment({
         id: defaultDataIdFromObject(userUpdated),
-        fragment: fragments.user,
+        fragment: fragments.userFields,
         data: userUpdated,
       })
     },
