@@ -17,6 +17,7 @@ export default gql `
     lastMessage {
       ...Message
     }
+    isGroup
   }
   ${message}
 `
