@@ -8,7 +8,7 @@
     "@types/moment": "^2.13.0",
     "apollo-cache-inmemory": "1.4.2",
     "apollo-client": "2.4.12",
-    "apollo-link": "1.2.6",
+    "apollo-link": "1.2.8",
     "apollo-link-context": "1.0.12",
     "apollo-link-http": "1.5.9",
     "apollo-link-ws": "1.0.12",
