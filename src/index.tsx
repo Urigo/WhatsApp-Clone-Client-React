@@ -18,15 +18,25 @@ const theme = createMuiTheme({
   },
 })
 
-ReactDOM.render(
-  <MuiThemeProvider theme={theme}>
-    <ApolloProvider client={apolloClient}>
-      <Suspense fallback={null}>
-        <App />
-      </Suspense>
-    </ApolloProvider>
-  </MuiThemeProvider>,
-  document.getElementById('root') as HTMLElement,
-)
+const startApp = () => {
+  ReactDOM.render(
+    <MuiThemeProvider theme={theme}>
+      <ApolloProvider client={apolloClient}>
+        <Suspense fallback={null}>
+          <App />
+        </Suspense>
+      </ApolloProvider>
+    </MuiThemeProvider>,
+    document.getElementById('root') as HTMLElement
+  )
 
-registerServiceWorker()
+  registerServiceWorker()
+}
+
+
+if (window.cordova) {
+  document.addEventListener('deviceready', startApp, false)
+}
+else {
+  startApp()
+}
