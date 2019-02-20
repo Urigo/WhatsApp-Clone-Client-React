@@ -32,7 +32,7 @@
     "uniqid": "5.0.3"
   },
   "devDependencies": {
-    "@types/graphql": "14.0.5",
+    "@types/graphql": "14.0.7",
     "@types/node": "10.12.18",
     "concurrently": "4.1.0",
     "graphql-code-generator": "0.16.0",
