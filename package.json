@@ -35,7 +35,7 @@
     "@types/graphql": "14.0.7",
     "@types/node": "11.9.4",
     "concurrently": "4.1.0",
-    "graphql-code-generator": "0.16.1",
+    "graphql-code-generator": "0.17.0",
     "graphql-codegen-typescript-client": "0.16.1",
     "graphql-codegen-typescript-common": "0.16.1",
     "nodemon": "1.18.10",
