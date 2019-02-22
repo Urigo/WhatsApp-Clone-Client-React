@@ -20,7 +20,7 @@
     "graphql-tag": "2.10.1",
     "moment": "2.24.0",
     "react": "16.8.2",
-    "react-apollo-hooks": "0.4.0",
+    "react-apollo-hooks": "0.4.1",
     "react-dom": "16.8.2",
     "react-scripts": "2.1.5",
     "styled-components": "4.1.3",
