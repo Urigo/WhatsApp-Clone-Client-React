@@ -4,7 +4,7 @@ import { defaultDataIdFromObject } from 'apollo-cache-inmemory'
 import gql from 'graphql-tag'
 import * as React from 'react'
 import { useEffect, useState } from 'react'
-import { useQuery, useMutation } from 'react-apollo-hooks'
+import { useMutation } from 'react-apollo-hooks'
 import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
 import * as fragments from '../../graphql/fragments'
@@ -91,7 +91,6 @@ export default ({ history }: RouteComponentProps) => {
     },
   )
 
-  // Update picture once changed
   useEffect(
     () => {
       if (myPicture !== me.picture) {

@@ -21,8 +21,8 @@ const Style = styled.div`
   padding: 0;
   display: flex;
   flex-direction: row;
-  margin-left: -20px;
 
+  margin-left: -20px;
   .ChatNavbar-title {
     line-height: 56px;
   }
@@ -85,6 +85,7 @@ export default ({ chatId, history }: ChatNavbarProps) => {
     data: { chat },
   } = useQuery<ChatNavbarQuery.Query, ChatNavbarQuery.Variables>(query, {
     variables: { chatId },
+    suspend: true,
   })
   const removeChat = useMutation<ChatNavbarMutation.Mutation, ChatNavbarMutation.Variables>(
     mutation,

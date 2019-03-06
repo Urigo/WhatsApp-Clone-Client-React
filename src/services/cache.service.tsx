@@ -1,20 +1,20 @@
 import { defaultDataIdFromObject } from 'apollo-cache-inmemory'
 import * as fragments from '../graphql/fragments'
-import * as queries from '../graphql/queries'
 import * as subscriptions from '../graphql/subscriptions'
-import { useSubscription } from '../polyfills/react-apollo-hooks'
+import * as queries from '../graphql/queries'
 import {
-  Chats,
-  Users,
+  ChatUpdated,
+  MessageAdded,
   Message,
+  Chats,
   FullChat,
   User,
-  MessageAdded,
-  ChatAdded,
-  ChatUpdated,
+  Users,
   UserAdded,
   UserUpdated,
+  ChatAdded,
 } from '../graphql/types'
+import { useSubscription } from '../polyfills/react-apollo-hooks'
 
 export const useSubscriptions = () => {
   useSubscription<ChatAdded.Subscription>(subscriptions.chatAdded, {
@@ -94,6 +94,7 @@ export const useSubscriptions = () => {
       if (chats) {
         const index = chats.findIndex(chat => chat.id === messageAdded.chat.id)
         const chat = chats[index]
+        chat.lastMessage = messageAdded
         chats.splice(index, 1)
         chats.unshift(chat)
 

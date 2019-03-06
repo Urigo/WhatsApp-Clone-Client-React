@@ -6,14 +6,15 @@ import styled from 'styled-components'
 
 const Style = styled.div`
   display: flex;
-  width: calc(100% - 9px);
-  padding-left: 9px;
 
   button {
+    border-radius: 0;
     text-transform: none;
     font-size: inherit;
     width: 100%;
     justify-content: flex-start;
+    padding-left: 15px;
+    padding-right: 15px;
 
     svg {
       font-size: 30px;

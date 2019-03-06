@@ -82,7 +82,7 @@ const query = gql`
 
 const mutation = gql`
   mutation GroupDetailsScreenMutation($chatId: ID!, $name: String, $picture: String) {
-    updateChat(chatId: $chatId, name: $name, picture: $picture) {
+    updateGroup(chatId: $chatId, groupName: $name, groupPicture: $picture) {
       ...Chat
     }
   }
@@ -106,6 +106,7 @@ export default ({ location, match, history }: RouteComponentProps) => {
       data: { chat },
     } = useQuery<GroupDetailsScreenQuery.Query, GroupDetailsScreenQuery.Variables>(query, {
       variables: { chatId },
+      suspend: true,
     })
     ownedByMe = chat.owner.id === me.id
     users = chat.allTimeMembers
@@ -134,16 +135,16 @@ export default ({ location, match, history }: RouteComponentProps) => {
       },
       optimisticResponse: {
         __typename: 'Mutation',
-        updateChat: {
+        updateGroup: {
           ...chat,
           __typename: 'Chat',
           picture: chatPicture,
           name: chatName,
         },
       },
-      update: (client, { data: { updateChat } }) => {
-        chat.picture = chatPicture
-        chat.name = chatName
+      update: (client, { data: { updateGroup } }) => {
+        chat.picture = updateGroup.picture
+        chat.name = updateGroup.name
 
         client.writeFragment({
           id: defaultDataIdFromObject(chat),

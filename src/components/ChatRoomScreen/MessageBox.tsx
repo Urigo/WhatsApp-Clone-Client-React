@@ -4,7 +4,7 @@ import { defaultDataIdFromObject } from 'apollo-cache-inmemory'
 import gql from 'graphql-tag'
 import * as React from 'react'
 import { useState } from 'react'
-import { useQuery, useMutation } from 'react-apollo-hooks'
+import { useMutation } from 'react-apollo-hooks'
 import styled from 'styled-components'
 import { time as uniqid } from 'uniqid'
 import * as fragments from '../../graphql/fragments'
@@ -40,7 +40,6 @@ const Style = styled.div`
     margin-right: 0;
     color: white;
     padding-left: 20px;
-
     svg {
       margin-left: -3px;
     }

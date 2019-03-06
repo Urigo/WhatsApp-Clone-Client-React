@@ -8,7 +8,6 @@ import { useQuery } from 'react-apollo-hooks'
 import * as ReactDOM from 'react-dom'
 import styled from 'styled-components'
 import * as fragments from '../../graphql/fragments'
-import { useSubscription } from '../../polyfills/react-apollo-hooks'
 import { ChatsListQuery } from '../../graphql/types'
 
 const Style = styled.div`
@@ -69,6 +68,7 @@ const query = gql`
       ...Chat
     }
   }
+
   ${fragments.chat}
 `
 
@@ -79,8 +79,7 @@ interface ChatsListProps {
 export default ({ history }: ChatsListProps) => {
   const {
     data: { chats },
-  } = useQuery<ChatsListQuery.Query>(query)
-  const chatsIds = chats.map(chat => chat.id)
+  } = useQuery<ChatsListQuery.Query>(query, { suspend: true })
 
   const navToChat = chatId => {
     history.push(`chats/${chatId}`)
@@ -89,7 +88,7 @@ export default ({ history }: ChatsListProps) => {
   return (
     <Style className="ChatsList">
       <List className="ChatsList-chats-list">
-        {chats && chats.map(chat => (
+        {chats.map(chat => (
           <ListItem
             key={chat.id}
             className="ChatsList-chat-item"

@@ -1,5 +1,8 @@
 {
   "extends": [
-    "config:base"
-  ]
+    "config:base",
+    ":rebaseStalePrs"
+  ],
+  "recreateClosed": true,
+  "rangeStrategy": "lockfile-update"
 }

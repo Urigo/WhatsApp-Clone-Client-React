@@ -6,10 +6,11 @@ import { History } from 'history'
 import * as React from 'react'
 import { useMutation } from 'react-apollo-hooks'
 import styled from 'styled-components'
+import { time as uniqid } from 'uniqid'
 import * as fragments from '../../graphql/fragments'
 import * as queries from '../../graphql/queries'
-import { Chats } from '../../graphql/types'
-import { User, CompleteGroupButtonMutation } from '../../graphql/types'
+import { Chats, User, CompleteGroupButtonMutation } from '../../graphql/types'
+import { useMe } from '../../services/auth.service'
 
 const Style = styled.div`
   position: fixed;
@@ -47,10 +48,25 @@ interface CompleteGroupButtonProps {
 }
 
 export default ({ history, users, groupName, groupPicture }: CompleteGroupButtonProps) => {
+  const me = useMe()
+
   const addGroup = useMutation<
     CompleteGroupButtonMutation.Mutation,
     CompleteGroupButtonMutation.Variables
   >(mutation, {
+    optimisticResponse: {
+      __typename: 'Mutation',
+      addGroup: {
+        __typename: 'Chat',
+        id: uniqid(),
+        name: groupName,
+        picture: groupPicture,
+        allTimeMembers: users,
+        owner: me,
+        isGroup: true,
+        lastMessage: null,
+      },
+    },
     variables: {
       userIds: users.map(user => user.id),
       groupName,
@@ -83,8 +99,8 @@ export default ({ history, users, groupName, groupPicture }: CompleteGroupButton
   })
 
   const onClick = () => {
-    addGroup().then(() => {
-      history.push('/chats')
+    addGroup().then(({ data: { addGroup } }) => {
+      history.push(`/chats/${addGroup.id}`)
     })
   }
 

@@ -4,8 +4,6 @@ import { History } from 'history'
 import * as React from 'react'
 import styled from 'styled-components'
 
-const name = 'GroupDetailsNavbar'
-
 const Style = styled.div`
   padding: 0;
   display: flex;
@@ -36,7 +34,7 @@ export default ({ history, chatId }: GroupDetailsNavbarProps) => {
   }
 
   return (
-    <Style className={name}>
+    <Style className="GroupDetailsNavbar">
       <Button className="GroupDetailsNavbar-back-button" onClick={navToNewGroup}>
         <ArrowBackIcon />
       </Button>

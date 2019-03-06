@@ -14,10 +14,10 @@ export default gql `
     owner {
       id
     }
-    isGroup
     lastMessage {
       ...Message
     }
+    isGroup
   }
   ${message}
 `
