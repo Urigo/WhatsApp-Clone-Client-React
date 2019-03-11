@@ -56,12 +56,35 @@ const MessageDate = styled.div`
   font-size: 13px;
 `;
 
+const getChatsQuery = `
+  query GetChats {
+    chats {
+      id
+      name
+      picture
+      lastMessage {
+        id
+        content
+        createdAt
+      }
+    }
+  }
+`;
+
 const ChatsList = () => {
   const [chats, setChats] = useState<any[]>([]);
 
   useMemo(async () => {
-    const body = await fetch(`${process.env.REACT_APP_SERVER_URL}/chats`);
-    const chats = await body.json();
+    const body = await fetch(`${process.env.REACT_APP_SERVER_URL}/graphql`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ query: getChatsQuery }),
+    });
+    const {
+      data: { chats },
+    } = await body.json();
     setChats(chats);
   }, []);
 
