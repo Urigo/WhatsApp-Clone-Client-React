@@ -38,5 +38,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "jest-dom": "3.2.1",
+    "jest-fetch-mock": "2.1.2",
+    "react-testing-library": "7.0.0"
   }
 }
