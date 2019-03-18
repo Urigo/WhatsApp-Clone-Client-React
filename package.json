@@ -24,7 +24,7 @@
     "react-apollo-hooks": "0.4.3",
     "react-dom": "16.8.4",
     "react-fast-compare": "2.0.4",
-    "react-router-dom": "4.4.0",
+    "react-router-dom": "5.0.0",
     "react-router-transition": "1.3.0",
     "react-scripts": "2.1.8",
     "styled-components": "4.1.3",
