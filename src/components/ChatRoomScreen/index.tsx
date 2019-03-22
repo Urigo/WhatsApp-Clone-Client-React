@@ -81,8 +81,6 @@ const ChatRoomScreen: React.FC<ChatRoomScreenParams> = ({
         content,
       };
 
-      console.log(chat.messages);
-
       setChat({
         ...chat,
         messages: chat.messages.concat(message),
