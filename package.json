@@ -7,6 +7,7 @@
     "url": "https://github.com/Urigo/WhatsApp-Clone-Client-React.git"
   },
   "dependencies": {
+    "@apollo/react-hooks": "3.0.0",
     "@material-ui/core": "4.3.0",
     "@material-ui/icons": "4.2.1",
     "@types/history": "4.7.2",
@@ -17,11 +18,13 @@
     "@types/react-dom": "16.8.5",
     "@types/react-router-dom": "4.3.4",
     "@types/styled-components": "4.1.18",
-    "history": "4.9.0",
     "apollo-cache-inmemory": "1.6.2",
     "apollo-client": "2.6.3",
     "apollo-link": "1.2.12",
     "apollo-link-http": "1.5.15",
+    "graphql": "14.4.2",
+    "graphql-tag": "2.10.1",
+    "history": "4.9.0",
     "moment": "2.24.0",
     "prettier": "1.18.2",
     "react": "16.8.6",
@@ -56,7 +59,7 @@
   },
   "devDependencies": {
     "@testing-library/jest-dom": "4.0.0",
-    "jest-fetch-mock": "2.1.2",
-    "@testing-library/react": "8.0.7"
+    "@testing-library/react": "8.0.7",
+    "jest-fetch-mock": "2.1.2"
   }
 }
