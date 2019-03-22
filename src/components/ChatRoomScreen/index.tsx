@@ -75,9 +75,7 @@ const ChatRoomScreen: React.FC<ChatRoomScreenParams> = ({ history, chatId }) => 
       content,
     };
 
-    console.log(chat.messages);
-
-     setChat({
+    setChat({
       ...chat,
       messages: chat.messages.concat(message),
     });
