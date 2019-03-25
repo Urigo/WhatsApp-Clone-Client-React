@@ -39,6 +39,7 @@
     "typescript": "3.5.1"
   },
   "scripts": {
+    "prebuild": "yarn codegen",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
