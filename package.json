@@ -43,6 +43,7 @@
     "typescript": "3.5.3"
   },
   "scripts": {
+    "prebuild": "yarn codegen",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "TZ=\"Asia/Jerusalem\" react-scripts test",
