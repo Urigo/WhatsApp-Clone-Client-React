@@ -63,6 +63,10 @@ const ChatRoomScreen: React.FC<ChatRoomScreenParams> = ({ history, chatId }) => 
           __typename: 'Message',
           id: Math.random().toString(36).substr(2, 9),
           createdAt: new Date(),
+          chat: {
+            __typename: 'Chat',
+            id: chatId,
+          },
           content,
         }
       },
