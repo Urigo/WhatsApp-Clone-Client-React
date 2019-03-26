@@ -70,6 +70,10 @@ const ChatRoomScreen: React.FC<ChatRoomScreenParams> = ({
               .toString(36)
               .substr(2, 9),
             createdAt: new Date(),
+            chat: {
+              __typename: 'Chat',
+              id: chatId,
+            },
             content,
           },
         },
