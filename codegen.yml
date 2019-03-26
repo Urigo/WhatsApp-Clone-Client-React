@@ -3,6 +3,7 @@ documents:
   - ./src/components/**/*.tsx
   - ./src/graphql/fragments/**/*.ts
   - ./src/graphql/queries/**/*.ts
+  - ./src/graphql/subscriptions/**/*.ts
 overwrite: true
 generates:
   ./src/graphql/types.tsx:
