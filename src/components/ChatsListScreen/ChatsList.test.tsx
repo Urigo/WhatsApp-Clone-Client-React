@@ -36,6 +36,7 @@ describe('ChatsList', () => {
                   id: 1,
                   content: 'Hello',
                   createdAt: new Date('14 Jun 2017 00:00:00 PDT').toUTCString(),
+                  isMine: true,
                   chat: {
                     __typename: 'Chat',
                     id: 1,
@@ -84,6 +85,7 @@ describe('ChatsList', () => {
                   id: 1,
                   content: 'Hello',
                   createdAt: new Date(0),
+                  isMine: true,
                   chat: {
                     __typename: 'Chat',
                     id: 1,
