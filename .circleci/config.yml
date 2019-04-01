@@ -12,7 +12,7 @@ jobs:
             - yarn-packages-{{ checksum "package.json" }}
       - run:
           name: Clone Server
-          command: git clone https://github.com/Urigo/WhatsApp-Clone-Server.git --branch master-step7 --single-branch ../WhatsApp-Clone-Server
+          command: git clone https://github.com/Urigo/WhatsApp-Clone-Server.git --branch master-step8 --single-branch ../WhatsApp-Clone-Server
       - run:
           name: Install Dependencies
           command: yarn
