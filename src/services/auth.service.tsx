@@ -2,7 +2,12 @@ import React from 'react';
 import { useContext, useCallback } from 'react';
 import { useApolloClient } from 'react-apollo-hooks';
 import { Redirect } from 'react-router-dom';
-import { useMeQuery, User, useSignInMutation } from '../graphql/types';
+import {
+  useMeQuery,
+  User,
+  useSignInMutation,
+  useSignUpMutation,
+} from '../graphql/types';
 import { useCacheService } from './cache.service';
 
 const MyContext = React.createContext<User | null>(null);
@@ -40,16 +45,17 @@ export const withAuth = <P extends object>(
 
     return (
       <MyContext.Provider value={data.me}>
-        <Component {...props as P} />
+        <Component {...(props as P)} />
       </MyContext.Provider>
     );
   };
 };
 
 export const useSignIn = useSignInMutation;
+export const useSignUp = useSignUpMutation;
 
 export const useSignOut = () => {
-  const client = useApolloClient()
+  const client = useApolloClient();
 
   return useCallback(() => {
     // "expires" represents the lifespan of a cookie. Beyond that date the cookie will
@@ -58,7 +64,7 @@ export const useSignOut = () => {
 
     // Clear cache
     return client.clearStore();
-  }, [client])
+  }, [client]);
 };
 
 export const isSignedIn = () => {

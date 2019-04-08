@@ -9,8 +9,8 @@ it('renders without crashing', () => {
   const client = mockApolloClient([
     {
       request: { query: subscriptions.messageAdded },
-      result: { data: {} }
-    }
+      result: { data: {} },
+    },
   ]);
   const div = document.createElement('div');
 
