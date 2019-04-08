@@ -2,7 +2,12 @@ import React from 'react';
 import { useContext, useCallback } from 'react';
 import { useApolloClient } from '@apollo/react-hooks';
 import { Redirect } from 'react-router-dom';
-import { useMeQuery, User, useSignInMutation } from '../graphql/types';
+import {
+  useMeQuery,
+  User,
+  useSignInMutation,
+  useSignUpMutation,
+} from '../graphql/types';
 import { useCacheService } from './cache.service';
 
 const MyContext = React.createContext<User | null>(null);
@@ -47,6 +52,7 @@ export const withAuth = <P extends object>(
 };
 
 export const useSignIn = useSignInMutation;
+export const useSignUp = useSignUpMutation;
 
 export const useSignOut = () => {
   const client = useApolloClient();
