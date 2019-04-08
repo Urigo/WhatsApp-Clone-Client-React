@@ -3,7 +3,10 @@ import { defaultDataIdFromObject } from 'apollo-cache-inmemory';
 import { ApolloClient } from 'apollo-client';
 import * as fragments from '../graphql/fragments';
 import * as queries from '../graphql/queries';
-import { MessageFragment, useMessageAddedSubscription } from '../graphql/types';
+import {
+  MessageFragment,
+  useMessageAddedSubscription,
+} from '../graphql/types';
 
 type Client = ApolloClient<any> | DataProxy;
 
@@ -57,7 +60,10 @@ export const writeMessage = (client: Client, message: MessageFragment) => {
     return;
   };
 
-  if (!data) return;
+  if (data === undefined || data.chats === undefined) {
+    return null;
+  }
+
   const chats = data.chats;
   if (!chats) return;
 
