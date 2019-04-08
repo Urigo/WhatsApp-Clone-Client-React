@@ -3,7 +3,10 @@ import { defaultDataIdFromObject } from 'apollo-cache-inmemory';
 import { ApolloClient } from 'apollo-client';
 import * as fragments from '../graphql/fragments';
 import * as queries from '../graphql/queries';
-import { MessageFragment, useMessageAddedSubscription } from '../graphql/types';
+import {
+  MessageFragment,
+  useMessageAddedSubscription,
+} from '../graphql/types';
 
 type Client = ApolloClient<any> | DataProxy;
 
