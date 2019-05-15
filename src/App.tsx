@@ -1,14 +1,10 @@
 import React from 'react';
-import ChatsList from './components/ChatsList';
-import ChatsNavbar from './components/ChatsNavbar';
+import ChatsListScreen from './components/ChatsListScreen';
 
-function App() {
-  return (
-    <div>
-      <ChatsNavbar />
-      <ChatsList />
-    </div>
-  );
-}
+const App: React.FC = () => (
+  <div>
+    <ChatsListScreen />
+  </div>
+);
 
 export default App;
