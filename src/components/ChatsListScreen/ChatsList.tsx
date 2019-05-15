@@ -9,8 +9,10 @@ const ChatsList: React.FC = () => (
           <img src={chat.picture} alt="Profile" />
           <div>{chat.name}</div>
           {chat.lastMessage && (
-          <div>{chat.lastMessage.content}</div>
-          <div>{chat.lastMessage.createdAt}</div>
+            <React.Fragment>
+              <div>{chat.lastMessage.content}</div>
+              <div>{chat.lastMessage.createdAt}</div>
+            </React.Fragment>
           )}
         </li>
       ))}
