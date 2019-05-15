@@ -14,6 +14,7 @@
     "@types/node": "14.0.4",
     "@types/react": "16.9.35",
     "@types/react-dom": "16.9.8",
+    "moment": "2.25.3",
     "prettier": "2.0.5",
     "react": "16.13.1",
     "react-dom": "16.13.1",
