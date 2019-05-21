@@ -47,11 +47,11 @@ const ChatNavbar: React.FC<ChatNavbarProps> = ({ chat, history }) => {
 
   return (
     <Container>
-      <BackButton onClick={navBack}>
+      <BackButton data-testid="back-button" onClick={navBack}>
         <ArrowBackIcon />
       </BackButton>
-      <Picture src={chat.picture} />
-      <Name>{chat.name}</Name>
+      <Picture data-testid="chat-picture" src={chat.picture} />
+      <Name data-testid="chat-name">{chat.name}</Name>
     </Container>
   );
 };
