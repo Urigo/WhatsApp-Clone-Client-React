@@ -1,5 +1,5 @@
 import React from 'react';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import ChatNavbar from './ChatNavbar';
 import MessageInput from './MessageInput';
@@ -36,7 +36,7 @@ interface ChatRoomScreenParams {
 export interface ChatQueryMessage { 
   id: string;
   content: string;
-  createdAt: string;
+  createdAt: number;
 };
 
 export interface ChatQueryResult { 
@@ -66,6 +66,23 @@ const ChatRoomScreen: React.FC<ChatRoomScreenParams> = ({ history, chatId }) => 
     setChat(chat);
   }, [chatId]);
 
+  const onSendMessage = useCallback((content: string) => {
+    if (!chat) return null;
+
+    const message = {
+      id: (chat.messages.length + 10).toString(),
+      createdAt: Date.now(),
+      content,
+    };
+
+    console.log(chat.messages);
+
+     setChat({
+      ...chat,
+      messages: chat.messages.concat(message),
+    });
+  }, [chat]);
+
   if (!chat) return null;
 
   return (
@@ -74,7 +91,7 @@ const ChatRoomScreen: React.FC<ChatRoomScreenParams> = ({ history, chatId }) => 
       {chat.messages && (
         <MessagesList messages={chat.messages} />
       )}
-      <MessageInput />
+      <MessageInput onSendMessage={onSendMessage}/>
     </Container>
   );
 };
