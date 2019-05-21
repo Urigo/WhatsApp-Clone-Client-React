@@ -1,12 +1,46 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { cleanup, render, waitForDomChange } from 'react-testing-library';
+import { cleanup, render, fireEvent, wait, waitForDomChange } from 'react-testing-library';
 import ChatsList from './ChatsList';
+import { createBrowserHistory } from 'history';
 
 describe('ChatsList', () => {
-  afterEach(cleanup);
+  afterEach(() => {
+    cleanup();
+    window.location.pathname = '/';
+  });
 
   it('renders fetched chats data', async () => {
+    fetch.mockResponseOnce(JSON.stringify({
+      data: {
+        chats: [
+          {
+            id: 1,
+            name: 'Foo Bar',
+            picture: 'https://localhost:4000/picture.jpg',
+            lastMessage: {
+              id: 1,
+              content: 'Hello',
+              createdAt: new Date('14 Jun 2017 00:00:00 PDT').toUTCString(),
+            },
+          },
+        ],
+      },
+    }));
+
+    {
+      const { container, getByTestId } = render(<ChatsList />);
+
+      await waitForDomChange({ container });
+
+      expect(getByTestId('name')).toHaveTextContent('Foo Bar');
+      expect(getByTestId('picture')).toHaveAttribute('src', 'https://localhost:4000/picture.jpg');
+      expect(getByTestId('content')).toHaveTextContent('Hello');
+      expect(getByTestId('date')).toHaveTextContent('10:00');
+    }
+  });
+
+  it('should navigate to the target chat room on chat item click', async () => {
     fetch.mockResponseOnce(JSON.stringify({
       data: {
         chats: [
@@ -24,15 +58,18 @@ describe('ChatsList', () => {
       },
     }));
 
-    {
-      const { container, getByTestId } = render(<ChatsList />);
+     const history = createBrowserHistory();
 
-      await waitForDomChange({ container });
+     {
+      const { container, getByTestId } = render(<ChatsList history={history} />);
 
-      expect(getByTestId('name')).toHaveTextContent('Foo Bar');
-      expect(getByTestId('picture')).toHaveAttribute('src', 'https://localhost:4000/picture.jpg');
-      expect(getByTestId('content')).toHaveTextContent('Hello');
-      expect(getByTestId('date')).toHaveTextContent('01:00');
+       await waitForDomChange({ container });
+
+       fireEvent.click(getByTestId('chat'));
+
+       await wait(() =>
+        expect(history.location.pathname).toEqual('/chats/1')
+      );
     }
   });
 });
