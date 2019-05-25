@@ -1,5 +1,7 @@
+import gql from 'graphql-tag';
 import React from 'react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback } from 'react';
+import { useApolloClient, useQuery } from 'react-apollo-hooks';
 import styled from 'styled-components';
 import ChatNavbar from './ChatNavbar';
 import MessageInput from './MessageInput';
@@ -13,7 +15,7 @@ import { History } from 'history';
   height: 100vh;
 `;
 
-const getChatQuery = `
+const getChatQuery = gql`
   query GetChat($chatId: ID!) {
     chat(chatId: $chatId) {
       id
@@ -47,24 +49,12 @@ export interface ChatQueryResult {
 };
 
 type OptionalChatQueryResult = ChatQueryResult | null;
-
+  
 const ChatRoomScreen: React.FC<ChatRoomScreenParams> = ({ history, chatId }) => {
-  const [chat, setChat] = useState<OptionalChatQueryResult>(null);
-
-  useMemo(async () => {
-    const body = await fetch(`${process.env.REACT_APP_SERVER_URL}/graphql`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query: getChatQuery,
-        variables: { chatId },
-      }),
-    });
-    const { data: { chat } } = await body.json();
-    setChat(chat);
-  }, [chatId]);
+  const client = useApolloClient();
+  const { data: { chat } } = useQuery<any>(getChatQuery, {
+    variables: { chatId }
+  });
 
   const onSendMessage = useCallback((content: string) => {
     if (!chat) return null;
@@ -73,13 +63,20 @@ const ChatRoomScreen: React.FC<ChatRoomScreenParams> = ({ history, chatId }) => 
       id: (chat.messages.length + 10).toString(),
       createdAt: Date.now(),
       content,
+      __typename: "Chat",
     };
 
-    setChat({
-      ...chat,
-      messages: chat.messages.concat(message),
-    });
-  }, [chat]);
+    client.writeQuery({
+      query: getChatQuery,
+      variables: { chatId },
+      data: {
+        chat: {
+          ...chat,
+          messages: chat.messages.concat(message),
+        },
+      },
+    })
+  }, [chat, chatId, client]);
 
   if (!chat) return null;
 
