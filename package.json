@@ -17,7 +17,7 @@
     "apollo-link-http": "1.5.14",
     "apollo-link-ws": "1.0.17",
     "apollo-utilities": "1.2.1",
-    "graphql": "14.1.1",
+    "graphql": "14.3.1",
     "graphql-tag": "2.10.1",
     "moment": "2.24.0",
     "react": "16.8.4",
@@ -32,7 +32,7 @@
     "uniqid": "5.0.3"
   },
   "devDependencies": {
-    "@types/graphql": "14.0.7",
+    "@types/graphql": "14.2.0",
     "@types/node": "11.11.3",
     "concurrently": "4.1.0",
     "graphql-code-generator": "0.18.0",
