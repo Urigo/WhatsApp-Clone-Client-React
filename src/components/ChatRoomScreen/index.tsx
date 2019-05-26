@@ -1,3 +1,4 @@
+import { defaultDataIdFromObject } from 'apollo-cache-inmemory';
 import gql from 'graphql-tag';
 import React from 'react';
 import { useCallback } from 'react';
@@ -86,15 +87,38 @@ const ChatRoomScreen: React.FC<ChatRoomScreenParams> = ({
           },
         },
         update: (client, { data: { addMessage } }) => {
-          client.writeQuery({
-            query: getChatQuery,
-            variables: { chatId },
-            data: {
-              chat: {
-                ...chat,
-                messages: chat.messages.concat(addMessage),
-              },
-            },
+          type FullChat = { [key: string]: any };
+          let fullChat;
+          const chatIdFromStore = defaultDataIdFromObject(chat);
+
+          if (chatIdFromStore === null) {
+            return;
+          }
+
+          try {
+            fullChat = client.readFragment<FullChat>({
+              id: chatIdFromStore,
+              fragment: fragments.fullChat,
+              fragmentName: 'FullChat',
+            });
+          } catch (e) {
+            return;
+          }
+
+          if (fullChat === null) {
+            return;
+          }
+          if (fullChat.messages.some((m: any) => m.id === addMessage.id))
+            return;
+
+          fullChat.messages.push(addMessage);
+          fullChat.lastMessage = addMessage;
+
+          client.writeFragment({
+            id: chatIdFromStore,
+            fragment: fragments.fullChat,
+            fragmentName: 'FullChat',
+            data: fullChat,
           });
 
           let data;
@@ -118,7 +142,6 @@ const ChatRoomScreen: React.FC<ChatRoomScreenParams> = ({
           if (chatIndex === -1) return;
           const chatWhereAdded = chats[chatIndex];
 
-          chatWhereAdded.lastMessage = addMessage;
           // The chat will appear at the top of the ChatsList component
           chats.splice(chatIndex, 1);
           chats.unshift(chatWhereAdded);
