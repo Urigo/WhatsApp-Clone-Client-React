@@ -5,6 +5,7 @@ import { cleanup, render, fireEvent, wait, waitForDomChange } from 'react-testin
 import { createBrowserHistory } from 'history';
 import { mockApolloClient } from '../../test-helpers';
 import ChatsList, { getChatsQuery } from './ChatsList';
+import * as queries from '../../graphql/queries';
 
 describe('ChatsList', () => {
   afterEach(() => {
@@ -15,7 +16,7 @@ describe('ChatsList', () => {
   it('renders fetched chats data', async () => {
     const client = mockApolloClient([
       {
-        request: { query: getChatsQuery },
+        request: { query: queries.chats },
         result: {
           data: {
             chats: [
@@ -56,7 +57,7 @@ describe('ChatsList', () => {
   it('should navigate to the target chat room on chat item click', async () => {
     const client = mockApolloClient([
       {
-        request: { query: getChatsQuery },
+        request: { query: queries.chats },
         result: {
           data: {
             chats: [
