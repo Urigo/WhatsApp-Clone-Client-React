@@ -8,6 +8,7 @@ import MessageInput from './MessageInput';
 import MessagesList from './MessagesList';
 import { History } from 'history';
 import * as queries from '../../graphql/queries';
+import * as fragments from '../../graphql/fragments';
 
 const Container = styled.div`
   background: url(/assets/chat-background.jpg);
@@ -19,26 +20,19 @@ const Container = styled.div`
 const getChatQuery = gql`
   query GetChat($chatId: ID!) {
     chat(chatId: $chatId) {
-      id
-      name
-      picture
-      messages {
-        id
-        content
-        createdAt
-      }
+      ...FullChat
     }
   }
+  ${fragments.fullChat}
 `;
 
 const addMessageMutation = gql`
   mutation AddMessage($chatId: ID!, $content: String!) {
     addMessage(chatId: $chatId, content: $content) {
-      id
-      content
-      createdAt
+      ...Message
     }
   }
+  ${fragments.message}
 `;
 
 interface ChatRoomScreenParams {
