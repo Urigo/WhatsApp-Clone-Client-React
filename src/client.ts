@@ -10,6 +10,7 @@ const wsUri = httpUri.replace(/^https?/, 'ws');
 
 const httpLink = new HttpLink({
   uri: httpUri,
+  credentials: 'include',
 });
 
 const wsLink = new WebSocketLink({
