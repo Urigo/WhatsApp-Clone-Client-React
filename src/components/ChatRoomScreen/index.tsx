@@ -2,12 +2,12 @@ import { defaultDataIdFromObject } from 'apollo-cache-inmemory';
 import gql from 'graphql-tag';
 import React from 'react';
 import { useCallback } from 'react';
-import { useQuery, useMutation } from 'react-apollo-hooks';
 import styled from 'styled-components';
 import ChatNavbar from './ChatNavbar';
 import MessageInput from './MessageInput';
 import MessagesList from './MessagesList';
 import { History } from 'history';
+import { ChatsQuery, useGetChatQuery, useAddMessageMutation } from '../../graphql/types';
 import * as queries from '../../graphql/queries';
 import * as fragments from '../../graphql/fragments';
 
@@ -18,6 +18,7 @@ const Container = styled.div`
   height: 100vh;
 `;
 
+// eslint-disable-next-line
 const getChatQuery = gql`
   query GetChat($chatId: ID!) {
     chat(chatId: $chatId) {
@@ -27,6 +28,7 @@ const getChatQuery = gql`
   ${fragments.fullChat}
 `;
 
+// eslint-disable-next-line
 const addMessageMutation = gql`
   mutation AddMessage($chatId: ID!, $content: String!) {
     addMessage(chatId: $chatId, content: $content) {
@@ -41,21 +43,6 @@ interface ChatRoomScreenParams {
   history: History;
 }
 
-export interface ChatQueryMessage {
-  id: string;
-  content: string;
-  createdAt: Date;
-}
-
-export interface ChatQueryResult {
-  id: string;
-  name: string;
-  picture: string;
-  messages: Array<ChatQueryMessage>;
-}
-
-type OptionalChatQueryResult = ChatQueryResult | null;
-
 interface ChatsResult {
   chats: any[];
 }
@@ -64,15 +51,20 @@ const ChatRoomScreen: React.FC<ChatRoomScreenParams> = ({
   history,
   chatId,
 }) => {
-  const {
-    data: { chat },
-  } = useQuery<any>(getChatQuery, {
+  const { data, loading } = useGetChatQuery({
     variables: { chatId },
   });
-  const [addMessage] = useMutation(addMessageMutation);
+
+const [addMessage] = useAddMessageMutation();
 
   const onSendMessage = useCallback(
     (content: string) => {
+      if (data === undefined) {
+        return null;
+      }
+      const chat = data.chat;
+      if (chat === null) return null;
+
       addMessage({
         variables: { chatId, content },
         optimisticResponse: {
@@ -89,12 +81,12 @@ const ChatRoomScreen: React.FC<ChatRoomScreenParams> = ({
         update: (client, { data: { addMessage } }) => {
           type FullChat = { [key: string]: any };
           let fullChat;
+
           const chatIdFromStore = defaultDataIdFromObject(chat);
 
           if (chatIdFromStore === null) {
             return;
           }
-
           try {
             fullChat = client.readFragment<FullChat>({
               id: chatIdFromStore,
@@ -105,11 +97,10 @@ const ChatRoomScreen: React.FC<ChatRoomScreenParams> = ({
             return;
           }
 
-          if (fullChat === null) {
+          if (fullChat === null || fullChat.messages === null) {
             return;
           }
-          if (fullChat.messages.some((m: any) => m.id === addMessage.id))
-            return;
+          if (fullChat.messages.some((currentMessage: any) => currentMessage.id === addMessage.id)) return;
 
           fullChat.messages.push(addMessage);
           fullChat.lastMessage = addMessage;
@@ -121,24 +112,24 @@ const ChatRoomScreen: React.FC<ChatRoomScreenParams> = ({
             data: fullChat,
           });
 
-          let data;
+          let data: ChatsQuery | null;
           try {
-            data = client.readQuery<ChatsResult>({
+            data = client.readQuery({
               query: queries.chats,
             });
           } catch (e) {
             return;
           }
 
-          if (!data || data === null) {
-            return null;
-          }
-          if (!data.chats || data.chats === undefined) {
+          if (!data || !data.chats) {
             return null;
           }
           const chats = data.chats;
 
-          const chatIndex = chats.findIndex((c: any) => c.id === chatId);
+          const chatIndex = chats.findIndex((c: any) => {
+            if (addMessage === null || addMessage.chat === null) return -1;
+            return c.id === addMessage.chat.id;
+          });
           if (chatIndex === -1) return;
           const chatWhereAdded = chats[chatIndex];
 
@@ -153,10 +144,17 @@ const ChatRoomScreen: React.FC<ChatRoomScreenParams> = ({
         },
       });
     },
-    [chat, chatId, addMessage]
+    [data, chatId, addMessage]
   );
 
-  if (!chat) return null;
+  if (data === undefined) {
+    return null;
+  }
+  const chat = data.chat;
+  const loadingChat = loading;
+
+  if (loadingChat) return null;
+  if (chat === null) return null;
 
   return (
     <Container>
