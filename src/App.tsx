@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Route, Redirect, RouteComponentProps } from 'react-router-dom';
+import AuthScreen from './components/AuthScreen';
 import ChatRoomScreen from './components/ChatRoomScreen';
 import ChatsListScreen from './components/ChatsListScreen';
 import AnimatedSwitch from './components/AnimatedSwitch';
@@ -11,6 +12,7 @@ const App: React.FC = () => {
   return (
     <BrowserRouter>
       <AnimatedSwitch>
+        <Route exact path="/sign-in" component={AuthScreen} />
         <Route exact path="/chats" component={ChatsListScreen} />
 
         <Route exact path="/chats/:chatId" component={
