@@ -8,26 +8,31 @@ import {
 import ChatRoomScreen from './components/ChatRoomScreen';
 import ChatsListScreen from './components/ChatsListScreen';
 import AnimatedSwitch from './components/AnimatedSwitch';
+import { useCacheService } from './services/cache.service';
 
-const App: React.FC = () => (
-  <BrowserRouter>
-    <AnimatedSwitch>
-      <Route exact path="/chats" component={ChatsListScreen} />
+const App: React.FC = () => {
+  useCacheService();
 
-      <Route
-        exact
-        path="/chats/:chatId"
-        component={({
-          match,
-          history,
-        }: RouteComponentProps<{ chatId: string }>) => (
-          <ChatRoomScreen chatId={match.params.chatId} history={history} />
-        )}
-      />
-    </AnimatedSwitch>
-    <Route exact path="/" render={redirectToChats} />
-  </BrowserRouter>
-);
+  return (
+    <BrowserRouter>
+      <AnimatedSwitch>
+        <Route exact path="/chats" component={ChatsListScreen} />
+
+        <Route
+          exact
+          path="/chats/:chatId"
+          component={({
+            match,
+            history,
+          }: RouteComponentProps<{ chatId: string }>) => (
+            <ChatRoomScreen chatId={match.params.chatId} history={history} />
+          )}
+        />
+      </AnimatedSwitch>
+      <Route exact path="/" render={redirectToChats} />
+    </BrowserRouter>
+  );
+};
 
 const redirectToChats = () => <Redirect to="/chats" />;
 
