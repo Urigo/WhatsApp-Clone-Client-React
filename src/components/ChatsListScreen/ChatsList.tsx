@@ -4,8 +4,7 @@ import { List, ListItem } from '@material-ui/core';
 import styled from 'styled-components';
 import { useCallback } from 'react';
 import { History } from 'history';
-import { useQuery } from 'react-apollo-hooks';
-import * as queries from '../../graphql/queries';
+import { useChatsQuery } from '../../graphql/types';
 
 const Container = styled.div `
   height: calc(100% - 56px);
@@ -64,11 +63,18 @@ interface ChatsListProps {
 };
 
 const ChatsList: React.FC<ChatsListProps> = ({ history }) => {
-  const { data: { chats = [] } } = useQuery<any>(queries.chats);
 
   const navToChat = useCallback((chat) => {
     history.push(`chats/${chat.id}`)
   }, [history]);
+
+  const { data } = useChatsQuery();
+
+  if (data === undefined || data.chats === undefined) {
+    return null;
+  }
+
+  let chats = data.chats;
 
   return (
     <Container>
