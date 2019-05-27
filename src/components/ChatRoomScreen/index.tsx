@@ -2,12 +2,12 @@ import { defaultDataIdFromObject } from 'apollo-cache-inmemory';
 import gql from 'graphql-tag';
 import React from 'react';
 import { useCallback } from 'react';
-import { useQuery, useMutation } from 'react-apollo-hooks';
 import styled from 'styled-components';
 import ChatNavbar from './ChatNavbar';
 import MessageInput from './MessageInput';
 import MessagesList from './MessagesList';
 import { History } from 'history';
+import { useGetChatQuery, useAddMessageMutation } from '../../graphql/types';
 import * as queries from '../../graphql/queries';
 import * as fragments from '../../graphql/fragments';
 
@@ -18,6 +18,7 @@ const Container = styled.div`
   height: 100vh;
 `;
 
+// eslint-disable-next-line
 const getChatQuery = gql`
   query GetChat($chatId: ID!) {
     chat(chatId: $chatId) {
@@ -27,6 +28,7 @@ const getChatQuery = gql`
   ${fragments.fullChat}
 `;
 
+// eslint-disable-next-line
 const addMessageMutation = gql`
   mutation AddMessage($chatId: ID!, $content: String!) {
     addMessage(chatId: $chatId, content: $content) {
@@ -41,21 +43,6 @@ interface ChatRoomScreenParams {
   history: History;
 }
 
-export interface ChatQueryMessage {
-  id: string;
-  content: string;
-  createdAt: number;
-}
-
-export interface ChatQueryResult {
-  id: string;
-  name: string;
-  picture: string;
-  messages: Array<ChatQueryMessage>;
-}
-
-type OptionalChatQueryResult = ChatQueryResult | null;
-
 interface ChatsResult {
   chats: any[];
 }
@@ -64,15 +51,20 @@ const ChatRoomScreen: React.FC<ChatRoomScreenParams> = ({
   history,
   chatId,
 }) => {
-  const {
-    data: { chat },
-  } = useQuery<any>(getChatQuery, {
+  const { data, loading } = useGetChatQuery({
     variables: { chatId },
   });
-  const addMessage = useMutation(addMessageMutation);
+
+  const addMessage = useAddMessageMutation();
 
   const onSendMessage = useCallback(
     (content: string) => {
+      if (data === undefined) {
+        return null;
+      }
+      const chat = data.chat;
+      if (chat === null) return null;
+
       addMessage({
         variables: { chatId, content },
         optimisticResponse: {
@@ -100,31 +92,37 @@ const ChatRoomScreen: React.FC<ChatRoomScreenParams> = ({
               id: chatIdFromStore,
               fragment: fragments.fullChat,
               fragmentName: 'FullChat',
+              data: fullChat,
             });
-          } catch (e) {
-            return;
-          }
 
-          if (fullChat === null) {
-            return;
-          }
-          if (fullChat.messages.some((m: any) => m.id === addMessage.id))
-            return;
+            let data;
+            try {
+              data = client.readQuery<ChatsResult>({
+                query: queries.chats,
+              });
+            } catch (e) {
+              return;
+            }
 
-          fullChat.messages.push(addMessage);
-          fullChat.lastMessage = addMessage;
+            if (!data || data === null) {
+              return null;
+            }
+            if (!data.chats || data.chats === undefined) {
+              return null;
+            }
+            const chats = data.chats;
 
-          client.writeFragment({
-            id: chatIdFromStore,
-            fragment: fragments.fullChat,
-            fragmentName: 'FullChat',
-            data: fullChat,
-          });
+            const chatIndex = chats.findIndex((c: any) => c.id === chatId);
+            if (chatIndex === -1) return;
+            const chatWhereAdded = chats[chatIndex];
 
-          let data;
-          try {
-            data = client.readQuery<ChatsResult>({
+            // The chat will appear at the top of the ChatsList component
+            chats.splice(chatIndex, 1);
+            chats.unshift(chatWhereAdded);
+
+            client.writeQuery({
               query: queries.chats,
+              data: { chats: chats },
             });
           } catch (e) {
             return;
@@ -153,10 +151,17 @@ const ChatRoomScreen: React.FC<ChatRoomScreenParams> = ({
         },
       });
     },
-    [chat, chatId, addMessage]
+    [data, chatId, addMessage]
   );
 
-  if (!chat) return null;
+  if (data === undefined) {
+    return null;
+  }
+  const chat = data.chat;
+  const loadingChat = loading;
+
+  if (loadingChat) return null;
+  if (chat === null) return null;
 
   return (
     <Container>
