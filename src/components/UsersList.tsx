@@ -4,7 +4,7 @@ import gql from 'graphql-tag';
 import React from 'react';
 import styled from 'styled-components';
 import * as fragments from '../graphql/fragments';
-import { useUsersListQuery } from '../graphql/types';
+import { useUsersListQuery, User } from '../graphql/types';
 
 const ActualList = styled(MaterialList) `
   padding: 0;
@@ -38,7 +38,11 @@ export const UsersListQuery = gql`
   ${fragments.user}
 `;
 
-const UsersList: React.FC = () => {
+interface ChildComponentProps {
+  onUserPick: any;
+};
+
+const UsersList: React.FC<ChildComponentProps> = ({ onUserPick = (user: User) => {} }) => {
   const { data, loading: loadingUsers } = useUsersListQuery();
 
   if (data === undefined) return null;
@@ -49,6 +53,8 @@ const UsersList: React.FC = () => {
       {!loadingUsers && users.map(user => (
         <UserItem
           key={user.id}
+          data-testid="user"
+          onClick={onUserPick.bind(null, user)}
           button
         >
           {(user !== null && user.picture !== null) &&
