@@ -45,7 +45,7 @@
     "prebuild": "yarn codegen",
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "TZ=\"Asia/Jerusalem\" react-scripts test",
     "eject": "react-scripts eject",
     "codegen": "gql-gen",
     "format": "prettier '**/*.{ts,tsx,css,graphql}' --write"
