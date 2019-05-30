@@ -8,6 +8,7 @@ import { useCallback } from 'react';
 import styled from 'styled-components';
 import { History } from 'history';
 import { useRemoveChatMutation } from '../../graphql/types';
+import { eraseChat } from '../../services/cache.service';
 
 const Container = styled(Toolbar) `
   padding: 0;
@@ -66,6 +67,9 @@ const ChatNavbar: React.FC<ChatNavbarProps> = ({ chat, history }) => {
   const removeChat = useRemoveChatMutation({
     variables: {
       chatId: chat.id
+    },
+    update: (client, { data: { removeChat } }) => {
+      eraseChat(client, removeChat);
     }
   });
 
