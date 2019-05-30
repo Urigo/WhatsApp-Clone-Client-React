@@ -7,6 +7,7 @@ import UsersList from '../UsersList';
 import ChatCreationNavbar from './ChatCreationNavbar';
 import { History } from 'history';
 import { useAddChatMutation } from '../../graphql/types';
+import { writeChat } from '../../services/cache.service';
 
 // eslint-disable-next-line
 const Container = styled.div`
@@ -50,6 +51,11 @@ const ChatCreationScreen: React.FC<ChildComponentProps> = ({ history }) => {
         },
         variables: {
           recipientId: user.id,
+        },
+        update: (client, { data }) => {
+          if (data && data.addChat) {
+            writeChat(client, data.addChat);
+          }
         },
       }).then((result) => {
         if (result && result.data !== null) {
