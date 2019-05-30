@@ -34,7 +34,7 @@ interface ChildComponentProps {
 }
 
 const ChatCreationScreen: React.FC<ChildComponentProps> = ({ history }) => {
-  const addChat = useAddChatMutation({
+  const [addChat] = useAddChatMutation({
     update: (client, { data: { addChat } }) => {
       writeChat(client, addChat);
     },
