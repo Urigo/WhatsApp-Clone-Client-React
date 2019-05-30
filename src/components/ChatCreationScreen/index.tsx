@@ -7,6 +7,7 @@ import UsersList from '../UsersList';
 import ChatCreationNavbar from './ChatCreationNavbar';
 import { History } from 'history';
 import { useAddChatMutation } from '../../graphql/types';
+import { writeChat } from '../../services/cache.service';
 
 // eslint-disable-next-line
 const Container = styled.div `
@@ -33,7 +34,11 @@ interface ChildComponentProps {
 };
 
 const ChatCreationScreen: React.FC<ChildComponentProps> = ({ history }) => {
-  const addChat = useAddChatMutation();
+  const addChat = useAddChatMutation({
+    update: (client, { data: { addChat } }) => {
+      writeChat(client, addChat);
+    }
+  });
 
   const onUserPick = useCallback((user) => {
     addChat({
