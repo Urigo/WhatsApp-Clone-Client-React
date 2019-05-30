@@ -97,7 +97,7 @@ const ChatRoomScreen: React.FC<ChatRoomScreenParams> = ({
 
   return (
     <Container>
-      <ChatNavbar chat={chat} history={history} />
+      {chat?.id && <ChatNavbar chat={chat} history={history} />}
       {chat?.messages && <MessagesList messages={chat.messages} />}
       <MessageInput onSendMessage={onSendMessage} />
     </Container>
