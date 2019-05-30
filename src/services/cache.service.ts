@@ -8,6 +8,7 @@ import {
   ChatsQuery,
   ChatFragment,
   useChatAddedSubscription,
+  useChatRemovedSubscription,
 } from '../graphql/types';
 
 type Client = Pick<
@@ -28,6 +29,14 @@ export const useCacheService = () => {
     onSubscriptionData: ({ client, subscriptionData: { data } }) => {
       if (data) {
         writeChat(client, data.chatAdded);
+      }
+    },
+  });
+
+  useChatRemovedSubscription({
+    onSubscriptionData: ({ client, subscriptionData: { data } }) => {
+      if (data) {
+        eraseChat(client, data.chatRemoved);
       }
     },
   });
@@ -135,5 +144,51 @@ export const writeChat = (client: Client, chat: ChatFragment) => {
   client.writeQuery({
     query: queries.chats,
     data: { chats },
+  });
+};
+
+export const eraseChat = (client: Client, chatId: string) => {
+  const chatType = {
+    __typename: 'Chat',
+    id: chatId,
+  };
+
+  const chatIdFromObject = defaultDataIdFromObject(chatType);
+  if (chatIdFromObject === null) {
+    return;
+  }
+
+  client.writeFragment({
+    id: chatIdFromObject,
+    fragment: fragments.fullChat,
+    fragmentName: 'FullChat',
+    data: null,
+  });
+
+  let data: ChatsQuery | null;
+  try {
+    data = client.readQuery<ChatsQuery>({
+      query: queries.chats,
+    });
+  } catch (e) {
+    return;
+  }
+
+  if (!data || !data.chats) return;
+
+  const chats = data.chats;
+
+  if (!chats) return;
+
+  const chatIndex = chats.findIndex((c: any) => c.id === chatId);
+
+  if (chatIndex === -1) return;
+
+  // The chat will appear at the top of the ChatsList component
+  chats.splice(chatIndex, 1);
+
+  client.writeQuery({
+    query: queries.chats,
+    data: { chats: chats },
   });
 };
