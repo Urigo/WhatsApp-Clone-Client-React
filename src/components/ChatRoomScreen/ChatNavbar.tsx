@@ -1,10 +1,13 @@
 import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import DeleteIcon from '@material-ui/icons/Delete';
+import gql from 'graphql-tag';
 import React from 'react';
 import { useCallback } from 'react';
 import styled from 'styled-components';
 import { History } from 'history';
+import { useRemoveChatMutation } from '../../graphql/types';
 
 const Container = styled(Toolbar)`
   padding: 0;
@@ -18,6 +21,12 @@ const BackButton = styled(Button)`
   svg {
     color: var(--primary-text);
   }
+`;
+
+const Rest = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
 `;
 
 const Picture = styled.img`
@@ -34,15 +43,38 @@ const Name = styled.div`
   line-height: 56px;
 `;
 
+const DeleteButton = styled(Button)`
+  color: var(--primary-text) !important;
+`;
+
+export const removeChatMutation = gql`
+  mutation RemoveChat($chatId: ID!) {
+    removeChat(chatId: $chatId)
+  }
+`;
+
 interface ChatNavbarProps {
   history: History;
-  chat?: {
+  chat: {
     picture?: string | null;
     name?: string | null;
+    id: string;
   };
 }
 
 const ChatNavbar: React.FC<ChatNavbarProps> = ({ chat, history }) => {
+  const [removeChat] = useRemoveChatMutation({
+    variables: {
+      chatId: chat.id,
+    },
+  });
+
+  const handleRemoveChat = useCallback(() => {
+    removeChat().then(() => {
+      history.replace('/chats');
+    });
+  }, [removeChat, history]);
+
   const navBack = useCallback(() => {
     history.replace('/chats');
   }, [history]);
@@ -58,6 +90,11 @@ const ChatNavbar: React.FC<ChatNavbarProps> = ({ chat, history }) => {
           <Name data-testid="chat-name">{chat.name}</Name>
         </React.Fragment>
       )}
+      <Rest>
+        <DeleteButton data-testid="delete-button" onClick={handleRemoveChat}>
+          <DeleteIcon />
+        </DeleteButton>
+      </Rest>
     </Container>
   );
 };
