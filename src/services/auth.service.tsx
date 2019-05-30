@@ -2,6 +2,7 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import client from '../client';
 import { useCacheService } from './cache.service';
+import gql from 'graphql-tag';
 
 export const withAuth = <P extends object>(
   Component: React.ComponentType<P>
@@ -21,19 +22,31 @@ export const withAuth = <P extends object>(
   };
 };
 
-export const signIn = (authToken: string) => {
-  document.cookie = `authToken=${authToken}`;
-
-  // This will become async in the near future
-  return Promise.resolve();
+export const signIn = ({
+  username,
+  password,
+}: {
+  username: string;
+  password: string;
+}) => {
+  return client.mutate({
+    mutation: gql`
+      mutation signIn($username: String!, $password: String!) {
+        signIn(username: $username, password: $password) {
+          id
+        }
+      }
+    `,
+    variables: {
+      username,
+      password,
+    },
+  });
 };
 
 export const signOut = () => {
-  // "expires" represents the lifespan of a cookie. Beyond that date the cookie will
-  // be deleted by the browser. "expires" cannot be viewed from "document.cookie"
   document.cookie = `authToken=;expires=${new Date(0)}`;
 
-  // Clear cache
   return client.clearStore();
 };
 
