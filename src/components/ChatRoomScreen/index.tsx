@@ -110,7 +110,7 @@ interface ChatRoomScreenParams {
 
 const ChatRoom: React.FC<ChatRoomScreenParams> = ({ history, chatId }) => {
   const { after, limit, setAfter } = usePagination();
-  const { data, loading } = useGetChatQuery({
+  const { data, loading, fetchMore } = useGetChatQuery({
     variables: { chatId, after, limit },
   });
 
@@ -156,7 +156,30 @@ const ChatRoom: React.FC<ChatRoomScreenParams> = ({ history, chatId }) => {
     }
 
     // every time after changes its value, fetch more messages
-  }, [after]);
+    fetchMore({
+      variables: {
+        after,
+        limit,
+      },
+      updateQuery(prev, { fetchMoreResult }) {
+        const messages = [
+          ...fetchMoreResult!.chat!.messages.messages,
+          ...prev.chat!.messages.messages,
+        ];
+
+        return {
+          ...prev,
+          chat: {
+            ...prev.chat!,
+            messages: {
+              ...fetchMoreResult!.chat!.messages,
+              messages,
+            },
+          },
+        };
+      },
+    });
+  }, [after, limit, fetchMore]);
 
   if (data === undefined) {
     return null;
