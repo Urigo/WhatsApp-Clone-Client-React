@@ -104,7 +104,7 @@ interface ChatRoomScreenParams {
 };
 
 const ChatRoom: React.FC<ChatRoomScreenParams> = ({ history, chatId }) => {
-  const { after, limit } = usePagination();
+  const { after, limit, setAfter } = usePagination();
   const { data, loading } = useGetChatQuery({
     variables: { chatId, after, limit }
   });
@@ -139,6 +139,14 @@ const ChatRoom: React.FC<ChatRoomScreenParams> = ({ history, chatId }) => {
     })
   }, [data, chatId, addMessage]);
 
+  useEffect(() => {
+    if (!after) {
+      return;
+    }
+
+    // every time after changes its value, fetch more messages
+  }, [after]);
+
   if (data === undefined) {
     return null;
   }
@@ -159,7 +167,10 @@ const ChatRoom: React.FC<ChatRoomScreenParams> = ({ history, chatId }) => {
     <Container>
       <ChatNavbar chat={chat} history={history} />
       {chat.messages && (
-        <MessagesList messages={chat.messages} />
+        <MessagesList
+        messages={chat.messages.messages}
+        hasMore={chat.messages.hasMore}
+        loadMore={() => setAfter(chat.messages.cursor!)} />
       )}
       <MessageInput onSendMessage={onSendMessage}/>
     </Container>
