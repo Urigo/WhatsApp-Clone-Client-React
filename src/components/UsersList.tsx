@@ -3,8 +3,9 @@ import MaterialItem from '@material-ui/core/ListItem';
 import gql from 'graphql-tag';
 import React from 'react';
 import styled from 'styled-components';
+import { useApolloClient } from '@apollo/react-hooks';
+import { useUsersListQuery, User, UsersListDocument } from '../graphql/types';
 import * as fragments from '../graphql/fragments';
-import { useUsersListQuery, User } from '../graphql/types';
 
 const ActualList = styled(MaterialList)`
   padding: 0;
@@ -37,6 +38,16 @@ export const UsersListQuery = gql`
   }
   ${fragments.user}
 `;
+
+export const useUsersPrefetch = () => {
+  const client = useApolloClient();
+
+  return () => {
+    client.query({
+      query: UsersListDocument,
+    });
+  };
+};
 
 interface ChildComponentProps {
   onUserPick: any;
