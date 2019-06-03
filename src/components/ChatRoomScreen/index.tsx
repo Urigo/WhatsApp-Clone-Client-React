@@ -108,10 +108,7 @@ interface ChatRoomScreenParams {
   history: History;
 }
 
-const ChatRoomScreen: React.FC<ChatRoomScreenParams> = ({
-  history,
-  chatId,
-}) => {
+const ChatRoom: React.FC<ChatRoomScreenParams> = ({ history, chatId }) => {
   const { after, limit } = usePagination();
   const { data, loading } = useGetChatQuery({
     variables: { chatId, after, limit },
@@ -175,6 +172,17 @@ const [addMessage] = useAddMessageMutation();
       {chat.messages && <MessagesList messages={chat.messages} />}
       <MessageInput onSendMessage={onSendMessage} />
     </Container>
+  );
+};
+
+const ChatRoomScreen: React.FC<ChatRoomScreenParams> = ({
+  history,
+  chatId,
+}) => {
+  return (
+    <ChatPaginationProvider>
+      <ChatRoom history={history} chatId={chatId} />
+    </ChatPaginationProvider>
   );
 };
 
