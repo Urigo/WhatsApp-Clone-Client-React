@@ -1,4 +1,4 @@
-schema: ../Whatsapp-Clone-Server/schema/typeDefs.graphql
+schema: ../Whatsapp-Clone-Server/modules/*/*.ts
 documents:
   - ./src/components/**/*.tsx
   - ./src/graphql/fragments/**/*.ts
