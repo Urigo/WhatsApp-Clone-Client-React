@@ -1,9 +1,9 @@
 import moment from 'moment';
 import React from 'react';
 import { useEffect, useRef } from 'react';
-import ReactDOM from 'react-dom';
 import styled, { css } from 'styled-components';
 import { useInfiniteScroll } from '../../hooks/use-infinite-scroll';
+import { useAdjustedScroll } from '../../hooks/use-adjusted-scroll';
 
 const Container = styled.div`
   position: relative;
@@ -117,17 +117,19 @@ const MessagesList: React.FC<MessagesListProps> = ({
     hasMore,
     ref: selfRef!,
   });
+  const adjustScroll = useAdjustedScroll(selfRef);
 
   useEffect(() => {
     if (!selfRef.current) return;
 
     if (fetching) {
       stopFetching();
+      adjustScroll();
+    } else {
+      // scroll to the most recent message
+      adjustScroll(true);
     }
-
-    const selfDOMNode = ReactDOM.findDOMNode(selfRef.current) as HTMLElement;
-    selfDOMNode.scrollTop = Number.MAX_SAFE_INTEGER;
-  }, [messages.length, selfRef, fetching, stopFetching]);
+  }, [messages.length, selfRef, fetching, stopFetching, adjustScroll]);
 
   return (
     <Container ref={selfRef}>
