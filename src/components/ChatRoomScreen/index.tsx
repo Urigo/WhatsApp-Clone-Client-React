@@ -21,7 +21,7 @@ import { writeMessage } from '../../services/cache.service';
 
 // eslint-disable-next-line
 const getChatQuery = gql `
-  query GetChat($chatId: ID!) {
+  query GetChat($chatId: ID!, $limit: Int!, $after: Float) {
     chat(chatId: $chatId) {
       ...FullChat
     }
