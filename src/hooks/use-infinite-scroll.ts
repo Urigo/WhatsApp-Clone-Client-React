@@ -2,18 +2,20 @@ import { useState, useEffect, useCallback, RefObject } from 'react';
 
 export const useInfiniteScroll = ({
   ref,
+  hasMore,
   onLoadMore,
 }: {
   onLoadMore: Function;
+  hasMore: boolean;
   ref: RefObject<HTMLElement>;
 }): [boolean, () => void] => {
   const [isFetching, setIsFetching] = useState(false);
   const handleScroll = useCallback(() => {
-    if (ref.current!.scrollTop === 0 && isFetching === false) {
-      // starts to fetch if scrolled to top and fetching is not in progress
+    if (ref.current!.scrollTop === 0 && isFetching === false && hasMore) {
+      // starts to fetch if scrolled to top, fetching is not in progress and has more data
       setIsFetching(true);
     }
-  }, [ref, isFetching]);
+  }, [ref, isFetching, hasMore]);
 
   useEffect(() => {
     const elem = ref.current;
