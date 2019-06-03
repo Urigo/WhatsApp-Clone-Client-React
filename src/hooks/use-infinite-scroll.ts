@@ -6,7 +6,7 @@ export const useInfiniteScroll = ({
 }: {
   onLoadMore: Function;
   ref: RefObject<HTMLElement>;
-}) => {
+}): [boolean, () => void] => {
   const [isFetching, setIsFetching] = useState(false);
   const handleScroll = useCallback(() => {
     if (ref.current!.scrollTop === 0 && isFetching === false) {
@@ -35,6 +35,12 @@ export const useInfiniteScroll = ({
       onLoadMore();
     }
   }, [isFetching, onLoadMore]);
+
+  const stopFetching = useCallback(() => {
+    setIsFetching(false);
+  }, []);
+
+  return [isFetching, stopFetching];
 };
 
 export default useInfiniteScroll;
