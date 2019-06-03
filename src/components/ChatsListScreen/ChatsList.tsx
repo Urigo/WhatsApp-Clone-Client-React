@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { useCallback } from 'react';
 import { History } from 'history';
 import { useChatsQuery } from '../../graphql/types';
+import { useGetChatPrefetch } from '../ChatRoomScreen'
 
 const Container = styled.div `
   height: calc(100% - 56px);
@@ -67,6 +68,7 @@ const ChatsList: React.FC<ChatsListProps> = ({ history }) => {
   const navToChat = useCallback((chat) => {
     history.push(`chats/${chat.id}`)
   }, [history]);
+  const prefetchChat = useGetChatPrefetch();
 
   const { data } = useChatsQuery();
 
@@ -80,7 +82,9 @@ const ChatsList: React.FC<ChatsListProps> = ({ history }) => {
     <Container>
       <StyledList>
         {chats.map((chat: any) => (
-          <StyledListItem key={chat.id} data-testid="chat" button onClick={navToChat.bind(null, chat)}>
+          <StyledListItem key={chat.id} data-testid="chat" button onClick={navToChat.bind(null, chat)} onMouseEnter={() => {
+            prefetchChat(chat.id)
+          }}>
             <ChatPicture data-testid="picture" src={chat.picture} alt="Profile"/>
             <ChatInfo>
               <ChatName data-testid="name">{chat.name}</ChatName>
