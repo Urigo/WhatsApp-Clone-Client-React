@@ -51,7 +51,8 @@
     "test": "TZ=\"Asia/Jerusalem\" react-scripts test",
     "eject": "react-scripts eject",
     "codegen": "gql-gen",
-    "format": "prettier \"**/*.{ts,tsx,css,graphql}\" --write"
+    "format": "prettier \"**/*.{ts,tsx,css,graphql}\" --write",
+    "size": "source-map-explorer 'build/static/js/*.js'"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -71,6 +72,7 @@
   "devDependencies": {
     "@testing-library/jest-dom": "4.0.0",
     "@testing-library/react": "8.0.7",
-    "jest-fetch-mock": "2.1.2"
+    "jest-fetch-mock": "2.1.2",
+    "source-map-explorer": "2.0.1"
   }
 }
