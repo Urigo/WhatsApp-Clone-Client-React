@@ -44,6 +44,7 @@
     "react-router-dom": "5.2.0",
     "react-router-transition": "2.0.0",
     "react-scripts": "3.4.1",
+    "source-map-explorer": "2.4.2",
     "styled-components": "5.1.0",
     "subscriptions-transport-ws": "0.9.16",
     "typescript": "3.9.2"
@@ -55,7 +56,8 @@
     "test": "react-scripts test --env=jest-environment-jsdom-sixteen",
     "eject": "react-scripts eject",
     "codegen": "graphql-codegen",
-    "format": "prettier \"**/*.{ts,tsx,css,graphql}\" --write"
+    "format": "prettier \"**/*.{ts,tsx,css,graphql}\" --write",
+    "size": "source-map-explorer 'build/static/js/*.js'"
   },
   "eslintConfig": {
     "extends": "react-app"
