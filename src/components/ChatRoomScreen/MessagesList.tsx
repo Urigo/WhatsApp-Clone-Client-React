@@ -1,4 +1,4 @@
-import moment from 'moment';
+import format from 'date-fns/format';
 import React from 'react';
 import { useEffect, useRef } from 'react';
 import styled, { css } from 'styled-components';
@@ -141,7 +141,7 @@ const MessagesList: React.FC<MessagesListProps> = ({
           key={message.id}>
           <Contents data-testid="message-content">{message.content}</Contents>
           <Timestamp data-testid="message-date">
-            {moment(message.createdAt).format('HH:mm')}
+            {format(message.createdAt, 'HH:mm')}
           </Timestamp>
         </MessageItem>
       ))}
