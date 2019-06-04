@@ -1,5 +1,5 @@
 import React from 'react';
-import moment from 'moment';
+import format from 'date-fns/format';
 import { List, ListItem } from '@material-ui/core';
 import styled from 'styled-components';
 import { useCallback } from 'react';
@@ -104,7 +104,7 @@ const ChatsList: React.FC<ChatsListProps> = ({ history }) => {
                     {chat.lastMessage.content}
                   </MessageContent>
                   <MessageDate data-testid="date">
-                    {moment(chat.lastMessage.createdAt).format('HH:mm')}
+                    {format(chat.lastMessage.createdAt, 'HH:mm')}
                   </MessageDate>
                 </React.Fragment>
               )}
