@@ -1,6 +1,5 @@
 import React from 'react';
 import { ApolloProvider } from 'react-apollo-hooks';
-import ReactDOM from 'react-dom';
 import {
   cleanup,
   render,
@@ -8,9 +7,9 @@ import {
   wait,
   waitForDomChange,
 } from '@testing-library/react';
-import { createBrowserHistory } from 'history';
+import { createBrowserHistory, createMemoryHistory } from 'history';
 import { mockApolloClient } from '../../test-helpers';
-import ChatsList, { getChatsQuery } from './ChatsList';
+import ChatsList from './ChatsList';
 import * as queries from '../../graphql/queries';
 
 describe('ChatsList', () => {
@@ -20,6 +19,7 @@ describe('ChatsList', () => {
   });
 
   it('renders fetched chats data', async () => {
+    const time = new Date('1 Jan 2019 GMT');
     const client = mockApolloClient([
       {
         request: { query: queries.chats },
@@ -35,7 +35,7 @@ describe('ChatsList', () => {
                   __typename: 'Message',
                   id: 1,
                   content: 'Hello',
-                  createdAt: new Date('14 Jun 2017 00:00:00 PDT').toUTCString(),
+                  createdAt: time.getTime(),
                   isMine: true,
                   chat: {
                     __typename: 'Chat',
@@ -49,10 +49,12 @@ describe('ChatsList', () => {
       },
     ]);
 
+    const history = createMemoryHistory();
+
     {
       const { container, getByTestId } = render(
         <ApolloProvider client={client}>
-          <ChatsList />
+          <ChatsList history={history} />
         </ApolloProvider>
       );
 
@@ -64,7 +66,7 @@ describe('ChatsList', () => {
         'https://localhost:4000/picture.jpg'
       );
       expect(getByTestId('content')).toHaveTextContent('Hello');
-      expect(getByTestId('date')).toHaveTextContent('10:00');
+      expect(getByTestId('date').innerHTML).toBe('00:00')
     }
   });
 

@@ -6,6 +6,7 @@ import {
   fireEvent,
   wait,
   waitForElement,
+  act
 } from '@testing-library/react';
 import SignInForm from './SignInForm';
 
@@ -44,60 +45,76 @@ describe('SignInForm', () => {
     const history = createMemoryHistory();
 
     fetchMock.mockRejectOnce(new Error('sign-in failed'));
+    let getByTestId: any = null;
 
-    {
-      const { container, getByTestId } = render(
-        <SignInForm history={history} />
-      );
-      const usernameInput = getByTestId('username-input').querySelector(
-        'input'
-      );
-      const passwordInput = getByTestId('password-input').querySelector(
-        'input'
-      );
-      const signInButton = getByTestId('sign-in-button') as HTMLButtonElement;
-      const errorMessage = getByTestId('error-message');
+    act(() => {
+      getByTestId = render(<SignInForm history={history} />).getByTestId;
+    });
 
+    const signInButton = await waitForElement(
+      () => getByTestId('sign-in-button') as HTMLButtonElement
+    );
+    const usernameInput = await waitForElement(() =>
+      getByTestId('username-input').querySelector('input')
+    );
+    const passwordInput = await waitForElement(() =>
+      getByTestId('password-input').querySelector('input')
+    );
+
+    act(() => {
       fireEvent.change(usernameInput, { target: { value: 'username' } });
       fireEvent.change(passwordInput, { target: { value: 'password' } });
+    });
 
-      await waitForElement(() => usernameInput);
-      await waitForElement(() => passwordInput);
-
+    act(() => {
       fireEvent.click(signInButton);
+    });
 
-      await waitForElement(() => errorMessage);
+    const errorMessage = await waitForElement(() =>
+      getByTestId('error-message')
+    );
 
-      expect(errorMessage.innerHTML).toEqual('sign-in failed');
-    }
+    expect(errorMessage.innerHTML).toContain('sign-in failed');
   });
 
   it('navigates to /chats if everything went right', async () => {
     const history = createMemoryHistory();
 
-    fetchMock.mockResponseOnce('success');
+    fetchMock.mockResponseOnce(
+      JSON.stringify({
+        data: {
+          signIn: {
+            __typename: 'User',
+            id: '1'
+          }
+        }
+      })
+    );
 
-    {
-      const { container, getByTestId } = render(
-        <SignInForm history={history} />
-      );
-      const usernameInput = getByTestId('username-input').querySelector(
-        'input'
-      );
-      const passwordInput = getByTestId('password-input').querySelector(
-        'input'
-      );
-      const signInButton = getByTestId('sign-in-button') as HTMLButtonElement;
+    let getByTestId: any = null;
 
+    act(() => {
+      getByTestId = render(<SignInForm history={history} />).getByTestId;
+    });
+    const usernameInput = await waitForElement(() =>
+      getByTestId('username-input').querySelector('input')
+    );
+    const passwordInput = await waitForElement(() =>
+      getByTestId('password-input').querySelector('input')
+    );
+    const signInButton = await waitForElement(
+      () => getByTestId('sign-in-button') as HTMLButtonElement
+    );
+
+    act(() => {
       fireEvent.change(usernameInput, { target: { value: 'username' } });
       fireEvent.change(passwordInput, { target: { value: 'password' } });
+    });
 
-      await waitForElement(() => usernameInput);
-      await waitForElement(() => passwordInput);
-
+    act(() => {
       fireEvent.click(signInButton);
+    });
 
-      await wait(() => expect(history.location.pathname).toEqual('/chats'));
-    }
+    await wait(() => expect(history.location.pathname).toEqual('/chats'));
   });
 });

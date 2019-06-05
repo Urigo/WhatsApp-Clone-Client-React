@@ -1,0 +1,61 @@
+type Chat {
+  id: ID!
+  name: String
+  picture: String
+  lastMessage: Message
+  messages(limit: Int!, after: Float): MessagesResult!
+  participants: [User!]!
+}
+
+scalar DateTime
+
+type Message {
+  id: ID!
+  content: String!
+  createdAt: DateTime!
+  chat: Chat
+  sender: User
+  recipient: User
+  isMine: Boolean!
+}
+
+type MessagesResult {
+  cursor: Float
+  hasMore: Boolean!
+  messages: [Message!]!
+}
+
+type Mutation {
+  addMessage(chatId: ID!, content: String!): Message
+  addChat(recipientId: ID!): Chat
+  removeChat(chatId: ID!): ID
+  _dummy: Boolean
+  signIn(username: String!, password: String!): User
+  signUp(
+    name: String!
+    username: String!
+    password: String!
+    passwordConfirm: String!
+  ): User
+}
+
+type Query {
+  chats: [Chat!]!
+  chat(chatId: ID!): Chat
+  _dummy: Boolean
+  me: User
+  users: [User!]!
+}
+
+type Subscription {
+  messageAdded: Message!
+  chatAdded: Chat!
+  chatRemoved: ID!
+  _dummy: Boolean
+}
+
+type User {
+  id: ID!
+  name: String!
+  picture: String
+}

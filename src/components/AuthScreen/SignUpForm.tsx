@@ -114,7 +114,7 @@ const SignUpForm: React.FC<RouteComponentProps<any>> = ({ history }) => {
           onClick={handleSignUp}>
           Sign up
         </Button>
-        <ErrorMessage data-testid="error-message">{error}</ErrorMessage>
+        { error ? <ErrorMessage data-testid="error-message">{error}</ErrorMessage> : null}
       </ActualForm>
     </SignForm>
   );

@@ -5,9 +5,10 @@ import {
   render,
   fireEvent,
   wait,
-  waitForElement,
+  waitForElement
 } from '@testing-library/react';
 import SignUpForm from './SignUpForm';
+import { act } from 'react-dom/test-utils';
 
 describe('SignUpForm', () => {
   afterEach(cleanup);
@@ -53,75 +54,87 @@ describe('SignUpForm', () => {
 
     fetchMock.mockRejectOnce(new Error('sign-up failed'));
 
-    {
-      const { container, getByTestId } = render(
-        <SignUpForm history={history} />
-      );
-      const nameInput = getByTestId('name-input').querySelector('input');
-      const usernameInput = getByTestId('username-input').querySelector(
-        'input'
-      );
-      const passwordInput = getByTestId('password-input').querySelector(
-        'input'
-      );
-      const passwordConfirmInput = getByTestId(
-        'password-confirm-input'
-      ).querySelector('input');
-      const signUpButton = getByTestId('sign-up-button') as HTMLButtonElement;
-      const errorMessage = getByTestId('error-message');
+    let getByTestId = null;
 
+    act(() => {
+      getByTestId = render(<SignUpForm history={history} />).getByTestId;
+    });
+    const nameInput = getByTestId('name-input').querySelector('input');
+    const usernameInput = getByTestId('username-input').querySelector('input');
+    const passwordInput = getByTestId('password-input').querySelector('input');
+    const passwordConfirmInput = getByTestId(
+      'password-confirm-input'
+    ).querySelector('input');
+    const signUpButton = getByTestId('sign-up-button') as HTMLButtonElement;
+
+    act(() => {
       fireEvent.change(nameInput, { target: { value: 'User Name' } });
       fireEvent.change(usernameInput, { target: { value: 'username' } });
       fireEvent.change(passwordInput, { target: { value: 'password' } });
       fireEvent.change(passwordConfirmInput, { target: { value: 'password' } });
+    });
 
-      await waitForElement(() => nameInput);
-      await waitForElement(() => usernameInput);
-      await waitForElement(() => passwordInput);
-      await waitForElement(() => passwordConfirmInput);
+    await waitForElement(() => nameInput);
+    await waitForElement(() => usernameInput);
+    await waitForElement(() => passwordInput);
+    await waitForElement(() => passwordConfirmInput);
 
+    act(() => {
       fireEvent.click(signUpButton);
+    });
 
-      await waitForElement(() => errorMessage);
+    const errorMessage = await waitForElement(() =>
+      getByTestId('error-message')
+    );
 
-      expect(errorMessage.innerHTML).toEqual('sign-up failed');
-    }
+    expect(errorMessage.innerHTML).toContain('sign-up failed');
   });
 
   it('navigates to /sign-in if everything went right', async () => {
     const history = createMemoryHistory();
+    fetchMock.mockResponseOnce(JSON.stringify({
+      data: {
+        signUp: {
+          __typename: 'User',
+          id: 1
+        }
+      }
+    }));
 
-    fetchMock.mockResponseOnce('success');
+    let getByTestId: any = null;
 
-    {
-      const { container, getByTestId } = render(
-        <SignUpForm history={history} />
-      );
-      const nameInput = getByTestId('name-input').querySelector('input');
-      const usernameInput = getByTestId('username-input').querySelector(
-        'input'
-      );
-      const passwordInput = getByTestId('password-input').querySelector(
-        'input'
-      );
-      const passwordConfirmInput = getByTestId(
-        'password-confirm-input'
-      ).querySelector('input');
-      const signUpButton = getByTestId('sign-up-button') as HTMLButtonElement;
+    act(() => {
+      const comp = render(<SignUpForm history={history} />);
+      getByTestId = comp.getByTestId;
+    });
+    const signUpButton = await waitForElement(
+      () => getByTestId('sign-up-button') as HTMLButtonElement
+    );
 
+    const nameInput = await waitForElement(() =>
+      getByTestId('name-input').querySelector('input')
+    );
+    const usernameInput = await waitForElement(() =>
+      getByTestId('username-input').querySelector('input')
+    );
+    const passwordInput = await waitForElement(() =>
+      getByTestId('password-input').querySelector('input')
+    );
+    const passwordConfirmInput = await waitForElement(() =>
+      getByTestId('password-confirm-input').querySelector('input')
+    );
+
+    act(() => {
       fireEvent.change(nameInput, { target: { value: 'User Name' } });
       fireEvent.change(usernameInput, { target: { value: 'username' } });
       fireEvent.change(passwordInput, { target: { value: 'password' } });
       fireEvent.change(passwordConfirmInput, { target: { value: 'password' } });
+    });
 
-      await waitForElement(() => nameInput);
-      await waitForElement(() => usernameInput);
-      await waitForElement(() => passwordInput);
-      await waitForElement(() => passwordConfirmInput);
-
+    act(() => {
       fireEvent.click(signUpButton);
+    })
 
-      await wait(() => expect(history.location.pathname).toEqual('/sign-in'));
-    }
+    await wait(() => expect(history.location.pathname).toEqual('/sign-in'));
   });
 });

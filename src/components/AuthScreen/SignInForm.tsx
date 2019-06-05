@@ -73,7 +73,7 @@ const SignInForm: React.FC<RouteComponentProps<any>> = ({ history }) => {
           onClick={handleSignIn}>
           Sign in
         </Button>
-        <ErrorMessage data-testid="error-message">{error}</ErrorMessage>
+        { error ? <ErrorMessage data-testid="error-message">{error}</ErrorMessage> : null}
       </ActualForm>
     </SignForm>
   );
