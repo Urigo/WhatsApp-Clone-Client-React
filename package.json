@@ -14,6 +14,7 @@
     "@types/node": "13.9.8",
     "@types/react": "16.9.29",
     "@types/react-dom": "16.9.5",
+    "prettier": "2.0.2",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-scripts": "3.4.1",
@@ -23,7 +24,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "format": "prettier \"**/*.{ts,tsx,css,graphql}\" --write"
   },
   "eslintConfig": {
     "extends": "react-app"
