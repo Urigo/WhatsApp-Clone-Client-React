@@ -11,12 +11,12 @@ describe('MessagesList', () => {
       {
         id: '1',
         content: 'foo',
-        createdAt: new Date('14 Jun 2017 00:00:00 PDT').toUTCString(),
+        createdAt: new Date('14 Jun 2017 00:00:00 GMT').toUTCString(),
       },
       {
         id: '2',
         content: 'bar',
-        createdAt: new Date('17 Jun 2017 00:01:00 PDT').toUTCString(),
+        createdAt: new Date('17 Jun 2017 00:01:00 GMT').toUTCString(),
       },
     ];
 
@@ -29,9 +29,9 @@ describe('MessagesList', () => {
     }
 
     expect(getByTestId(message1, 'message-content')).toHaveTextContent('foo');
-    expect(getByTestId(message1, 'message-date')).toHaveTextContent('10:00');
+    expect(getByTestId(message1, 'message-date')).toHaveTextContent('01:00');
 
     expect(getByTestId(message2, 'message-content')).toHaveTextContent('bar');
-    expect(getByTestId(message2, 'message-date')).toHaveTextContent('10:01');
+    expect(getByTestId(message2, 'message-date')).toHaveTextContent('01:01');
   });
 });

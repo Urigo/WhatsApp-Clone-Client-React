@@ -29,7 +29,7 @@ describe('ChatsList', () => {
                   __typename: 'Message',
                   id: 1,
                   content: 'Hello',
-                  createdAt: new Date('14 Jun 2017 00:00:00 PDT').toUTCString(),
+                  createdAt: new Date('14 Jun 2017 00:00:00 GMT').toUTCString(),
                   isMine: true,
                   chat: {
                     __typename: 'Chat',
@@ -55,7 +55,7 @@ describe('ChatsList', () => {
       expect(getByTestId('name')).toHaveTextContent('Foo Bar');
       expect(getByTestId('picture')).toHaveAttribute('src', 'https://localhost:4000/picture.jpg');
       expect(getByTestId('content')).toHaveTextContent('Hello');
-      expect(getByTestId('date')).toHaveTextContent('10:00');
+      expect(getByTestId('date')).toHaveTextContent('01:00');
     }
   });
 
