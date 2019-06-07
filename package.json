@@ -15,7 +15,7 @@
     "@types/styled-components": "4.1.16",
     "history": "4.9.0",
     "moment": "2.24.0",
-    "prettier": "1.17.1",
+    "prettier": "1.18.1",
     "react": "16.8.6",
     "react-dom": "16.8.6",
     "react-router-dom": "5.0.1",
