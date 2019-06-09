@@ -7,11 +7,11 @@
     "url": "https://github.com/Urigo/WhatsApp-Clone-Client-React.git"
   },
   "dependencies": {
-    "@graphql-codegen/add": "1.2.1-alpha-3d654462.34",
-    "@graphql-codegen/cli": "1.2.1-alpha-3d654462.34",
-    "@graphql-codegen/typescript": "1.2.1-alpha-3d654462.34",
-    "@graphql-codegen/typescript-operations": "1.2.1-alpha-3d654462.34",
-    "@graphql-codegen/typescript-react-apollo": "1.2.1-alpha-3d654462.34",
+    "@graphql-codegen/add": "1.2.1",
+    "@graphql-codegen/cli": "1.2.1",
+    "@graphql-codegen/typescript": "1.2.1",
+    "@graphql-codegen/typescript-operations": "1.2.1",
+    "@graphql-codegen/typescript-react-apollo": "1.2.1",
     "@material-ui/core": "4.0.2",
     "@material-ui/icons": "4.0.1",
     "@types/history": "4.7.2",
