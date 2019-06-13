@@ -15,7 +15,7 @@
     "@types/node": "12.0.8",
     "@types/react": "16.8.19",
     "@types/react-dom": "16.8.4",
-    "@types/react-router-dom": "4.3.3",
+    "@types/react-router-dom": "4.3.4",
     "@types/styled-components": "4.1.16",
     "history": "4.9.0",
     "moment": "2.24.0",
