@@ -74,6 +74,6 @@
     "jest-dom": "3.5.0",
     "jest-fetch-mock": "2.1.2",
     "@testing-library/react": "8.0.1",
-    "source-map-explorer": "2.0.0"
+    "source-map-explorer": "2.0.1"
   }
 }
