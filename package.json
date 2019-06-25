@@ -69,6 +69,6 @@
   "devDependencies": {
     "jest-dom": "3.5.0",
     "jest-fetch-mock": "2.1.2",
-    "@testing-library/react": "8.0.1"
+    "@testing-library/react": "8.0.4"
   }
 }
