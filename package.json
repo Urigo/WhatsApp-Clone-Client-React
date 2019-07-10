@@ -14,7 +14,7 @@
     "@types/node": "12.6.2",
     "@types/react": "16.8.23",
     "@types/react-dom": "16.8.4",
-    "@types/styled-components": "4.1.17",
+    "@types/styled-components": "4.1.18",
     "moment": "2.24.0",
     "prettier": "1.18.2",
     "react": "16.8.6",
