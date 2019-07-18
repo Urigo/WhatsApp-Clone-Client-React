@@ -102,7 +102,7 @@ describe('SignInForm', () => {
       getByTestId('error-message')
     );
 
-    expect(errorMessage.innerHTML).toContain('sign-in failed');
+    await wait(() => expect(errorMessage.innerHTML).toContain('sign-in failed'));
   });
 
   it('navigates to /chats if everything went right', async () => {

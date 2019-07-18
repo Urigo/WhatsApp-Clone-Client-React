@@ -144,7 +144,7 @@ describe('SignUpForm', () => {
       getByTestId('error-message')
     );
 
-    expect(errorMessage.innerHTML).toContain('sign-up failed');
+    await wait(() =>expect(errorMessage.innerHTML).toContain('sign-up failed'));
   });
 
   it('navigates to /sign-in if everything went right', async () => {
