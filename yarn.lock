@@ -899,7 +899,7 @@
   dependencies:
     regenerator-runtime "^0.13.2"
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.2.0", "@babel/runtime@^7.3.1", "@babel/runtime@^7.3.4", "@babel/runtime@^7.4.0", "@babel/runtime@^7.4.2", "@babel/runtime@^7.4.4", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.1", "@babel/runtime@^7.5.4", "@babel/runtime@^7.5.5":
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.2.0", "@babel/runtime@^7.3.1", "@babel/runtime@^7.3.4", "@babel/runtime@^7.4.0", "@babel/runtime@^7.4.2", "@babel/runtime@^7.4.4", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.1", "@babel/runtime@^7.5.5":
   version "7.5.5"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.5.5.tgz#74fba56d35efbeca444091c7850ccd494fd2f132"
   integrity sha512-28QvEGyQyNkB0/m2B4FU7IEZGK2NUrcMtT6BZEFALTguLk+AUT6ofsHtPk5QyjAdUkpMJ+/Em+quwz4HOt30AQ==
@@ -1362,16 +1362,16 @@
     "@svgr/plugin-svgo" "^4.0.3"
     loader-utils "^1.1.0"
 
-"@testing-library/dom@^5.5.4":
-  version "5.6.1"
-  resolved "https://registry.yarnpkg.com/@testing-library/dom/-/dom-5.6.1.tgz#705a1cb4a039b877c1e69e916824038e837ab637"
-  integrity sha512-Y1T2bjtvQMewffn1CJ28kpgnuvPYKsBcZMagEH0ppfEMZPDc8AkkEnTk4smrGZKw0cblNB3lhM2FMnpfLExlHg==
+"@testing-library/dom@^6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@testing-library/dom/-/dom-6.0.0.tgz#34e28e69e49bd6347fc64a5dde4c4f9aabbd17d3"
+  integrity sha512-B5XTz3uMsbqbdR9CZlnwpZjTE3fCWuqRkz/zvDc2Ej/vuHmTM0Ur2v0XPwr7usWfGIBsahEK5HL1E91+4IFiBg==
   dependencies:
     "@babel/runtime" "^7.5.5"
     "@sheerun/mutationobserver-shim" "^0.3.2"
     aria-query "3.0.0"
     pretty-format "^24.8.0"
-    wait-for-expect "^1.2.0"
+    wait-for-expect "^1.3.0"
 
 "@testing-library/jest-dom@4.0.0":
   version "4.0.0"
@@ -1388,13 +1388,13 @@
     pretty-format "^24.0.0"
     redent "^3.0.0"
 
-"@testing-library/react@8.0.7":
-  version "8.0.7"
-  resolved "https://registry.yarnpkg.com/@testing-library/react/-/react-8.0.7.tgz#b5992c9156e926850a0e3a7c882ae1aed83b1c77"
-  integrity sha512-6XoeWSr3UCdxMswbkW0BmuXYw8a6w+stt+5gg4D4zAcljfhXETQ5o28bjJFwNab4OPg8gBNK8KIVot86L4Q8Vg==
+"@testing-library/react@9.0.2":
+  version "9.0.2"
+  resolved "https://registry.yarnpkg.com/@testing-library/react/-/react-9.0.2.tgz#6164cef63e9cd1a721ca8d5f2edd23e6387057d2"
+  integrity sha512-bM7NczdgG9p/Uni5kTAACU8ofuwbLsI4X8bKjuUAxnrQ+fX2XMbo2juur1sYn9wcNReStxbZIXAwcRcUBi5aug==
   dependencies:
-    "@babel/runtime" "^7.5.4"
-    "@testing-library/dom" "^5.5.4"
+    "@babel/runtime" "^7.5.5"
+    "@testing-library/dom" "^6.0.0"
 
 "@types/babel__core@^7.1.0":
   version "7.1.2"
@@ -1965,7 +1965,16 @@ apollo-link-http@1.5.15:
     apollo-link-http-common "^0.2.14"
     tslib "^1.9.3"
 
-apollo-link@1.2.12, apollo-link@^1.0.0, apollo-link@^1.2.12:
+apollo-link-mock@1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/apollo-link-mock/-/apollo-link-mock-1.0.1.tgz#266ebcf0b972382fd701ff0e94b292138648786f"
+  integrity sha512-2sUCU2KVu0dOYpviKlvH4IzHiWqf6p5D4rP6VoaQovkHS/OJm1sFnL1tExiPe3SnK6v6EoyrDqhxuDAmCfEB0w==
+  dependencies:
+    apollo-link "^1.2.3"
+    apollo-utilities "^1.0.25"
+    lodash.isequal "^4.5.0"
+
+apollo-link@1.2.12, apollo-link@^1.0.0, apollo-link@^1.2.12, apollo-link@^1.2.3:
   version "1.2.12"
   resolved "https://registry.yarnpkg.com/apollo-link/-/apollo-link-1.2.12.tgz#014b514fba95f1945c38ad4c216f31bcfee68429"
   integrity sha512-fsgIAXPKThyMVEMWQsUN22AoQI+J/pVXcjRGAShtk97h7D8O+SPskFinCGEkxPeQpE83uKaqafB2IyWdjN+J3Q==
@@ -1975,7 +1984,7 @@ apollo-link@1.2.12, apollo-link@^1.0.0, apollo-link@^1.2.12:
     tslib "^1.9.3"
     zen-observable-ts "^0.8.19"
 
-apollo-utilities@1.3.2, apollo-utilities@^1.3.0, apollo-utilities@^1.3.2:
+apollo-utilities@1.3.2, apollo-utilities@^1.0.25, apollo-utilities@^1.3.0, apollo-utilities@^1.3.2:
   version "1.3.2"
   resolved "https://registry.yarnpkg.com/apollo-utilities/-/apollo-utilities-1.3.2.tgz#8cbdcf8b012f664cd6cb5767f6130f5aed9115c9"
   integrity sha512-JWNHj8XChz7S4OZghV6yc9FNnzEXj285QYp/nLNh943iObycI5GTDO3NGR9Dth12LRrSFMeDOConPfPln+WGfg==
@@ -6454,6 +6463,11 @@ lodash._reinterpolate@^3.0.0:
   resolved "https://registry.yarnpkg.com/lodash._reinterpolate/-/lodash._reinterpolate-3.0.0.tgz#0ccf2d89166af03b3663c796538b75ac6e114d9d"
   integrity sha1-DM8tiRZq8Ds2Y8eWU4t1rG4RTZ0=
 
+lodash.isequal@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
+  integrity sha1-QVxEePK8wwEgwizhDtMib30+GOA=
+
 lodash.memoize@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
@@ -10319,10 +10333,10 @@ w3c-xmlserializer@^1.1.2:
     webidl-conversions "^4.0.2"
     xml-name-validator "^3.0.0"
 
-wait-for-expect@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/wait-for-expect/-/wait-for-expect-1.2.0.tgz#fdab6a26e87d2039101db88bff3d8158e5c3e13f"
-  integrity sha512-EJhKpA+5UHixduMBEGhTFuLuVgQBKWxkFbefOdj2bbk2/OpA5Opsc4aUTGmF+qJ+v3kTGxDRNYwKaT4j6g5n8Q==
+wait-for-expect@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/wait-for-expect/-/wait-for-expect-1.3.0.tgz#65241ce355425f907f5d127bdb5e72c412ff830c"
+  integrity sha512-8fJU7jiA96HfGPt+P/UilelSAZfhMBJ52YhKzlmZQvKEZU2EcD1GQ0yqGB6liLdHjYtYAoGVigYwdxr5rktvzA==
 
 walker@^1.0.7, walker@~1.0.5:
   version "1.0.7"
