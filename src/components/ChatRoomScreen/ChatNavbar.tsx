@@ -10,27 +10,27 @@ import { History } from 'history';
 import { useRemoveChatMutation } from '../../graphql/types';
 import { eraseChat } from '../../services/cache.service';
 
-const Container = styled(Toolbar) `
+const Container = styled(Toolbar)`
   padding: 0;
   display: flex;
   flex-direction: row;
   background-color: var(--primary-bg);
   color: var(--primary-text);
-` as typeof Toolbar;
+`;
 
-const BackButton = styled(Button) `
+const BackButton = styled(Button)`
   svg {
     color: var(--primary-text);
   }
-` as typeof Button;
+`;
 
-const Rest = styled.div `
+const Rest = styled.div`
   flex: 1;
   display: flex;
   justify-content: flex-end;
-`
+`;
 
-const Picture = styled.img `
+const Picture = styled.img`
   height: 40px;
   width: 40px;
   margin-top: 3px;
@@ -40,13 +40,13 @@ const Picture = styled.img `
   border-radius: 50%;
 `;
 
-const Name = styled.div `
+const Name = styled.div`
   line-height: 56px;
 `;
 
 const DeleteButton = styled(Button)`
   color: var(--primary-text) !important;
-` as typeof Button;
+`;
 
 export const removeChatMutation = gql`
   mutation RemoveChat($chatId: ID!) {
@@ -61,21 +61,21 @@ interface ChatNavbarProps {
     name?: string | null;
     id: string;
   };
-};
+}
 
 const ChatNavbar: React.FC<ChatNavbarProps> = ({ chat, history }) => {
-  const removeChat = useRemoveChatMutation({
+  const [removeChat] = useRemoveChatMutation({
     variables: {
-      chatId: chat.id
+      chatId: chat.id,
     },
     update: (client, { data: { removeChat } }) => {
       eraseChat(client, removeChat);
-    }
+    },
   });
 
   const handleRemoveChat = useCallback(() => {
     removeChat().then(() => {
-      history.replace('/chats')
+      history.replace('/chats');
     });
   }, [removeChat, history]);
 

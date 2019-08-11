@@ -1,29 +1,29 @@
 import React from 'react';
-import { useContext } from 'react';
+import { useContext, useCallback } from 'react';
+import { useApolloClient } from '@apollo/react-hooks';
 import { Redirect } from 'react-router-dom';
-import client from '../client';
-import { useMeQuery, User } from '../graphql/types';
+import { useMeQuery, User, useSignInMutation, useSignUpMutation } from '../graphql/types';
 import { useCacheService } from './cache.service';
-import gql from 'graphql-tag';
 
-const MyContext = React.createContext<User|null>(null);
+const MyContext = React.createContext<User | null>(null);
 
 export const useMe = () => {
   return useContext(MyContext);
 };
 
-export const withAuth = <P extends object>(Component: React.ComponentType<P>) => {
+export const withAuth = <P extends object>(
+  Component: React.ComponentType<P>
+) => {
   return (props: any) => {
     if (!isSignedIn()) {
       if (props.history.location.pathname === '/sign-in') {
         return null;
       }
 
-      return (
-        <Redirect to="/sign-in" />
-      );
+      return <Redirect to="/sign-in" />;
     }
 
+    const signOut = useSignOut();
     const { data, error, loading } = useMeQuery();
 
     useCacheService();
@@ -46,45 +46,20 @@ export const withAuth = <P extends object>(Component: React.ComponentType<P>) =>
   };
 };
 
-export const signIn = ({ username, password }: { username: string, password: string}) => {
-  return client.mutate({
-    mutation: gql`
-      mutation signIn($username: String!, $password: String!) {
-        signIn(username: $username, password: $password) {
-          id
-        }
-      }
-    `,
-    variables: {
-      username,
-      password
-    }
-  });
-};
+export const useSignIn = useSignInMutation;
+export const useSignUp = useSignUpMutation;
 
-export const signUp = ({ name, username, password, passwordConfirm }: 
-  {name: string, username: string, password: string, passwordConfirm: string}) => {
-  return client.mutate({
-    mutation: gql`
-      mutation signUp($name: String!, $username: String!, $password: String!, $passwordConfirm: String!) {
-        signUp(name: $name, username: $username, password: $password, passwordConfirm: $passwordConfirm) {
-          id
-        }
-      }
-    `,
-    variables: {
-      name,
-      username,
-      password,
-      passwordConfirm
-    }
-  });
-};
+export const useSignOut = () => {
+  const client = useApolloClient()
 
-export const signOut = () => {
-  document.cookie = `authToken=;expires=${new Date(0)}`;
+  return useCallback(() => {
+    // "expires" represents the lifespan of a cookie. Beyond that date the cookie will
+    // be deleted by the browser. "expires" cannot be viewed from "document.cookie"
+    document.cookie = `authToken=;expires=${new Date(0)}`;
 
-  return client.clearStore();
+    // Clear cache
+    return client.clearStore();
+  }, [client])
 };
 
 export const isSignedIn = () => {

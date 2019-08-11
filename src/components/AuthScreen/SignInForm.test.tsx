@@ -1,81 +1,163 @@
 import { createMemoryHistory } from 'history';
 import React from 'react';
-import { cleanup, render, fireEvent, wait, waitForElement } from 'react-testing-library';
+import { ApolloProvider } from '@apollo/react-hooks';
+import { act, cleanup, render, fireEvent, wait, waitForElement } from '@testing-library/react';
 import SignInForm from './SignInForm';
+import { SignInDocument } from '../../graphql/types';
+import { mockApolloClient } from '../../test-helpers';
 
 describe('SignInForm', () => {
   afterEach(cleanup);
-  afterEach(() => fetch.resetMocks());
 
   it('enables sign-in button when filled in', async () => {
     const history = createMemoryHistory();
+    const client = mockApolloClient();
 
-    {
-      const { container, getByTestId } = render(<SignInForm history={history} />);
-      const usernameInput = getByTestId('username-input').querySelector('input');
-      const passwordInput = getByTestId('password-input').querySelector('input');
-      const signInButton = getByTestId('sign-in-button') as HTMLButtonElement;
+    let getByTestId: any = null;
 
-      expect(signInButton.disabled).toEqual(true);
+    act(() => {
+      getByTestId = render(
+        <ApolloProvider client={client}>
+          <SignInForm history={history} />
+        </ApolloProvider>
+      ).getByTestId;
+    });
 
+    const signInButton = await waitForElement(() =>
+      getByTestId('sign-in-button') as HTMLButtonElement
+    );
+    const usernameInput = await waitForElement(() =>
+      getByTestId('username-input').querySelector('input')
+    );
+    const passwordInput = await waitForElement(() =>
+      getByTestId('password-input').querySelector('input')
+    );
+
+    expect(signInButton.disabled).toEqual(true);
+
+    act(() => {
       fireEvent.change(usernameInput, { target: { value: 'username' } });
       fireEvent.change(passwordInput, { target: { value: 'password' } });
+    });
 
-      await waitForElement(() => usernameInput);
-      await waitForElement(() => passwordInput);
-
-      expect(signInButton.disabled).toEqual(false);
-    }
+    await wait(() =>
+      expect(signInButton.disabled).toEqual(false)
+    )
   });
 
   it('prints server error if input was wrong', async () => {
     const history = createMemoryHistory();
 
-    fetchMock.mockRejectOnce(new Error('sign-in failed'));
+    const client = mockApolloClient([
+      {
+        request: {
+          query: SignInDocument,
+          variables: {
+            username: 'username',
+            password: 'password'
+          }
+        },
+        get result() { throw Error('sign-in failed') },
+      }
+    ]);
 
-    {
-      const { container, getByTestId } = render(<SignInForm history={history} />);
-      const usernameInput = getByTestId('username-input').querySelector('input');
-      const passwordInput = getByTestId('password-input').querySelector('input');
-      const signInButton = getByTestId('sign-in-button') as HTMLButtonElement;
-      const errorMessage = getByTestId('error-message');
+    let getByTestId: any = null;
 
+    act(() => {
+      getByTestId = render(
+        <ApolloProvider client={client}>
+          <SignInForm history={history} />
+        </ApolloProvider>
+      ).getByTestId;
+    });
+
+    const signInButton = await waitForElement(() =>
+      getByTestId('sign-in-button') as HTMLButtonElement
+    );
+    const usernameInput = await waitForElement(() =>
+      getByTestId('username-input').querySelector('input')
+    );
+    const passwordInput = await waitForElement(() =>
+      getByTestId('password-input').querySelector('input')
+    );
+
+    act(() => {
       fireEvent.change(usernameInput, { target: { value: 'username' } });
       fireEvent.change(passwordInput, { target: { value: 'password' } });
+    });
 
-      await waitForElement(() => usernameInput);
-      await waitForElement(() => passwordInput);
+    await wait(() =>
+      expect(usernameInput.value).toEqual('username')
+    );
 
+    await wait(() =>
+      expect(passwordInput.value).toEqual('password')
+    );
+
+    act(() => {
       fireEvent.click(signInButton);
+    });
 
-      await waitForElement(() => errorMessage);
+    const errorMessage = await waitForElement(() =>
+      getByTestId('error-message')
+    );
 
-      expect(errorMessage.innerHTML).toEqual('sign-in failed');
-    }
+    await wait(() => expect(errorMessage.innerHTML).toContain('sign-in failed'));
   });
 
   it('navigates to /chats if everything went right', async () => {
     const history = createMemoryHistory();
 
-    fetchMock.mockResponseOnce('success');
+    const client = mockApolloClient([
+      {
+        request: {
+          query: SignInDocument,
+          variables: {
+            username: 'username',
+            password: 'password'
+          }
+        },
+        result: { data: {} }
+      }
+    ]);
 
-    {
-      const { container, getByTestId } = render(<SignInForm history={history} />);
-      const usernameInput = getByTestId('username-input').querySelector('input');
-      const passwordInput = getByTestId('password-input').querySelector('input');
-      const signInButton = getByTestId('sign-in-button') as HTMLButtonElement;
+    let getByTestId: any = null;
 
+    act(() => {
+      getByTestId = render(
+        <ApolloProvider client={client}>
+          <SignInForm history={history} />
+        </ApolloProvider>
+      ).getByTestId;
+    })
+
+    const usernameInput = await waitForElement(() =>
+      getByTestId('username-input').querySelector('input')
+    );
+    const passwordInput = await waitForElement(() =>
+      getByTestId('password-input').querySelector('input')
+    );
+    const signInButton = await waitForElement(() =>
+      getByTestId('sign-in-button') as HTMLButtonElement
+    );
+
+    act(() => {
       fireEvent.change(usernameInput, { target: { value: 'username' } });
       fireEvent.change(passwordInput, { target: { value: 'password' } });
+    });
 
-      await waitForElement(() => usernameInput);
-      await waitForElement(() => passwordInput);
+    await wait(() =>
+      expect(usernameInput.value).toEqual('username')
+    );
 
+    await wait(() =>
+      expect(passwordInput.value).toEqual('password')
+    );
+
+    act(() => {
       fireEvent.click(signInButton);
+    });
 
-      await wait(() =>
-        expect(history.location.pathname).toEqual('/chats')
-      );
-    }
+    await wait(() => expect(history.location.pathname).toEqual('/chats'));
   });
 });

@@ -5,13 +5,13 @@ import styled from 'styled-components';
 import { History } from 'history';
 import AddChatButton from './AddChatButton';
 
-const Container = styled.div `
+const Container = styled.div`
   height: 100vh;
 `;
 
 interface ChatsListScreenProps {
-  history : History;
-};
+  history: History;
+}
 
 const ChatsListScreen: React.FC<ChatsListScreenProps> = ({ history }) => (
   <Container>

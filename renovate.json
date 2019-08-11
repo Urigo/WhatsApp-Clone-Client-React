@@ -2,7 +2,6 @@
   "extends": ["config:base", ":rebaseStalePrs"],
   "baseBranches": [
     "master",
-    "master-root",
     "master-step1",
     "master-step2",
     "master-step3",
