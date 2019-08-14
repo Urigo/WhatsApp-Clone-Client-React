@@ -23,10 +23,12 @@ export const useAdjustedScroll = (ref: RefObject<HTMLElement>) => {
       node.scrollTop = node.scrollHeight - height;
 
       // saves current scroll details
-      setPreviousScroll({
-        top: node.scrollTop,
-        height: node.scrollHeight,
-      });
+      if (previousScroll && node.scrollTop !== previousScroll.top) {
+        setPreviousScroll({
+          top: node.scrollTop,
+          height: node.scrollHeight,
+        });
+      }
     },
     [ref, previousScroll]
   );
