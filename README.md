@@ -44,7 +44,7 @@ Start the client:
 
 `yarn start`
 
-This repository is using the Tortilla project for creating tutorials from real apps and git. For more information, see https://www.tortilla.academy/ and https://www.npmjs.com/package/tortilla.
+This repository is using the Tortilla project for creating tutorials from real apps and git. For more information, see [Tortilla Academy](https://www.tortilla.academy/) and [NPM Tortilla Package](https://www.npmjs.com/package/tortilla).
 
 ### External contributors
 
