@@ -2,8 +2,8 @@
 
 [//]: # (head-end)
 
+A full working React client for a WhatsApp clone written in the latest versions of:
 
-A full working React client for a WhatsApp clone written in latest versions of:
 * [React](https://github.com/facebook/react)
 * [Material-UI](https://github.com/mui-org/material-ui)
 * [Styled Components](https://github.com/styled-components/styled-components)
@@ -13,7 +13,7 @@ A full working React client for a WhatsApp clone written in latest versions of:
 * [GraphQL Code Generator](https://github.com/dotansimha/graphql-code-generator)
 * [Jest](https://github.com/facebook/jest)
 
-This React client constantly being updated by using CI tests and renovate.
+This React client is constantly being updated by using CI tests and renovate.
 
 You can watch this repository to learn about new updates or check out the git diffs between new versions on the [tutorial's version diff pages](https://www.tortilla.academy/Urigo/WhatsApp-Clone-Tutorial) (at the top of the screen).
 
@@ -32,7 +32,7 @@ Install dependencies:
 
 `yarn`
 
-Run the the codegen to generate Typescript types from GraphQL (this step requires the server to be cloned under the same repo and its folder to be with it's default name):
+Run the codegen to generate Typescript types from GraphQL (this step requires the server to be cloned under the same repo and its folder to be with it's default name):
 
 `yarn codegen`
 
@@ -44,7 +44,6 @@ Start the client:
 
 `yarn start`
 
-
 This repository is using the Tortilla project for creating tutorials from real apps and git. For more information, see https://www.tortilla.academy/ and https://www.npmjs.com/package/tortilla.
 
 ### External contributors
@@ -53,7 +52,6 @@ This repository is using the Tortilla project for creating tutorials from real a
 * [braedongough](https://github.com/braedongough)
 * [milenazuccarelli](https://github.com/milenazuccarelli)
 * [czd](https://github.com/czd)
-
 
 [//]: # (foot-start)
 
