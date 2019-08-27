@@ -27,7 +27,7 @@
     "apollo-link": "1.2.12",
     "apollo-link-http": "1.5.15",
     "apollo-link-mock": "1.0.1",
-    "graphql": "14.4.2",
+    "graphql": "14.5.3",
     "graphql-tag": "2.10.1",
     "history": "4.9.0",
     "moment": "2.24.0",
