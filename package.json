@@ -10,7 +10,7 @@
     "@material-ui/core": "4.3.3",
     "@material-ui/icons": "4.2.1",
     "@types/jest": "24.0.18",
-    "@types/node": "12.7.2",
+    "@types/node": "12.12.30",
     "@types/react": "16.9.2",
     "@types/react-dom": "16.9.0",
     "@types/styled-components": "4.1.18",
