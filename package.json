@@ -30,7 +30,7 @@
     "history": "4.10.1",
     "jest-environment-jsdom-sixteen": "1.0.3",
     "jest-fetch-mock": "3.0.3",
-    "moment": "2.24.0",
+    "moment": "2.25.3",
     "prettier": "2.0.5",
     "react": "16.13.1",
     "react-dom": "16.13.1",
