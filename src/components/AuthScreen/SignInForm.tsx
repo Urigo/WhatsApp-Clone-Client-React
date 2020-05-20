@@ -37,7 +37,7 @@ const SignInForm: React.FC<RouteComponentProps<any>> = ({ history }) => {
       .then(() => {
         history.replace('/chats');
       })
-      .catch(error => {
+      .catch((error) => {
         setError(error.message || error);
       });
   }, [username, password, history, signIn]);

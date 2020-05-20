@@ -1,7 +1,13 @@
 import { createMemoryHistory } from 'history';
 import React from 'react';
 import { ApolloProvider } from '@apollo/react-hooks';
-import { act, cleanup, render, fireEvent, wait, waitForElement } from '@testing-library/react';
+import {
+  act,
+  cleanup,
+  render,
+  fireEvent,
+  waitFor,
+} from '@testing-library/react';
 import SignInForm from './SignInForm';
 import { SignInDocument } from '../../graphql/types';
 import { mockApolloClient } from '../../test-helpers';
@@ -23,13 +29,13 @@ describe('SignInForm', () => {
       ).getByTestId;
     });
 
-    const signInButton = await waitForElement(() =>
-      getByTestId('sign-in-button') as HTMLButtonElement
+    const signInButton = await waitFor(
+      () => getByTestId('sign-in-button') as HTMLButtonElement
     );
-    const usernameInput = await waitForElement(() =>
+    const usernameInput = await waitFor(() =>
       getByTestId('username-input').querySelector('input')
     );
-    const passwordInput = await waitForElement(() =>
+    const passwordInput = await waitFor(() =>
       getByTestId('password-input').querySelector('input')
     );
 
@@ -40,9 +46,7 @@ describe('SignInForm', () => {
       fireEvent.change(passwordInput, { target: { value: 'password' } });
     });
 
-    await wait(() =>
-      expect(signInButton.disabled).toEqual(false)
-    )
+    await waitFor(() => expect(signInButton.disabled).toEqual(false));
   });
 
   it('prints server error if input was wrong', async () => {
@@ -54,11 +58,13 @@ describe('SignInForm', () => {
           query: SignInDocument,
           variables: {
             username: 'username',
-            password: 'password'
-          }
+            password: 'password',
+          },
         },
-        get result() { throw Error('sign-in failed') },
-      }
+        get result() {
+          throw Error('sign-in failed');
+        },
+      },
     ]);
 
     let getByTestId: any = null;
@@ -71,13 +77,13 @@ describe('SignInForm', () => {
       ).getByTestId;
     });
 
-    const signInButton = await waitForElement(() =>
-      getByTestId('sign-in-button') as HTMLButtonElement
+    const signInButton = await waitFor(
+      () => getByTestId('sign-in-button') as HTMLButtonElement
     );
-    const usernameInput = await waitForElement(() =>
+    const usernameInput = await waitFor(() =>
       getByTestId('username-input').querySelector('input')
     );
-    const passwordInput = await waitForElement(() =>
+    const passwordInput = await waitFor(() =>
       getByTestId('password-input').querySelector('input')
     );
 
@@ -86,23 +92,19 @@ describe('SignInForm', () => {
       fireEvent.change(passwordInput, { target: { value: 'password' } });
     });
 
-    await wait(() =>
-      expect(usernameInput.value).toEqual('username')
-    );
+    await waitFor(() => expect(usernameInput.value).toEqual('username'));
 
-    await wait(() =>
-      expect(passwordInput.value).toEqual('password')
-    );
+    await waitFor(() => expect(passwordInput.value).toEqual('password'));
 
     act(() => {
       fireEvent.click(signInButton);
     });
 
-    const errorMessage = await waitForElement(() =>
-      getByTestId('error-message')
-    );
+    const errorMessage = await waitFor(() => getByTestId('error-message'));
 
-    await wait(() => expect(errorMessage.innerHTML).toContain('sign-in failed'));
+    await waitFor(() =>
+      expect(errorMessage.innerHTML).toContain('sign-in failed')
+    );
   });
 
   it('navigates to /chats if everything went right', async () => {
@@ -114,11 +116,11 @@ describe('SignInForm', () => {
           query: SignInDocument,
           variables: {
             username: 'username',
-            password: 'password'
-          }
+            password: 'password',
+          },
         },
-        result: { data: {} }
-      }
+        result: { data: {} },
+      },
     ]);
 
     let getByTestId: any = null;
@@ -129,16 +131,16 @@ describe('SignInForm', () => {
           <SignInForm history={history} />
         </ApolloProvider>
       ).getByTestId;
-    })
+    });
 
-    const usernameInput = await waitForElement(() =>
+    const usernameInput = await waitFor(() =>
       getByTestId('username-input').querySelector('input')
     );
-    const passwordInput = await waitForElement(() =>
+    const passwordInput = await waitFor(() =>
       getByTestId('password-input').querySelector('input')
     );
-    const signInButton = await waitForElement(() =>
-      getByTestId('sign-in-button') as HTMLButtonElement
+    const signInButton = await waitFor(
+      () => getByTestId('sign-in-button') as HTMLButtonElement
     );
 
     act(() => {
@@ -146,18 +148,14 @@ describe('SignInForm', () => {
       fireEvent.change(passwordInput, { target: { value: 'password' } });
     });
 
-    await wait(() =>
-      expect(usernameInput.value).toEqual('username')
-    );
+    await waitFor(() => expect(usernameInput.value).toEqual('username'));
 
-    await wait(() =>
-      expect(passwordInput.value).toEqual('password')
-    );
+    await waitFor(() => expect(passwordInput.value).toEqual('password'));
 
     act(() => {
       fireEvent.click(signInButton);
     });
 
-    await wait(() => expect(history.location.pathname).toEqual('/chats'));
+    await waitFor(() => expect(history.location.pathname).toEqual('/chats'));
   });
 });

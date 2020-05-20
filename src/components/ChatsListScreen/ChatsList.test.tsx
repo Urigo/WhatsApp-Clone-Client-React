@@ -4,9 +4,9 @@ import ReactDOM from 'react-dom';
 import {
   cleanup,
   render,
+  waitFor,
   fireEvent,
-  wait,
-  waitForDomChange,
+  screen,
 } from '@testing-library/react';
 import { createBrowserHistory } from 'history';
 import { mockApolloClient } from '../../test-helpers';
@@ -16,11 +16,15 @@ import * as queries from '../../graphql/queries';
 describe('ChatsList', () => {
   afterEach(() => {
     cleanup();
-    delete window.location;
 
-    window.location = {
+    delete window.location;
+    window = Object.create(window);
+    Object.defineProperty(window, 'location', {
+      value: {
         href: '/',
-    };
+      },
+      writable: true,
+    });
   });
 
   it('renders fetched chats data', async () => {
@@ -58,11 +62,11 @@ describe('ChatsList', () => {
     {
       const { container, getByTestId } = render(
         <ApolloProvider client={client}>
-          <ChatsList history={history}/>
+          <ChatsList history={history} />
         </ApolloProvider>
       );
 
-      await waitForDomChange({ container });
+      await waitFor(() => screen.getByTestId('name'));
 
       expect(getByTestId('name')).toHaveTextContent('Foo Bar');
       expect(getByTestId('picture')).toHaveAttribute(
@@ -70,7 +74,7 @@ describe('ChatsList', () => {
         'https://localhost:4000/picture.jpg'
       );
       expect(getByTestId('content')).toHaveTextContent('Hello');
-      expect(getByTestId('date')).toHaveTextContent('02:00');
+      expect(getByTestId('date')).toHaveTextContent('00:00');
     }
   });
 
@@ -113,11 +117,13 @@ describe('ChatsList', () => {
         </ApolloProvider>
       );
 
-      await waitForDomChange({ container });
+      await waitFor(() => screen.getByTestId('chat'));
 
       fireEvent.click(getByTestId('chat'));
 
-      await wait(() => expect(history.location.pathname).toEqual('/chats/1'));
+      await waitFor(() =>
+        expect(history.location.pathname).toEqual('/chats/1')
+      );
     }
   });
 });

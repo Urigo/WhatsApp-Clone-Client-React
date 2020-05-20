@@ -4,12 +4,11 @@ import {
   cleanup,
   render,
   fireEvent,
-  wait,
-  waitForDomChange,
+  waitFor,
+  screen,
 } from '@testing-library/react';
 import { mockApolloClient } from '../test-helpers';
 import UsersList, { UsersListQuery } from './UsersList';
-import * as queries from '../graphql/queries';
 
 describe('UsersList', () => {
   afterEach(cleanup);
@@ -40,7 +39,7 @@ describe('UsersList', () => {
         </ApolloProvider>
       );
 
-      await waitForDomChange({ container });
+      await waitFor(() => screen.getByTestId('name'));
 
       expect(getByTestId('name')).toHaveTextContent('Charles Dickhead');
       expect(getByTestId('picture')).toHaveAttribute(
@@ -78,11 +77,11 @@ describe('UsersList', () => {
         </ApolloProvider>
       );
 
-      await waitForDomChange({ container });
+      await waitFor(() => screen.getByTestId('user'));
 
       fireEvent.click(getByTestId('user'));
 
-      await wait(() => expect(onUserPick.mock.calls.length).toBe(1));
+      await waitFor(() => expect(onUserPick.mock.calls.length).toBe(1));
 
       expect(onUserPick.mock.calls[0][0].name).toEqual('Charles Dickhead');
       expect(onUserPick.mock.calls[0][0].picture).toEqual(

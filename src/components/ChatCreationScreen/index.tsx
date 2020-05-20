@@ -37,14 +37,13 @@ const ChatCreationScreen: React.FC<ChildComponentProps> = ({ history }) => {
   const [addChat] = useAddChatMutation();
 
   const onUserPick = useCallback(
-    user => addChat({
+    (user) =>
+      addChat({
         optimisticResponse: {
           __typename: 'Mutation',
           addChat: {
             __typename: 'Chat',
-            id: Math.random()
-              .toString(36)
-              .substr(2, 9),
+            id: Math.random().toString(36).substr(2, 9),
             name: user.name,
             picture: user.picture,
             lastMessage: null,
@@ -53,10 +52,12 @@ const ChatCreationScreen: React.FC<ChildComponentProps> = ({ history }) => {
         variables: {
           recipientId: user.id,
         },
-        update: (client, { data: { addChat } }) => {
-          writeChat(client, addChat);
+        update: (client, { data }) => {
+          if (data && data.addChat) {
+            writeChat(client, data.addChat);
+          }
         },
-      }).then(result => {
+      }).then((result) => {
         if (result && result.data !== null) {
           history.push(`/chats/${result.data!.addChat!.id}`);
         }

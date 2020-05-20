@@ -1,6 +1,6 @@
 import { createMemoryHistory } from 'history';
 import React from 'react';
-import { cleanup, render, fireEvent, wait } from '@testing-library/react';
+import { cleanup, render, fireEvent, waitFor } from '@testing-library/react';
 import ChatCreationNavbar from './ChatCreationNavbar';
 
 describe('ChatCreationNavbar', () => {
@@ -11,7 +11,7 @@ describe('ChatCreationNavbar', () => {
 
     history.push('/new-chat');
 
-    await wait(() => expect(history.location.pathname).toEqual('/new-chat'));
+    await waitFor(() => expect(history.location.pathname).toEqual('/new-chat'));
 
     {
       const { container, getByTestId } = render(
@@ -20,7 +20,7 @@ describe('ChatCreationNavbar', () => {
 
       fireEvent.click(getByTestId('back-button'));
 
-      await wait(() => expect(history.location.pathname).toEqual('/chats'));
+      await waitFor(() => expect(history.location.pathname).toEqual('/chats'));
     }
   });
 });

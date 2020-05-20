@@ -114,7 +114,7 @@ const ChatRoom: React.FC<ChatRoomScreenParams> = ({ history, chatId }) => {
     variables: { chatId, after, limit },
   });
 
-const [addMessage] = useAddMessageMutation();
+  const [addMessage] = useAddMessageMutation();
 
   const onSendMessage = useCallback(
     (content: string) => {
@@ -130,9 +130,7 @@ const [addMessage] = useAddMessageMutation();
           __typename: 'Mutation',
           addMessage: {
             __typename: 'Message',
-            id: Math.random()
-              .toString(36)
-              .substr(2, 9),
+            id: Math.random().toString(36).substr(2, 9),
             createdAt: new Date(),
             isMine: true,
             chat: {
@@ -142,8 +140,10 @@ const [addMessage] = useAddMessageMutation();
             content,
           },
         },
-        update: (client, { data: { addMessage } }) => {
-          writeMessage(client, addMessage);
+        update: (client, { data }) => {
+          if (data && data.addMessage) {
+            writeMessage(client, data.addMessage);
+          }
         },
       });
     },
@@ -197,8 +197,8 @@ const [addMessage] = useAddMessageMutation();
 
   return (
     <Container>
-      <ChatNavbar chat={chat} history={history} />
-      {chat.messages && (
+      {chat?.id && <ChatNavbar chat={chat} history={history} />}
+      {chat?.messages && (
         <MessagesList
           messages={chat.messages.messages}
           hasMore={chat.messages.hasMore}

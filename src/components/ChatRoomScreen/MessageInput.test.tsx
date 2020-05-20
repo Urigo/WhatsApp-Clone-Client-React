@@ -1,12 +1,6 @@
 import { createMemoryHistory } from 'history';
 import React from 'react';
-import {
-  cleanup,
-  render,
-  fireEvent,
-  wait,
-  waitForElement,
-} from '@testing-library/react';
+import { cleanup, render, waitFor, fireEvent } from '@testing-library/react';
 import MessageInput from './MessageInput';
 
 describe('MessageInput;', () => {
@@ -24,11 +18,11 @@ describe('MessageInput;', () => {
 
       fireEvent.change(messageInput, { target: { value: 'foo' } });
 
-      await waitForElement(() => messageInput);
+      await waitFor(() => messageInput);
 
       fireEvent.click(sendButton);
 
-      await wait(() => expect(onSendMessage.mock.calls.length).toBe(1));
+      await waitFor(() => expect(onSendMessage.mock.calls.length).toBe(1));
     }
   });
 
@@ -43,7 +37,7 @@ describe('MessageInput;', () => {
 
       fireEvent.change(messageInput, { target: { value: 'foo' } });
 
-      await waitForElement(() => messageInput);
+      await waitFor(() => messageInput);
 
       fireEvent.keyPress(messageInput, {
         key: 'Enter',
@@ -51,7 +45,7 @@ describe('MessageInput;', () => {
         charCode: 13,
       });
 
-      await wait(() => expect(onSendMessage.mock.calls.length).toBe(1));
+      await waitFor(() => expect(onSendMessage.mock.calls.length).toBe(1));
     }
   });
 });

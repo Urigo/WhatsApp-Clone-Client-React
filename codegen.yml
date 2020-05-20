@@ -1,10 +1,5 @@
-schema: ../WhatsApp-Clone-Server/modules/*/*.ts
-documents:
-  - ./src/components/**/*.tsx
-  - ./src/graphql/fragments/**/*.ts
-  - ./src/graphql/queries/**/*.ts
-  - ./src/graphql/subscriptions/**/*.ts
-  - ./src/graphql/mutations/**/*.ts
+schema: ../WhatsApp-Clone-Server/modules/*/index.ts
+documents: './src/**/*.{tsx,ts}'
 overwrite: true
 generates:
   ./src/graphql/types.tsx:

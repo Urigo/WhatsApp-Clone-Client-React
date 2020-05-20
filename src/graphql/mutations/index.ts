@@ -1,1 +1,1 @@
-export { default as signIn } from './signIn.mutation'
+export { default as signIn } from './signIn.mutation';

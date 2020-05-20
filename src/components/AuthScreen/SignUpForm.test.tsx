@@ -1,7 +1,13 @@
 import { createMemoryHistory } from 'history';
 import React from 'react';
 import { ApolloProvider } from '@apollo/react-hooks';
-import { act, cleanup, render, fireEvent, wait, waitForElement } from '@testing-library/react';
+import {
+  act,
+  cleanup,
+  render,
+  fireEvent,
+  waitFor,
+} from '@testing-library/react';
 import SignUpForm from './SignUpForm';
 import { SignUpDocument } from '../../graphql/types';
 import { mockApolloClient } from '../../test-helpers';
@@ -23,20 +29,20 @@ describe('SignUpForm', () => {
       ).getByTestId;
     });
 
-    const nameInput = await waitForElement(() =>
+    const nameInput = await waitFor(() =>
       getByTestId('name-input').querySelector('input')
     );
-    const usernameInput = await waitForElement(() =>
+    const usernameInput = await waitFor(() =>
       getByTestId('username-input').querySelector('input')
     );
-    const passwordInput = await waitForElement(() =>
+    const passwordInput = await waitFor(() =>
       getByTestId('password-input').querySelector('input')
     );
-    const passwordConfirmInput = await waitForElement(() =>
+    const passwordConfirmInput = await waitFor(() =>
       getByTestId('password-confirm-input').querySelector('input')
     );
-    const signUpButton = await waitForElement(() =>
-      getByTestId('sign-up-button') as HTMLButtonElement
+    const signUpButton = await waitFor(
+      () => getByTestId('sign-up-button') as HTMLButtonElement
     );
 
     expect(signUpButton.disabled).toEqual(true);
@@ -48,25 +54,15 @@ describe('SignUpForm', () => {
       fireEvent.change(passwordConfirmInput, { target: { value: 'password' } });
     });
 
-    await wait(() =>
-      expect(nameInput.value).toEqual('User Name')
-    );
+    await waitFor(() => expect(nameInput.value).toEqual('User Name'));
 
-    await wait(() =>
-      expect(usernameInput.value).toEqual('username')
-    );
+    await waitFor(() => expect(usernameInput.value).toEqual('username'));
 
-    await wait(() =>
-      expect(passwordInput.value).toEqual('password')
-    );
+    await waitFor(() => expect(passwordInput.value).toEqual('password'));
 
-    await wait(() =>
-      expect(passwordConfirmInput.value).toEqual('password')
-    );
+    await waitFor(() => expect(passwordConfirmInput.value).toEqual('password'));
 
-    await wait(() =>
-      expect(signUpButton.disabled).toEqual(false)
-    )
+    await waitFor(() => expect(signUpButton.disabled).toEqual(false));
   });
 
   it('prints server error if input was wrong', async () => {
@@ -80,11 +76,13 @@ describe('SignUpForm', () => {
             name: 'User Name',
             username: 'username',
             password: 'password',
-            passwordConfirm: 'password'
-          }
+            passwordConfirm: 'password',
+          },
         },
-        get result() { throw Error('sign-up failed') }
-      }
+        get result() {
+          throw Error('sign-up failed');
+        },
+      },
     ]);
 
     let getByTestId: any = null;
@@ -97,20 +95,20 @@ describe('SignUpForm', () => {
       ).getByTestId;
     });
 
-    const nameInput = await waitForElement(() =>
+    const nameInput = await waitFor(() =>
       getByTestId('name-input').querySelector('input')
     );
-    const usernameInput = await waitForElement(() =>
+    const usernameInput = await waitFor(() =>
       getByTestId('username-input').querySelector('input')
     );
-    const passwordInput = await waitForElement(() =>
+    const passwordInput = await waitFor(() =>
       getByTestId('password-input').querySelector('input')
     );
-    const passwordConfirmInput = await waitForElement(() =>
+    const passwordConfirmInput = await waitFor(() =>
       getByTestId('password-confirm-input').querySelector('input')
     );
-    const signUpButton = await waitForElement(() =>
-      getByTestId('sign-up-button') as HTMLButtonElement
+    const signUpButton = await waitFor(
+      () => getByTestId('sign-up-button') as HTMLButtonElement
     );
 
     act(() => {
@@ -120,31 +118,23 @@ describe('SignUpForm', () => {
       fireEvent.change(passwordConfirmInput, { target: { value: 'password' } });
     });
 
-    await wait(() =>
-      expect(nameInput.value).toEqual('User Name')
-    );
+    await waitFor(() => expect(nameInput.value).toEqual('User Name'));
 
-    await wait(() =>
-      expect(usernameInput.value).toEqual('username')
-    );
+    await waitFor(() => expect(usernameInput.value).toEqual('username'));
 
-    await wait(() =>
-      expect(passwordInput.value).toEqual('password')
-    );
+    await waitFor(() => expect(passwordInput.value).toEqual('password'));
 
-    await wait(() =>
-      expect(passwordConfirmInput.value).toEqual('password')
-    );
+    await waitFor(() => expect(passwordConfirmInput.value).toEqual('password'));
 
     act(() => {
       fireEvent.click(signUpButton);
     });
 
-    const errorMessage = await waitForElement(() =>
-      getByTestId('error-message')
-    );
+    const errorMessage = await waitFor(() => getByTestId('error-message'));
 
-    await wait(() =>expect(errorMessage.innerHTML).toContain('sign-up failed'));
+    await waitFor(() =>
+      expect(errorMessage.innerHTML).toContain('sign-up failed')
+    );
   });
 
   it('navigates to /sign-in if everything went right', async () => {
@@ -158,11 +148,11 @@ describe('SignUpForm', () => {
             name: 'User Name',
             username: 'username',
             password: 'password',
-            passwordConfirm: 'password'
-          }
+            passwordConfirm: 'password',
+          },
         },
-        result: { data: {} }
-      }
+        result: { data: {} },
+      },
     ]);
 
     let getByTestId: any = null;
@@ -175,20 +165,20 @@ describe('SignUpForm', () => {
       ).getByTestId;
     });
 
-    const nameInput = await waitForElement(() =>
+    const nameInput = await waitFor(() =>
       getByTestId('name-input').querySelector('input')
     );
-    const usernameInput = await waitForElement(() =>
+    const usernameInput = await waitFor(() =>
       getByTestId('username-input').querySelector('input')
     );
-    const passwordInput = await waitForElement(() =>
+    const passwordInput = await waitFor(() =>
       getByTestId('password-input').querySelector('input')
     );
-    const passwordConfirmInput = await waitForElement(() =>
+    const passwordConfirmInput = await waitFor(() =>
       getByTestId('password-confirm-input').querySelector('input')
     );
-    const signUpButton = await waitForElement(() =>
-      getByTestId('sign-up-button') as HTMLButtonElement
+    const signUpButton = await waitFor(
+      () => getByTestId('sign-up-button') as HTMLButtonElement
     );
 
     act(() => {
@@ -198,28 +188,18 @@ describe('SignUpForm', () => {
       fireEvent.change(passwordConfirmInput, { target: { value: 'password' } });
     });
 
-    await wait(() =>
-      expect(nameInput.value).toEqual('User Name')
-    );
+    await waitFor(() => expect(nameInput.value).toEqual('User Name'));
 
-    await wait(() =>
-      expect(usernameInput.value).toEqual('username')
-    );
+    await waitFor(() => expect(usernameInput.value).toEqual('username'));
 
-    await wait(() =>
-      expect(passwordInput.value).toEqual('password')
-    );
+    await waitFor(() => expect(passwordInput.value).toEqual('password'));
 
-    await wait(() =>
-      expect(passwordConfirmInput.value).toEqual('password')
-    );
+    await waitFor(() => expect(passwordConfirmInput.value).toEqual('password'));
 
     act(() => {
       fireEvent.click(signUpButton);
     });
 
-    await wait(() =>
-      expect(history.location.pathname).toEqual('/sign-in')
-    );
+    await waitFor(() => expect(history.location.pathname).toEqual('/sign-in'));
   });
 });

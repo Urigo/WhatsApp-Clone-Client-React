@@ -1,7 +1,7 @@
 import { createMemoryHistory } from 'history';
 import { ApolloProvider } from '@apollo/react-hooks';
 import React from 'react';
-import { cleanup, render, fireEvent, wait } from '@testing-library/react';
+import { cleanup, render, fireEvent, waitFor } from '@testing-library/react';
 import AddChatButton from './AddChatButton';
 import { mockApolloClient } from '../../test-helpers';
 
@@ -21,7 +21,9 @@ describe('AddChatButton', () => {
 
       fireEvent.click(getByTestId('new-chat-button'));
 
-      await wait(() => expect(history.location.pathname).toEqual('/new-chat'));
+      await waitFor(() =>
+        expect(history.location.pathname).toEqual('/new-chat')
+      );
     }
   });
 });

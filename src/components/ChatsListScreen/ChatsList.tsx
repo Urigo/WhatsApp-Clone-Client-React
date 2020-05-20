@@ -65,7 +65,7 @@ interface ChatsListProps {
 
 const ChatsList: React.FC<ChatsListProps> = ({ history }) => {
   const navToChat = useCallback(
-    chat => {
+    (chat) => {
       history.push(`chats/${chat.id}`);
     },
     [history]

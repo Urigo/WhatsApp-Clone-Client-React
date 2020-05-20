@@ -1,12 +1,6 @@
 import { createMemoryHistory } from 'history';
 import React from 'react';
-import {
-  cleanup,
-  render,
-  fireEvent,
-  wait,
-  getByTestId,
-} from '@testing-library/react';
+import { cleanup, render, getByTestId } from '@testing-library/react';
 import MessagesList from './MessagesList';
 
 describe('MessagesList', () => {
@@ -39,9 +33,9 @@ describe('MessagesList', () => {
     }
 
     expect(getByTestId(message1, 'message-content')).toHaveTextContent('foo');
-    expect(getByTestId(message1, 'message-date')).toHaveTextContent('02:00');
+    expect(getByTestId(message1, 'message-date')).toHaveTextContent('00:00');
 
     expect(getByTestId(message2, 'message-content')).toHaveTextContent('bar');
-    expect(getByTestId(message2, 'message-date')).toHaveTextContent('02:00');
+    expect(getByTestId(message2, 'message-date')).toHaveTextContent('00:00');
   });
 });

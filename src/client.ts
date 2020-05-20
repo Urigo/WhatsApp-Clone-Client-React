@@ -21,9 +21,17 @@ const wsLink = new WebSocketLink({
   },
 });
 
+/**
+ * Fix error typing in `split` method in `apollo-link`
+ * Related issue https://github.com/apollographql/apollo-client/issues/3090
+ */
+export interface Definition {
+  kind: string;
+  operation?: string;
+}
 const terminatingLink = split(
   ({ query }) => {
-    const { kind, operation } = getMainDefinition(query);
+    const { kind, operation }: Definition = getMainDefinition(query);
     // If this is a subscription query, use wsLink, otherwise use httpLink
     return kind === 'OperationDefinition' && operation === 'subscription';
   },

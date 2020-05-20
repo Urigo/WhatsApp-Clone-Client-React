@@ -64,7 +64,7 @@ const UsersList: React.FC<ChildComponentProps> = ({
   return (
     <ActualList>
       {!loadingUsers &&
-        users.map(user => (
+        users.map((user) => (
           <UserItem
             key={user.id}
             data-testid="user"

@@ -18,7 +18,7 @@ const SignUpForm: React.FC<RouteComponentProps<any>> = ({ history }) => {
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [error, setError] = useState('');
-  const [signUp] = useSignUp()
+  const [signUp] = useSignUp();
 
   const updateName = useCallback(({ target }) => {
     setError('');
@@ -49,7 +49,7 @@ const SignUpForm: React.FC<RouteComponentProps<any>> = ({ history }) => {
       .then(() => {
         history.replace('/sign-in');
       })
-      .catch(error => {
+      .catch((error) => {
         setError(error.message || error);
       });
   }, [name, username, password, passwordConfirm, history, signUp]);
