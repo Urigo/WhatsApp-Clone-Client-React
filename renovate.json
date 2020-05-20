@@ -1,0 +1,23 @@
+{
+  "extends": ["config:base", ":rebaseStalePrs"],
+  "baseBranches": [
+    "master",
+    "master-root",
+    "master-step1",
+    "master-step2",
+    "master-step3",
+    "master-step4",
+    "master-step5",
+    "master-step6",
+    "master-step7",
+    "master-step8",
+    "master-step9",
+    "master-step10",
+    "master-step11",
+    "master-step12",
+    "master-step13"
+  ],
+  "prHourlyLimit": 60,
+  "recreateClosed": true,
+  "rangeStrategy": "lockfile-update"
+}
