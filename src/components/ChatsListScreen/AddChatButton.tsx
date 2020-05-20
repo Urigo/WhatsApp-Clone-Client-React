@@ -3,8 +3,9 @@ import ChatIcon from '@material-ui/icons/Chat';
 import React from 'react';
 import styled from 'styled-components';
 import { History } from 'history';
+import { useUsersPrefetch } from '../UsersList';
 
-const Container = styled.div `
+const Container = styled.div`
   position: fixed;
   right: 10px;
   bottom: 10px;
@@ -18,23 +19,24 @@ const Container = styled.div `
     color: white;
   }
 `;
+
 interface ChildComponentProps {
   history: History;
-};
+}
 
 const AddChatButton: React.FC<ChildComponentProps> = ({ history }) => {
+  const prefetchUsers = useUsersPrefetch();
   const onClick = () => {
-    history.push('/new-chat')
+    history.push('/new-chat');
   };
 
   return (
-    <Container>
+    <Container onMouseEnter={() => prefetchUsers()}>
       <Button
         data-testid="new-chat-button"
         variant="contained"
         color="secondary"
-        onClick={onClick}
-      >
+        onClick={onClick}>
         <ChatIcon />
       </Button>
     </Container>

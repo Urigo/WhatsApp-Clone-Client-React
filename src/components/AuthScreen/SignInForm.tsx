@@ -1,6 +1,6 @@
 import React from 'react';
 import { useCallback, useState } from 'react';
-import { signIn } from '../../services/auth.service';
+import { useSignIn } from '../../services/auth.service';
 import {
   SignForm,
   ActualForm,
@@ -16,6 +16,7 @@ const SignInForm: React.FC<RouteComponentProps<any>> = ({ history }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [signIn] = useSignIn();
 
   const onUsernameChange = useCallback(({ target }) => {
     setError('');
@@ -32,14 +33,14 @@ const SignInForm: React.FC<RouteComponentProps<any>> = ({ history }) => {
   }, [username, password]);
 
   const handleSignIn = useCallback(() => {
-    signIn({ username, password })
+    signIn({ variables: { username, password } })
       .then(() => {
-        history.replace('/chats')
+        history.replace('/chats');
       })
       .catch(error => {
-        setError(error.message || error)
+        setError(error.message || error);
       });
-  }, [username, password, history]);
+  }, [username, password, history, signIn]);
 
   return (
     <SignForm>
@@ -70,8 +71,7 @@ const SignInForm: React.FC<RouteComponentProps<any>> = ({ history }) => {
           color="secondary"
           variant="contained"
           disabled={!maySignIn()}
-          onClick={handleSignIn}
-        >
+          onClick={handleSignIn}>
           Sign in
         </Button>
         <ErrorMessage data-testid="error-message">{error}</ErrorMessage>

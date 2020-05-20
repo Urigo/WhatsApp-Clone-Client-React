@@ -1,7 +1,7 @@
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { ApolloProvider } from 'react-apollo-hooks';
+import { ApolloProvider } from '@apollo/react-hooks';
 import './index.css';
 import App from './App';
 import client from './client';
@@ -12,18 +12,16 @@ const theme = createMuiTheme({
     primary: { main: '#2c6157' },
     secondary: { main: '#6fd056' },
   },
-  typography: {
-    useNextVariants: true,
-  },
-})
+});
 
 ReactDOM.render(
   <MuiThemeProvider theme={theme}>
     <ApolloProvider client={client}>
       <App />
     </ApolloProvider>
-  </MuiThemeProvider>
-, document.getElementById('root'));
+  </MuiThemeProvider>,
+  document.getElementById('root')
+);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

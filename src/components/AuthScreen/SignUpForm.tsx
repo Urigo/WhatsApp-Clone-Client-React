@@ -1,6 +1,6 @@
 import React from 'react';
 import { useCallback, useState } from 'react';
-import { signUp } from '../../services/auth.service';
+import { useSignUp } from '../../services/auth.service';
 import {
   SignForm,
   ActualForm,
@@ -18,6 +18,7 @@ const SignUpForm: React.FC<RouteComponentProps<any>> = ({ history }) => {
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [error, setError] = useState('');
+  const [signUp] = useSignUp()
 
   const updateName = useCallback(({ target }) => {
     setError('');
@@ -44,14 +45,14 @@ const SignUpForm: React.FC<RouteComponentProps<any>> = ({ history }) => {
   }, [name, username, password, passwordConfirm]);
 
   const handleSignUp = useCallback(() => {
-    signUp({ username, password, passwordConfirm, name })
+    signUp({ variables: { username, password, passwordConfirm, name } })
       .then(() => {
-        history.replace('/sign-in')
+        history.replace('/sign-in');
       })
       .catch(error => {
-        setError(error.message || error)
+        setError(error.message || error);
       });
-  }, [name, username, password, passwordConfirm, history]);
+  }, [name, username, password, passwordConfirm, history, signUp]);
 
   return (
     <SignForm>
@@ -62,8 +63,7 @@ const SignUpForm: React.FC<RouteComponentProps<any>> = ({ history }) => {
             float: 'left',
             width: 'calc(50% - 10px)',
             paddingRight: '10px',
-          }}
-        >
+          }}>
           <TextField
             data-testid="name-input"
             label="Name"
@@ -86,8 +86,7 @@ const SignUpForm: React.FC<RouteComponentProps<any>> = ({ history }) => {
             float: 'right',
             width: 'calc(50% - 10px)',
             paddingLeft: '10px',
-          }}
-        >
+          }}>
           <TextField
             data-testid="password-input"
             label="Password"
@@ -113,8 +112,7 @@ const SignUpForm: React.FC<RouteComponentProps<any>> = ({ history }) => {
           color="secondary"
           variant="contained"
           disabled={!maySignUp()}
-          onClick={handleSignUp}
-        >
+          onClick={handleSignUp}>
           Sign up
         </Button>
         <ErrorMessage data-testid="error-message">{error}</ErrorMessage>

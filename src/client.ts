@@ -25,12 +25,10 @@ const terminatingLink = split(
   ({ query }) => {
     const { kind, operation } = getMainDefinition(query);
     // If this is a subscription query, use wsLink, otherwise use httpLink
-    return (
-      kind === 'OperationDefinition' && operation === 'subscription'
-    );
+    return kind === 'OperationDefinition' && operation === 'subscription';
   },
   wsLink,
-  httpLink,
+  httpLink
 );
 
 const link = ApolloLink.from([terminatingLink]);

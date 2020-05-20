@@ -19,7 +19,7 @@ export const useCacheService = () => {
       if (data) {
         writeMessage(client, data.messageAdded);
       }
-    }
+    },
   });
 
   useChatAddedSubscription({
@@ -27,7 +27,7 @@ export const useCacheService = () => {
       if (data) {
         writeChat(client, data.chatAdded);
       }
-    }
+    },
   });
 
   useChatRemovedSubscription({
@@ -35,7 +35,7 @@ export const useCacheService = () => {
       if (data) {
         eraseChat(client, data.chatRemoved);
       }
-    }
+    },
   });
 };
 
@@ -45,21 +45,25 @@ export const writeMessage = (client: Client, message: MessageFragment) => {
 
   const chatIdFromStore = defaultDataIdFromObject(message.chat);
 
-  if (chatIdFromStore === null) { return; }
+  if (chatIdFromStore === null) {
+    return;
+  }
   try {
     fullChat = client.readFragment<FullChat>({
       id: chatIdFromStore,
       fragment: fragments.fullChat,
       fragmentName: 'FullChat',
-    })
+    });
   } catch (e) {
     return;
   }
 
-  if (fullChat === null || fullChat.messages === null) { return; }
-  if (fullChat.messages.some((m: any) => m.id === message.id)) return;
+  if (fullChat === null || fullChat.messages === null) {
+    return;
+  }
+  if (fullChat.messages.messages.some((m: any) => m.id === message.id)) return;
 
-  fullChat.messages.push(message);
+  fullChat.messages.messages.push(message);
   fullChat.lastMessage = message;
 
   client.writeFragment({
@@ -69,22 +73,22 @@ export const writeMessage = (client: Client, message: MessageFragment) => {
     data: fullChat,
   });
 
-
   let data;
   try {
     data = client.readQuery({
       query: queries.chats,
-    })
+    });
   } catch (e) {
     return;
-  };
-
-  if (data === undefined || data.chats === undefined) {
-    return null;
   }
 
+  if (!data || data === null) {
+    return null;
+  }
+  if (!data.chats || data.chats === undefined) {
+    return null;
+  }
   const chats = data.chats;
-  if (!chats) return;
 
   const chatIndex = chats.findIndex((c: any) => {
     if (message === null || message.chat === null) return -1;
@@ -101,10 +105,9 @@ export const writeMessage = (client: Client, message: MessageFragment) => {
     query: queries.chats,
     data: { chats: chats },
   });
-}
+};
 
 export const writeChat = (client: Client, chat: ChatFragment) => {
-
   const chatId = defaultDataIdFromObject(chat);
   if (chatId === null) {
     return;
@@ -115,15 +118,15 @@ export const writeChat = (client: Client, chat: ChatFragment) => {
     fragment: fragments.chat,
     fragmentName: 'Chat',
     data: chat,
-  })
+  });
 
   let data;
   try {
     data = client.readQuery({
       query: queries.chats,
-    })
+    });
   } catch (e) {
-    return; 
+    return;
   }
 
   if (!data) return;
@@ -133,18 +136,18 @@ export const writeChat = (client: Client, chat: ChatFragment) => {
   if (!chats) return;
   if (chats.some((c: any) => c.id === chat.id)) return;
 
-  chats.unshift(chat)
+  chats.unshift(chat);
 
   client.writeQuery({
     query: queries.chats,
     data: { chats },
   });
-}
+};
 
 export const eraseChat = (client: Client, chatId: string) => {
   const chatType = {
     __typename: 'Chat',
-    id: chatId
+    id: chatId,
   };
 
   const chatIdFromObject = defaultDataIdFromObject(chatType);
@@ -157,7 +160,7 @@ export const eraseChat = (client: Client, chatId: string) => {
     fragment: fragments.fullChat,
     fragmentName: 'FullChat',
     data: null,
-  })
+  });
 
   let data;
   try {
@@ -185,4 +188,4 @@ export const eraseChat = (client: Client, chatId: string) => {
     query: queries.chats,
     data: { chats: chats },
   });
-}
+};
