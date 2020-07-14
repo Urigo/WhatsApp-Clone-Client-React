@@ -104,7 +104,7 @@ const ChatsList: React.FC<ChatsListProps> = ({ history }) => {
                     {chat.lastMessage.content}
                   </MessageContent>
                   <MessageDate data-testid="date">
-                    {format(chat.lastMessage.createdAt, 'HH:mm')}
+                    {format(new Date(chat.lastMessage.createdAt), 'HH:mm')}
                   </MessageDate>
                 </React.Fragment>
               )}
